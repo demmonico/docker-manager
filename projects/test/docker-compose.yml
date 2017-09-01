@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+
+  coins:
+    build:
+     # image source
+     context: ../../images/ubuntu-apache-php
+     args:
+      - PHP_VER=7.0
+      - GITHUB_TOKEN=58dd77fe95481ad1614a5644a105eaecce79b7d4
+    image: ubuntu-apache-php7
+    container_name: coins
+    volumes:
+      # webapp code
+      - ./app:/var/www/html
+      # ssh keys for git
+      - ../../config/ssh:/root/.ssh:ro
+    networks:
+      - proxy_common
+      - internal
+    links:
+      - coins-db:db
+    env_file:
+      - host.env
+    environment:
+      - REPOSITORY=git@bitbucket.org:demmonico/coins.git
+      - REPO_BRANCH=master
+    logging:
+      driver: none
+    stdin_open: true
+    tty: true
+
+  coins-db:
+    build:
+     context: ../../images/ubuntu-mariadb
+    image: ubuntu-mariadb
+    container_name: coins-db
+    networks:
+      - internal
+    logging:
+      driver: none
+    stdin_open: true
+    tty: true
+
+networks:
+  proxy_common:
+    external: true
+  internal:
+    driver: bridge

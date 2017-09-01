@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+
+  main:
+    image:
+      tutum/lamp
+#    depends_on:
+#      - proxy
+    container_name:
+      main
+    ports:
+      - "8080:80"
+    networks:
+#      - main
+      - proxy_common
+    volumes:
+      - ./datatest:/var/www
+    env_file:
+      - host.env
+#    environment:
+##      - VIRTUAL_HOST=academysmart.cf,academysmart.ml
+    logging:
+      driver: none
+
+networks:
+  proxy_common:
+    external: true

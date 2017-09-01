@@ -1,0 +1,4 @@
+proxy:
+  hosts:
+    - academysmart.cf
+    - academysmart.ml
