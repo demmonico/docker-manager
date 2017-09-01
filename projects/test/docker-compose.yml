@@ -20,7 +20,7 @@ services:
       - proxy_common
       - internal
     links:
-      - coins-db:db
+      - db:db
     env_file:
       - host.env
     environment:
