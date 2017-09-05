@@ -1,4 +1,3 @@
 *
-!/test/
-!test/*
+!docker-compose.yml
 !.gitignore
