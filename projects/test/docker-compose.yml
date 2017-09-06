@@ -2,6 +2,7 @@ version: '3'
 
 services:
 
+# rename!!! project name
   web:
     build:
      # image source
@@ -10,6 +11,7 @@ services:
       - PHP_VER=7.0
       - GITHUB_TOKEN=58dd77fe95481ad1614a5644a105eaecce79b7d4
     image: ubuntu-apache-php7
+# rename!!! project name
     container_name: web
     volumes:
       # webapp code
@@ -20,24 +22,26 @@ services:
       - proxy_common
       - internal
     links:
-      # name of internal DB host (equial to db container's name)
+# rename!!! first = db container name
       - db:db
     env_file:
       - host.env
     environment:
       - REPOSITORY=git@bitbucket.org:demmonico/coins.git
       - REPO_BRANCH=master
-      # name of internal DB host (equial to db container's name)
+      # name of internal DB host
       - DB_HOST=db
     logging:
       driver: none
     stdin_open: true
     tty: true
 
+# rename!!! db container name
   db:
     build:
      context: ../../images/ubuntu-mariadb
     image: ubuntu-mariadb
+# rename!!! db container name
     container_name: db
     volumes:
       # db tables
@@ -45,6 +49,7 @@ services:
     networks:
       - internal
     environment:
+# rename!!! db name (for example set to project's name)
       - DB_NAME=test
     logging:
       driver: none
