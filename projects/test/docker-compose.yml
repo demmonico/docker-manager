@@ -20,12 +20,15 @@ services:
       - proxy_common
       - internal
     links:
+      # name of internal DB host (equial to db container's name)
       - db:db
     env_file:
       - host.env
     environment:
       - REPOSITORY=git@bitbucket.org:demmonico/coins.git
       - REPO_BRANCH=master
+      # name of internal DB host (equial to db container's name)
+      - DB_HOST=db
     logging:
       driver: none
     stdin_open: true
@@ -36,8 +39,13 @@ services:
      context: ../../images/ubuntu-mariadb
     image: ubuntu-mariadb
     container_name: db
+    volumes:
+      # db tables
+      - ./db:/var/lib/mysql
     networks:
       - internal
+    environment:
+      - DB_NAME=test
     logging:
       driver: none
     stdin_open: true

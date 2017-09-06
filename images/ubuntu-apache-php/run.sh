@@ -2,14 +2,18 @@
 
 
 ##### run once
-if [ -f "/run_once" ]; then
+if [ -f "${RUN_ONCE_FLAG}" ]; then
+  # run script once
   /bin/bash run_once.sh
-  /bin/rm -f /run_once
+  # rm flag
+  /bin/rm -f ${RUN_ONCE_FLAG}
 fi
+
 
 
 ##### run
 cd ${PROJECT_DIR}
+
 
 
 ### set dummy
@@ -23,6 +27,7 @@ yes | cp -rf ${DUMMY_DIR}/.htaccess ${PROJECT_DIR}/.htaccess
 # start apache for dummy
 ( echo "Starting apache"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
 service apache2 start
+
 
 
 ### update code
@@ -40,6 +45,20 @@ then
     php init --env=${PROJECT_ENV} --overwrite=n
 fi
 
+# wait for db
+if [ ! -z "${DB_HOST}" ]
+then
+    ( echo "Wait for db container"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
+    while ! mysqladmin ping -h"${DB_HOST}" --silent; do
+        sleep 1
+    done
+
+    # run migrations
+    ( echo "Running db migrations"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
+    php yii migrate --interactive=0
+fi
+
+
 
 ### stop dummy's apache
 ( echo "Starting container"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
@@ -51,6 +70,7 @@ if [ -f "${PROJECT_DIR}/real.htaccess" ]; then
     /bin/rm -f ${PROJECT_DIR}/real.htaccess
 fi
 /bin/rm -rf ${PROJECT_DUMMY_DIR}
+
 
 
 ### run supervisord

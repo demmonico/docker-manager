@@ -28,6 +28,8 @@ RUN apt-get update \
     && sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf \
     # php
     && apt-get install -y --force-yes  --no-install-recommends php${PHP_VER} libapache2-mod-php${PHP_VER} php${PHP_VER}-mysql php${PHP_VER}-xml php${PHP_VER}-gd php${PHP_VER}-mcrypt php${PHP_VER}-mbstring \
+    # DB client
+    && apt-get install -y mariadb-client \
 
     # demonisation for docker
     && apt-get install -y supervisor \
@@ -61,7 +63,8 @@ COPY dummy ${DUMMY_DIR}
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 
 COPY run_once.sh /run_once.sh
-RUN tee /run_once && chmod +x /run_once.sh
+ENV RUN_ONCE_FLAG "/run_once"
+RUN tee ${RUN_ONCE_FLAG} && chmod +x /run_once.sh
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
 CMD ["/run.sh"]
