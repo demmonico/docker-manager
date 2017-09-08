@@ -23,6 +23,12 @@ user=mysql
 # localhost which is more compatible and is not less secure.
 bind-address = 0.0.0.0
 
+# Was added for Moodle
+innodb_large_prefix = 1
+innodb_file_per_table = 1
+innodb_file_format = barracuda
+
+
 
 # This will be passed to all mysql clients
 # It has been reported that passwords should be enclosed with ticks/quotes

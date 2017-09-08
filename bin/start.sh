@@ -40,12 +40,18 @@ do
     # trim /
     PROJECT=${PROJECT%%/}
 
-    # setup subdomain env settings
-    FILE_ENV_CONFIG="$DC_PROJECT_DIR/$PROJECT/$DC_HOST_ENV_CONFIG"
-    if [ ! -f $FILE_ENV_CONFIG ]; then
-       echo "$(get_vhosts_environment "$DC_ROOT_DIR/$NETWORK_PREFIX/config.yml" "$PROJECT")" > $FILE_ENV_CONFIG
-    fi
+    # check whether docker project
+    DC_FILE="./$PROJECT/$DC_FILENAME"
+    if [ -f $DC_FILE ]; then
 
-    # build && up
-    docker-compose --file ./$PROJECT/$DC_FILENAME up -d --build
+        # setup subdomain env settings
+        FILE_ENV_CONFIG="$DC_PROJECT_DIR/$PROJECT/$DC_HOST_ENV_CONFIG"
+        if [ ! -f $FILE_ENV_CONFIG ]; then
+           echo "$(get_vhosts_environment "$DC_ROOT_DIR/$NETWORK_PREFIX/config.yml" "$PROJECT")" > $FILE_ENV_CONFIG
+        fi
+
+        # build && up
+        docker-compose --file $DC_FILE up -d --build
+
+    fi
 done

@@ -68,6 +68,8 @@ service apache2 stop
 if [ -f "${PROJECT_DIR}/real.htaccess" ]; then
     yes | cp -rf ${PROJECT_DIR}/real.htaccess ${PROJECT_DIR}/.htaccess
     /bin/rm -f ${PROJECT_DIR}/real.htaccess
+else
+    /bin/rm -f ${PROJECT_DIR}/.htaccess
 fi
 /bin/rm -rf ${PROJECT_DUMMY_DIR}
 
