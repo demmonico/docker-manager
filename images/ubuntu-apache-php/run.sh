@@ -78,9 +78,9 @@ fi
 
 
 ### run custom script if exists
-if [ ! -z ${CUSTOM_SCRIPT} ] && [ -f ${CUSTOM_SCRIPT} ] && [ -x ${CUSTOM_SCRIPT} ]
+if [ ! -z ${CUSTOM_RUN_SCRIPT} ] && [ -f ${CUSTOM_RUN_SCRIPT} ] && [ -x ${CUSTOM_RUN_SCRIPT} ]
 then
-    /bin/bash ${CUSTOM_SCRIPT}
+    /bin/bash ${CUSTOM_RUN_SCRIPT}
 fi
 
 
