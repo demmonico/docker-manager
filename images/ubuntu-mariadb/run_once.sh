@@ -26,7 +26,13 @@ if [ ! -d /var/lib/mysql/mysql ]; then
 
     # create the default database
     mysql -e "CREATE DATABASE ${DB_NAME};"
-    #mysql < /schema.sql
+
+    # import database from SQL if exists
+    FILE_IMPORT="/var/lib/mysql/${DB_NAME}.sql"
+    if [ -f ${FILE_IMPORT} ]
+    then
+        mysql ${DB_NAME} < ${FILE_IMPORT}
+    fi
 
     # Tell the MySQL daemon to shutdown.
     mysqladmin shutdown
