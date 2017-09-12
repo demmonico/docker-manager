@@ -46,11 +46,18 @@ services:
     volumes:
       # db tables
       - ./db:/var/lib/mysql
+      # custom scripts folder
+      #- ./custom:/docker-custom
+      # NOTES: for correct work should be setted up CUSTOM_SCRIPT and/or CUSTOM_SCRIPT_ONCE env variables at the environment section
+      # e.g. CUSTOM_SCRIPT=/docker-custom/run.sh
     networks:
       - internal
     environment:
 # rename!!! db name (for example set to project's name)
       - DB_NAME=test
+# remove if unused!!!
+#      - CUSTOM_SCRIPT=/docker-custom/run_db.sh
+#      - CUSTOM_SCRIPT_ONCE=/docker-custom/run_db_once.sh
     logging:
       driver: none
     stdin_open: true
