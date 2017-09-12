@@ -1,5 +1,5 @@
 #!/bin/bash
-#docker-compose up --build "$@"
+# This script starts all available docker container(s) and networks
 
 ## set filenames and paths
 # docker compose filename

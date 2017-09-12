@@ -1,4 +1,7 @@
 #!/bin/bash
+# This script build and add docker container and his internal networks and connect them to the external docker network
+#
+# Format: ./add.sh PROJECT_NAME
 
 ## set filenames and paths
 # docker compose filename
