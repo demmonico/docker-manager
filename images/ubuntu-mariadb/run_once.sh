@@ -1,5 +1,9 @@
 #!/bin/bash
+# This file has executed after container's builds
 
+
+
+### init DB
 if [ ! -d /var/lib/mysql/mysql ]; then
 
     # set permissions
@@ -30,4 +34,12 @@ if [ ! -d /var/lib/mysql/mysql ]; then
     # Wait for the MySQL daemon to exit.
     wait $mysql_pid
 
+fi
+
+
+
+### run custom script if exists
+if [ ! -z ${CUSTOM_SCRIPT_ONCE} ] && [ -f ${CUSTOM_SCRIPT_ONCE} ] && [ -x ${CUSTOM_SCRIPT_ONCE} ]
+then
+    /bin/bash ${CUSTOM_SCRIPT_ONCE}
 fi

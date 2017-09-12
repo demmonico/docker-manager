@@ -1,4 +1,6 @@
 #!/bin/bash
+# This file has executed each time when container's starts
+
 
 
 ##### run once
@@ -72,6 +74,14 @@ else
     /bin/rm -f ${PROJECT_DIR}/.htaccess
 fi
 /bin/rm -rf ${PROJECT_DUMMY_DIR}
+
+
+
+### run custom script if exists
+if [ ! -z ${CUSTOM_SCRIPT} ] && [ -f ${CUSTOM_SCRIPT} ] && [ -x ${CUSTOM_SCRIPT} ]
+then
+    /bin/bash ${CUSTOM_SCRIPT}
+fi
 
 
 
