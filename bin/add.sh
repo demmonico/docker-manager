@@ -9,8 +9,6 @@ DC_HOST_ENV_CONFIG="host.env"
 DC_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # docker containers root dir
 DC_ROOT_DIR="$(dirname "$DC_BIN_DIR")"
-# dir of projects
-DC_PROJECT_DIR="$DC_ROOT_DIR/projects"
 
 # common network prefix used when create network inside the proxy container
 NETWORK_PREFIX="proxy"
@@ -44,6 +42,7 @@ do
 done
 
 ### init project
+DC_PROJECT_DIR="$DC_ROOT_DIR/projects"
 cd $DC_PROJECT_DIR
 
 # setup subdomain env settings
@@ -53,4 +52,4 @@ if [ ! -f $FILE_ENV_CONFIG ]; then
 fi
 
 # build && up
-docker-compose --file ./$PROJECT/$DC_FILENAME up -d --build
+docker-compose --file "$DC_PROJECT_DIR/$PROJECT/$DC_FILENAME" up -d --build
