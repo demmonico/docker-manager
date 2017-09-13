@@ -33,17 +33,23 @@ service apache2 start
 
 
 ### update code
-( echo "Code is updating"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
-git pull origin ${REPO_BRANCH}
+if [ ! -z ${REPOSITORY} ]
+then
+    ( echo "Code is updating"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
+    git pull origin ${REPO_BRANCH}
+fi
 
 # install composer relations
-( echo "Composer relations is updating"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
-composer install
+if [ -f "${PROJECT_DIR}/composer.json" ]
+then
+    ( echo "Composer relations is updating"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
+    composer install
+fi
 
 # setup environment
-( echo "Environment is setting up"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
-if [ ! -z "$PROJECT_ENV" ]
+if [ ! -z "$PROJECT_ENV" ] && [ -f "${PROJECT_DIR}/init" ]
 then
+    ( echo "Environment is setting up"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
     php init --env=${PROJECT_ENV} --overwrite=n
 fi
 
@@ -56,8 +62,11 @@ then
     done
 
     # run migrations
-    ( echo "Running db migrations"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
-    php yii migrate --interactive=0
+    if [ -f "${PROJECT_DIR}/yii" ]
+    then
+        ( echo "Running db migrations"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
+        php yii migrate --interactive=0
+    fi
 fi
 
 
