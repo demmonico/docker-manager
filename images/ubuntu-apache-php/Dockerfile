@@ -27,7 +27,8 @@ RUN apt-get update \
     && ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/ \
     && sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf \
     # php
-    && apt-get install -y --force-yes  --no-install-recommends php${PHP_VER} libapache2-mod-php${PHP_VER} php${PHP_VER}-mysql php${PHP_VER}-xml php${PHP_VER}-gd php${PHP_VER}-mcrypt php${PHP_VER}-mbstring \
+    && apt-get install -y --force-yes  --no-install-recommends php${PHP_VER} libapache2-mod-php${PHP_VER} \
+        php${PHP_VER}-mysql php${PHP_VER}-xml php${PHP_VER}-gd php${PHP_VER}-mcrypt php${PHP_VER}-mbstring php${PHP_VER}-soap php${PHP_VER}-intl php${PHP_VER}-zip php${PHP_VER}-curl \
     # DB client
     && apt-get install -y mariadb-client \
 

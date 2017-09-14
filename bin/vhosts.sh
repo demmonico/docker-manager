@@ -9,7 +9,6 @@ function get_vhosts_environment() {
     eval "$(${YAML_PARSER_FILE} ${YAML_CONFIG_FILE} config_)"
 
     # virtual host environment string as template
-    #VIRTUAL_HOST_TEMPLATE="VIRTUAL_HOST={{subdomain}}academysmart.cf,{{subdomain}}academysmart.ml"
     local TEMPLATE=""
     local VAR="{{subdomain}}"
 

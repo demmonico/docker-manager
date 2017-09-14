@@ -2,6 +2,10 @@
 # This file has executed after container's builds
 
 
+### set apache user ID equal to host's owner ID
+usermod -u ${HOST_USER_ID} www-data && groupmod -g ${HOST_USER_ID} www-data
+
+
 
 ### init git if we need it
 if [ ! -d "${PROJECT_DIR}/.git" ] && [ ! -z ${REPOSITORY} ]
