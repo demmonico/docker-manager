@@ -71,6 +71,15 @@ fi
 
 
 
+### run custom script if exists
+if [ ! -z ${CUSTOM_RUN_SCRIPT} ] && [ -f ${CUSTOM_RUN_SCRIPT} ] && [ -x ${CUSTOM_RUN_SCRIPT} ]
+then
+    ( echo "Running custom script"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
+    /bin/bash ${CUSTOM_RUN_SCRIPT}
+fi
+
+
+
 ### stop dummy's apache
 ( echo "Starting container"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
 service apache2 stop
@@ -88,14 +97,6 @@ fi
 
 # FIX permissions
 chown -R www-data:www-data ${PROJECT_DIR}
-
-
-
-### run custom script if exists
-if [ ! -z ${CUSTOM_RUN_SCRIPT} ] && [ -f ${CUSTOM_RUN_SCRIPT} ] && [ -x ${CUSTOM_RUN_SCRIPT} ]
-then
-    /bin/bash ${CUSTOM_RUN_SCRIPT}
-fi
 
 
 
