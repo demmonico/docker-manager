@@ -86,6 +86,11 @@ fi
 
 
 
+# FIX permissions
+chown -R www-data:www-data ${PROJECT_DIR}
+
+
+
 ### run custom script if exists
 if [ ! -z ${CUSTOM_RUN_SCRIPT} ] && [ -f ${CUSTOM_RUN_SCRIPT} ] && [ -x ${CUSTOM_RUN_SCRIPT} ]
 then
