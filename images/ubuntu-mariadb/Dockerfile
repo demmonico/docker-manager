@@ -48,6 +48,11 @@ COPY mariadb-debian.cnf /etc/mysql/debian.cnf
 EXPOSE 3306
 
 
+### UPDATE & RUN PROJECT
+# dafault name of internal DB
+ENV DB_NAME=''
+
+
 ### RUN
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 

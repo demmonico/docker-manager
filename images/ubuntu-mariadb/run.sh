@@ -2,6 +2,11 @@
 # This file has executed each time when container's starts
 
 
+# define DB_NAME
+if [ -z "${DB_NAME}" ]; then
+  DB_NAME=${PROJECT}
+fi
+
 
 ##### run once
 if [ -f "${RUN_ONCE_FLAG}" ]; then
