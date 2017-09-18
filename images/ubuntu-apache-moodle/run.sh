@@ -46,13 +46,6 @@ then
     composer install
 fi
 
-# setup environment
-if [ ! -z "$PROJECT_ENV" ] && [ -f "${PROJECT_DIR}/init" ]
-then
-    ( echo "Environment is setting up"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
-    php init --env=${PROJECT_ENV} --overwrite=n
-fi
-
 # wait for db
 if [ ! -z "${DB_HOST}" ]
 then
@@ -60,13 +53,6 @@ then
     while ! mysqladmin ping -h"${DB_HOST}" --silent; do
         sleep 1
     done
-
-    # run migrations
-    if [ -f "${PROJECT_DIR}/yii" ]
-    then
-        ( echo "Running db migrations"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status
-        php yii migrate --interactive=0
-    fi
 fi
 
 

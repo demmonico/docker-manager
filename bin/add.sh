@@ -57,6 +57,8 @@ FILE_ENV_CONFIG="$DC_PROJECT_DIR/$PROJECT/$DC_HOST_ENV_CONFIG"
 if [ ! -f $FILE_ENV_CONFIG ]; then
     # virtual hosts
     echo "$(get_vhosts_environment "$DC_ROOT_DIR/$NETWORK_PREFIX/config.yml" "$PROJECT")" > $FILE_ENV_CONFIG
+    # project name
+    echo "PROJECT=${PROJECT}" >> $FILE_ENV_CONFIG
     # script's owner name
     echo "HOST_USER_NAME=${HOST_USER_NAME}" >> $FILE_ENV_CONFIG
     # script's owner ID

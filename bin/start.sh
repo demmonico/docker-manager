@@ -32,6 +32,7 @@ docker-compose --file "$DC_ROOT_DIR/proxy/$DC_FILENAME" --project-name $NETWORK_
 #### init main host with parent domain name
 # setup domain name env settings
 echo "$(get_vhosts_environment "$DC_ROOT_DIR/$NETWORK_PREFIX/config.yml")" > "$DC_ROOT_DIR/main/$DC_HOST_ENV_CONFIG"
+echo "PROJECT=main" >> "$DC_ROOT_DIR/main/$DC_HOST_ENV_CONFIG"
 echo "HOST_USER_NAME=${HOST_USER_NAME}" >> "$DC_ROOT_DIR/main/$DC_HOST_ENV_CONFIG"
 echo "HOST_USER_ID=${HOST_USER_ID}" >> "$DC_ROOT_DIR/main/$DC_HOST_ENV_CONFIG"
 # build && up
@@ -54,6 +55,8 @@ do
         if [ ! -f $FILE_ENV_CONFIG ]; then
             # virtual hosts
             echo "$(get_vhosts_environment "$DC_ROOT_DIR/$NETWORK_PREFIX/config.yml" "$PROJECT")" > $FILE_ENV_CONFIG
+            # project name
+            echo "PROJECT=${PROJECT}" >> $FILE_ENV_CONFIG
             # script's owner name
             echo "HOST_USER_NAME=${HOST_USER_NAME}" >> $FILE_ENV_CONFIG
             # script's owner ID

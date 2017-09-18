@@ -1,0 +1,20 @@
+# prevent directory listings
+Options -Indexes
+IndexIgnore */*
+
+# follow symbolic links
+Options FollowSymlinks
+RewriteEngine on
+
+# prevent httpd from serving dotfiles (.htaccess, .svn, .git, etc.)
+RedirectMatch 403 /\..*$
+
+# redirect from WWW
+RewriteCond %{HTTP_HOST} ^www\.(.*) [NC]
+RewriteRule ^(.*)$ http://%1/$1 [L,R=301]
+
+# forwarding
+RewriteCond %{SCRIPT_FILENAME} !uc.php
+RewriteCond %{SCRIPT_FILENAME} !uc.jpg
+RewriteRule ^(.+)?$ /dummy/uc.php [R=503,L]
+ErrorDocument 503 /dummy/uc.php
