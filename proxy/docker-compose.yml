@@ -13,6 +13,7 @@ services:
       - common
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./default_location:/etc/nginx/vhost.d/default_location:ro
 
 networks:
   common:

@@ -1,0 +1,13 @@
+# publish no robots allowed
+#
+# User-agent: *
+# Disallow: /
+
+location /robots.txt {
+    allow all;
+    log_not_found off;
+    access_log off;
+
+    add_header Content-Type text/plain;
+    return 200 "User-agent: *\nDisallow: /\n";
+}
