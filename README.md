@@ -1,13 +1,13 @@
-#Docker CI structure
+# Docker CI structure
 
-##Description
+## Description
 
 Docker-based structure for different web-sites deploy at dev-server.
 This is a skeleton for automatically independent deploy different web-sites at dev-server and maintenance them further.
 
 
 
-##Contents
+## Contents
 
 - [Description](#description)
 - [Install](#install)
@@ -18,7 +18,7 @@ This is a skeleton for automatically independent deploy different web-sites at d
 
 
 
-##Install
+## Install
 
 At the Debian's OS please, follow steps below or see [guide](https://docs.docker.com/engine/installation/) 
 
@@ -55,7 +55,7 @@ git clone https://github.com/demmonico/docker-ci /var/docker
 
 
 
-##Directory Structure
+## Directory Structure
 ```
 bin/            contains management scripts
 config/         contains common configs
@@ -72,25 +72,25 @@ proxy/          contains docker container for proxy
 
 
 
-##Config
+## Config
 
 Here you can configure follow things:
 
-###SSH keys of CI bot and known hosts
+### SSH keys of CI bot and known hosts
 If you want to download anything from git then you should create `config/ssh` folder and place ssh key files and known hosts file there.
 Note that it is excluded from VCS.
 
-###Host domain name
+### Host domain name
 Please, edit `config.yml` file to setup host's domain name(s).
 
-###Autostart
+### Autostart
 If you want to start you virtual hosts automatically after system's loads then you should add `/var/docker/bin/start.sh` (or your custom CI folder) to your system scheduler.
 
 
 
-##Usage
+## Usage
 
-###Project structure
+### Project structure
 In common way internal folder usages:
 ```
 PROJECT_NAME/app                    contains web-site files
@@ -99,14 +99,14 @@ PROJECT_NAME/data                   contains additional data files, e.g. moodled
 PROJECT_NAME/docker-compose.yml     contains project build and run settings
 ```
 
-###Project settings
+### Project settings
 You can drive your project settings via `PROJECT_NAME/docker-compose.yml` file. Use Docker Compose, exists pre-defined docker images and you custom Dockerfiles to build your containers.
 At `docker-compose.yml` file you can define bound volumes, network links, container names etc.
 Firstly you should replace all occurrences of your project's names at `docker-compose.yml` file with actual.
 
 ***Note*** that container's name should be unique through the all projects and have to reflect to the project's name.
 
-###Environment variables
+### Environment variables
 You can pass environment variables inside your container through the:
 - on first container's run there are creates `PROJECT_NAME/hosts.env` file with common environments variables automatically. You can use it using `env_file` section.
 - you can pass env variables via `docker-compose.yml` file using `environment` section.
@@ -114,21 +114,21 @@ You can pass environment variables inside your container through the:
 
 
 
-##Commands
+## Commands
 Here follows up available commands:
 
-###Start all
+### Start all
 To start proxy, main container and all exists project's containers you should use command `/var/docker/bin/start.sh`.
 
-###Stop all
+### Stop all
 To stop all containers (included proxy and main) you should use command `/var/docker/bin/stop.sh [PARAMS]`.
 Available params (you'd use one of following):
 - -c - remove containers after they stops
 - -a - remove containers and their images after they stops
 
-###Start one
+### Start one
 To start only one project's container you should use command `/var/docker/bin/add.sh PROJECT_NAME`.
 
-###Stop one
+### Stop one
 To stop one container you should use command `/var/docker/bin/stop.sh [PARAMS] -n PROJECT_NAME`.
 Available params are the same as in [Stop all](#stop-all) section.
