@@ -20,11 +20,13 @@ cd ${PROJECT_DIR}
 
 ### set dummy
 PROJECT_DUMMY_DIR="$PROJECT_DIR/dummy"
-cp -rf ${DUMMY_DIR} ${PROJECT_DUMMY_DIR}
-if [ -f "${PROJECT_DIR}/.htaccess" ]; then
-    cp ${PROJECT_DIR}/.htaccess ${PROJECT_DIR}/real.htaccess
+if [ ! -d "${PROJECT_DUMMY_DIR}" ]; then
+    cp -rf ${DUMMY_DIR} ${PROJECT_DUMMY_DIR}
+    if [ -f "${PROJECT_DIR}/.htaccess" ]; then
+        cp ${PROJECT_DIR}/.htaccess ${PROJECT_DIR}/real.htaccess
+    fi
+    yes | cp -rf ${DUMMY_DIR}/.htaccess ${PROJECT_DIR}/.htaccess
 fi
-yes | cp -rf ${DUMMY_DIR}/.htaccess ${PROJECT_DIR}/.htaccess
 
 # start apache for dummy
 ( echo "Starting apache"; ) | sudo tee ${PROJECT_DUMMY_DIR}/status

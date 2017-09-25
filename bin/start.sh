@@ -1,5 +1,7 @@
 #!/bin/bash
 # This script starts all available docker container(s) and networks
+#
+# Format: ./start.sh [PROXY_ENV=server]
 
 ## set filenames and paths
 # docker compose filename
@@ -21,13 +23,28 @@ NETWORK_PREFIX="proxy"
 # include virtual host getter
 source "$DC_BIN_DIR/vhosts.sh"
 
+# define default PROXY_ENV value
+PROXY_ENV="$1"
+case "$PROXY_ENV" in
+    dev)
+     shift ;;
+    server)
+     shift ;;
+    "") PROXY_ENV='server'
+     shift ;;
+    *)
+        echo "Invalid environment '$PROXY_ENV'"
+        exit
+        ;;
+esac
+
 
 ########################
 ######### MAIN #########
 ########################
 
 # init proxy gateway with common network
-docker-compose --file "$DC_ROOT_DIR/proxy/$DC_FILENAME" --project-name $NETWORK_PREFIX up -d --build
+docker-compose --file "$DC_ROOT_DIR/proxy/${PROXY_ENV}_${DC_FILENAME}" --project-name $NETWORK_PREFIX up -d --build
 
 #### init main host with parent domain name
 # setup domain name env settings
