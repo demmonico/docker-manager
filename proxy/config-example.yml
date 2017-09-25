@@ -1,0 +1,4 @@
+proxy:
+  hosts:
+    - example.com
+    - example.loc

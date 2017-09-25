@@ -7,8 +7,8 @@ services:
       tutum/lamp
     container_name:
       main
-    ports:
-      - "8080:80"
+#    ports:
+#      - "8080:80"
     networks:
       - proxy_common
     volumes:

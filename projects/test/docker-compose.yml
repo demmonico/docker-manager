@@ -52,6 +52,8 @@ services:
       # e.g. CUSTOM_RUN_SCRIPT=/docker-custom/run.sh
     networks:
       - internal
+    env_file:
+      - host.env
 #    environment:
 # rename!!! db name (for example set to project's name). If wont be setted then DB wont be created on first run
 #      - DB_NAME=test

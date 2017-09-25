@@ -1,1 +1,5 @@
+# folder with PHPStorm settings
 /.idea
+
+# automatically created by newsite.sh folder with apache logs
+/log
