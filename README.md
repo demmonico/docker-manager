@@ -83,6 +83,20 @@ sudo apt-get install docker-ce
 sudo apt-get install docker-compose
 ```
 
+***Note*** If further you'll catch an error similar to the following
+```
+Couldn't connect to Docker daemon at http+unix://var/run/docker.sock - is it running?
+```
+then try to fix it, as described [here](https://stackoverflow.com/questions/29101043/cant-connect-to-docker-from-docker-compose) - add new group `docker` and add yourself there
+```sh
+# 1. Create the docker group.
+sudo groupadd docker
+# 2. Add your user to the docker group.
+sudo usermod -aG docker $USER
+# 3. Log out and log back in so that your group membership is re-evaluated.
+```
+
+
 ### Install at development environment
 
 1) Create new website project's folder and setup apache configs manually or automatically using [script](https://github.com/demmonico/bash/blob/master/newsite.sh)
