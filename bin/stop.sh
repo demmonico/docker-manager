@@ -1,4 +1,5 @@
 #!/bin/bash
+#-----------------------------------------------------------#
 # @author: dep
 # @link: https://github.com/demmonico
 # @package: https://github.com/demmonico/docker-ci
@@ -10,6 +11,7 @@
 # Params:
 #   -c - remove containers after they stops
 #   -a - remove all containers and their images after they stops
+#-----------------------------------------------------------#
 
 # get params
 while [[ $# -gt 0 ]]

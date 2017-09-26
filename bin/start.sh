@@ -1,4 +1,5 @@
 #!/bin/bash
+#-----------------------------------------------------------#
 # @author: dep
 # @link: https://github.com/demmonico
 # @package: https://github.com/demmonico/docker-ci
@@ -6,6 +7,7 @@
 # This script starts all available docker container(s) and networks
 #
 # Format: ./start.sh [PROXY_ENV=server]
+#-----------------------------------------------------------#
 
 ## set filenames and paths
 # docker compose filename
