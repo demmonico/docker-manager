@@ -1,4 +1,8 @@
 #!/bin/bash
+# @author: dep
+# @link: https://github.com/demmonico
+# @package: https://github.com/demmonico/docker-ci
+#
 # This script build and add docker container and his internal networks and connect them to the external docker network
 #
 # Format: ./add.sh PROJECT_NAME

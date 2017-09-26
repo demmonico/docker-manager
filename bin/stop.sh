@@ -1,4 +1,8 @@
 #!/bin/bash
+# @author: dep
+# @link: https://github.com/demmonico
+# @package: https://github.com/demmonico/docker-ci
+#
 # This script stops docker container(s) and unused networks
 # If PROJECT_NAME doesn't exists then script will stop all exists containers and unused networks
 #
