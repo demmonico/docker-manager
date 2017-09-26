@@ -45,7 +45,7 @@ function configApache
         echo "    ErrorLog ${SITE_DIR}/log/error.log";
         echo "    CustomLog ${SITE_DIR}/log/access.log combined";
         echo "</VirtualHost>";
-    ) 2>&1 | tee /etc/apache2/sites-available/$SITENAME.conf
+    ) | tee /etc/apache2/sites-available/$SITENAME.conf >/dev/null 2>&1;
     echo -e "${GREEN}done${NC}";
 
     # restart apache
@@ -95,10 +95,9 @@ then
     # copy from example
     cp ${PROXY_CONFIG_EXAMPLE} ${PROXY_CONFIG} && chown -R `stat . -c %u:%g` ${PROXY_CONFIG}
     # remove example lines by pattern
-    sed -i "/^\s*-\sexample.com\s*$/d" /etc/hosts;
-    sed -i "/^\s*-\sexample.loc\s*$/d" /etc/hosts;
-    sed -i "/^\s*-\sexample.loc\s*$/d" /etc/hosts;
-    echo "    - $SITENAME" | tee -a ${PROXY_CONFIG};
+    sed -i "/^\s*-\sexample.com\s*$/d" ${PROXY_CONFIG};
+    sed -i "/^\s*-\sexample.loc\s*$/d" ${PROXY_CONFIG};
+    echo "    - $SITENAME" | tee -a ${PROXY_CONFIG} >/dev/null 2>&1;
     echo -e "${GREEN}done${NC}";
 fi;
 
