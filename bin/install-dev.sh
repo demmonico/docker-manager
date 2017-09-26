@@ -52,6 +52,15 @@ function configApache
     echo -n "Restart apache service ... ";
     service apache2 restart
     echo -e "${GREEN}done${NC}";
+
+    # update hosts file
+    echo -n "Updating available hosts ... ";
+    # remove if exists
+    local domain=`echo "test.$SITENAME" | sed 's/\./\\\\./g'`;      # shield dots
+    sed -i "/^127\.0\.0\.1\s*$domain$/d" /etc/hosts;                # remove lines by pattern
+    # add
+    echo "127.0.0.1        test.$SITENAME" | sudo tee -a /etc/hosts >/dev/null 2>&1;
+    echo -e "${GREEN}done${NC}";
 }
 
 

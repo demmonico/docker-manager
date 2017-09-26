@@ -2,7 +2,7 @@
 
 ## Description
 
-Docker-based structure for different web-sites deploy at dev-server.
+Docker-based structure for different web-sites deploy at dev-server and local development.
 This is a skeleton for automatically independent deploy different web-sites at dev-server and maintenance them further.
 
 
@@ -10,20 +10,55 @@ This is a skeleton for automatically independent deploy different web-sites at d
 ## Contents
 
 - [Description](#description)
-- [Install](#install)
 - [Directory structure](#directory-structure)
+- [Install](#install)
+    - [Pre-Install Docker (Docker Compose)](#pre-install-docker)
+    - [Install at development environment](#install-at-development-environment)
+    - [Install at dev server environment](#install-at-dev-server-environment)
 - [Config](#config)
+    - [SSH keys of CI bot and known hosts](#ssh-keys-of-ci-bot-and-known-hosts)
+    - [Host domain name](#host-domain-name)
+    - [Autostart](#autostart)
 - [Usage](#usage)
+    - [Project structure](#project-structure)
+    - [Project settings](#project-settings)
+    - [Environment variables](#environment-variables)
+    - [Add new project](#add-new-project)
 - [Commands](#commands)
+    - [Start all](#start-all)
+    - [Stop all](#stop-all)
+    - [Start one](#start-one)
+    - [Stop one](#stop-one)
+
+ 
+
+## Directory Structure
+```
+bin/            contains management scripts
+config/         contains common configs
+    ssh/        contains ssh keys of CI bot account and known hosts file. Will be bound to each virtual host
+images/         contains docker images which further will be used at the projects
+    ...
+main/           contains docker container for main dev-server's host, which can be contains docker web-console etc.
+projects/       contains docker containers for all virtual hosts (your web-sites) + test container. Excluded from VCS
+    ...
+proxy/          contains docker container for proxy
+    config.yml/ contains settings for domain name of hosts gateway
+    ...
+```
 
 
 
 ## Install
 
-At the Debian's OS please, follow steps below or see [guide](https://docs.docker.com/engine/installation/) 
+Follow steps. ***Note*** that you couldn't use any copy of this docker-ci structure at the system simultaneously!
+
+### Pre-Install Docker
+
+At the Debian's OS please, follow steps below or see [guide](https://docs.docker.com/engine/installation/)
 
 1) Install Docker CE at :
-```php
+```sh
 # setup repository
 sudo apt-get update && \
 sudo apt-get install \
@@ -44,30 +79,66 @@ sudo apt-get install docker-ce
 ```
 
 2) Install Docker Compose
-```php
+```sh
 sudo apt-get install docker-compose
 ```
 
-3) Get this structure from git repo e.g. into `/var/docker` folder
-```php
+### Install at development environment
+
+1) Create new website project's folder and setup apache configs manually or automatically using [script](https://github.com/demmonico/bash/blob/master/newsite.sh)
+```sh
+# prepare
+sudo wget -q https://raw.githubusercontent.com/demmonico/bash/master/newsite.sh -O /var/www/newsite.sh
+cd /var/www/
+sudo chmod +x newsite.sh
+
+# create new site
+sudo ./newsite.sh -n SITENAME
+```
+***Note*** to automatically remove website and clear up hosts and apache settings you can use [script](https://github.com/demmonico/bash/blob/master/rmsite.sh)
+```sh
+# pulling script the same as newsite.sh
+# and afterward run it
+sudo ./rmsite.sh -n SITENAME
+```
+
+2) Pull this structure from git repo
+```sh
+cd SITENAME/
+git remote add origin https://github.com/demmonico/docker-ci
+git pull origin master
+```
+Now you could remove `.git`  folder to avoid nested git IDE errors
+
+3) Correct host's apache config and setup docker-ci host's settings.
+```sh
+sudo ./bin/install-dev.sh SITENAME
+```
+Run this script will provide you correct work with inner docker projects like with your exists apache projects.
+
+4) Copy your ssh keys and known hosts file into `config/ssh` folder to provide access to `github.com`
+
+5) Build and start proxy, main and other containers. Note you should set environment to `dev` value
+```sh
+./bin/start.sh dev
+```
+
+### Install at dev server environment
+
+1) Just pull this structure from git repo into a folder e.g. `/var/docker` 
+```sh
 git clone https://github.com/demmonico/docker-ci /var/docker
 ```
+Now you could remove `.git`  folder to avoid nested git IDE errors
 
+2) Copy file `proxy/config-example.yml` to `proxy/config.yml` and edit host name(s)
 
+3) Copy your ssh keys and known hosts file into `config/ssh` folder to provide access to `github.com`
 
-## Directory Structure
-```
-bin/            contains management scripts
-config/         contains common configs
-    ssh/        contains ssh keys of CI bot account and known hosts file. Will be bound to each virtual host
-images/         contains docker images which further will be used at the projects
-    ...
-main/           contains docker container for main dev-server's host, which can be contains docker web-console etc.
-projects/       contains docker containers for all virtual hosts (your web-sites) + test container. Excluded from VCS
-    ...
-proxy/          contains docker container for proxy
-    config.yml/ contains settings for domain name of hosts gateway
-    ...
+4) Build and start proxy, main and other containers
+```sh
+cd /var/docker
+./bin/start.sh
 ```
 
 
@@ -112,13 +183,40 @@ You can pass environment variables inside your container through the:
 - you can pass env variables via `docker-compose.yml` file using `environment` section.
 - you can define any env variables in your custom Dockerfile.
 
+### Add new project
+1) Create unique folder `projects/PROJECT_NAME` and `docker-compose.yml` file inside or you can copy it from `test` project.
+2) Correct your `projects/PROJECT_NAME/docker-compose.yml` file remembering:
+    - each container's name should be unique through all running containers
+    - you can use inherits of exists docker images at `images/` or pull from `dockerhub.com` or use own
+3) Add app code, data, database sql dump or custom running scripts if you need they.
+4) Add new container to exists and run it
+```sh
+/var/docker/bin/add.sh PROJECT_NAME
+```
+
+***Important*** When you create new project at the local development environment you should add string to your local `/etc/hosts` file
+```
+127.0.0.1        PROJECT_NAME.DOCKER_HOSTNAME
+```
+
 
 
 ## Commands
+
+***Important***
+Please, note that you should run all commands from your current user (not from `root`) otherwise there can be permission fails both inside the docker container and at the host
+Of course that the owner of all files in this structure should be your current user too.
+
 Here follows up available commands:
 
 ### Start all
-To start proxy, main container and all exists project's containers you should use command `/var/docker/bin/start.sh`.
+To start proxy, main container and all exists project's containers you should use command:
+```sh
+# dev server
+/var/docker/bin/start.sh
+# local dev
+/var/docker/bin/start.sh dev
+```
 
 ### Stop all
 To stop all containers (included proxy and main) you should use command `/var/docker/bin/stop.sh [PARAMS]`.
