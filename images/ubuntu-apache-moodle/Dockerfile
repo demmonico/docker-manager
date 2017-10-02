@@ -55,6 +55,7 @@ EXPOSE 80
 # moodle repo data
 ENV MOODLE_REPOSITORY='git://git.moodle.org/moodle.git'
 ENV MOODLE_TAG_VERSION=''
+ENV MOODLE_BRANCH=''
 # project repo data
 ENV REPOSITORY=''
 ENV REPO_BRANCH=master
