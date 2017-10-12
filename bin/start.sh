@@ -29,6 +29,10 @@ NETWORK_PREFIX="proxy"
 # include virtual host getter
 source "$DC_BIN_DIR/vhosts.sh"
 
+# set colors
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
 # define default PROXY_ENV value
 PROXY_ENV="$1"
 case "$PROXY_ENV" in
@@ -54,7 +58,9 @@ docker-compose --file "$DC_ROOT_DIR/proxy/${PROXY_ENV}_${DC_FILENAME}" --project
 
 #### init main host with parent domain name
 # setup domain name env settings
-echo "$(get_vhosts_environment "$DC_ROOT_DIR/$NETWORK_PREFIX/config.yml")" > "$DC_ROOT_DIR/main/$DC_HOST_ENV_CONFIG"
+VIRTUAL_HOST="$(get_vhosts_environment "$DC_ROOT_DIR/$NETWORK_PREFIX/config.yml")"
+if [ -z $VIRTUAL_HOST ]; then echo -e "${RED}Error: file proxy/config.yml with domain settings is absent!${NC}" 1>&2; exit 1; fi
+echo $VIRTUAL_HOST > "$DC_ROOT_DIR/main/$DC_HOST_ENV_CONFIG"
 echo "PROJECT=main" >> "$DC_ROOT_DIR/main/$DC_HOST_ENV_CONFIG"
 echo "HOST_USER_NAME=${HOST_USER_NAME}" >> "$DC_ROOT_DIR/main/$DC_HOST_ENV_CONFIG"
 echo "HOST_USER_ID=${HOST_USER_ID}" >> "$DC_ROOT_DIR/main/$DC_HOST_ENV_CONFIG"
@@ -77,7 +83,9 @@ do
         FILE_ENV_CONFIG="$DC_PROJECT_DIR/$PROJECT/$DC_HOST_ENV_CONFIG"
         if [ ! -f $FILE_ENV_CONFIG ]; then
             # virtual hosts
-            echo "$(get_vhosts_environment "$DC_ROOT_DIR/$NETWORK_PREFIX/config.yml" "$PROJECT")" > $FILE_ENV_CONFIG
+            VIRTUAL_HOST="$(get_vhosts_environment "$DC_ROOT_DIR/$NETWORK_PREFIX/config.yml" "$PROJECT")"
+            if [ -z $VIRTUAL_HOST ]; then echo -e "${RED}Error: file proxy/config.yml with domain settings is absent!${NC}" 1>&2; exit 1; fi
+            echo $VIRTUAL_HOST > $FILE_ENV_CONFIG
             # project name
             echo "PROJECT=${PROJECT}" >> $FILE_ENV_CONFIG
             # script's owner name
