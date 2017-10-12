@@ -35,7 +35,7 @@ fi
 ### config moodle
 
 # add configs
-mv -f /config.php "${PROJECT_DIR}/config.php"
+mv -n /config.php "${PROJECT_DIR}/config.php"
 
 # config db
 if [ ! -z "${DB_HOST}" ]
