@@ -40,14 +40,16 @@ images/         contains docker images which further will be used at the project
     ...
 main/           contains docker container for main dev-server's host, which can be contains docker web-console etc.
 projects/       contains docker containers for all virtual hosts (your web-sites) + test container. Excluded from VCS
-    ...
-    PROJECT_NAME/app                    contains web-site files
-    PROJECT_NAME/custom                 contains custom run/run_once bin scripts or another files
-    PROJECT_NAME/data                   contains additional data files, e.g. moodledata folder
-    PROJECT_NAME/db                     contains db files
-    PROJECT_NAME/shared                 contains files shared between this project's containers as "/docker-shared/FILES"
-    PROJECT_NAME/docker-compose.yml     contains project build and run settings
-    PROJECT_NAME/host.env               contains environment's variables. NOTE it generates automatically
+    PROJECT_NAME/
+        ...
+        app/                contains web-site files
+        custom/             contains custom run/run_once bin scripts or another files
+        data/               contains additional data files, e.g. moodledata folder
+        db/                 contains db files
+        shared/             contains files shared between this project's containers as "/docker-shared/FILES"
+        docker-compose.yml  contains project build and run settings
+        host.env            contains environment's variables. NOTE it generates automatically
+        ...
     ...
 proxy/          contains docker container for proxy
     config.yml/ contains settings for domain name of hosts gateway
