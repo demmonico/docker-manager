@@ -1,4 +1,4 @@
-# Docker CI structure
+# Docker Manager structure
 
 ## Description
 
@@ -20,7 +20,6 @@ This is a skeleton for automatically independent deploy different web-sites at d
     - [Host domain name](#host-domain-name)
     - [Autostart](#autostart)
 - [Usage](#usage)
-    - [Project structure](#project-structure)
     - [Project settings](#project-settings)
     - [Environment variables](#environment-variables)
     - [Add new project](#add-new-project)
@@ -42,6 +41,14 @@ images/         contains docker images which further will be used at the project
 main/           contains docker container for main dev-server's host, which can be contains docker web-console etc.
 projects/       contains docker containers for all virtual hosts (your web-sites) + test container. Excluded from VCS
     ...
+    PROJECT_NAME/app                    contains web-site files
+    PROJECT_NAME/custom                 contains custom run/run_once bin scripts or another files
+    PROJECT_NAME/data                   contains additional data files, e.g. moodledata folder
+    PROJECT_NAME/db                     contains db files
+    PROJECT_NAME/shared                 contains files shared between this project's containers as "/docker-shared/FILES"
+    PROJECT_NAME/docker-compose.yml     contains project build and run settings
+    PROJECT_NAME/host.env               contains environment's variables. NOTE it generates automatically
+    ...
 proxy/          contains docker container for proxy
     config.yml/ contains settings for domain name of hosts gateway
     ...
@@ -51,7 +58,7 @@ proxy/          contains docker container for proxy
 
 ## Install
 
-Follow steps. ***Note*** that you couldn't use any copy of this docker-ci structure at the system simultaneously!
+Follow steps. ***Note*** that you couldn't use any copy of this docker-manager structure at the system simultaneously!
 
 ### Pre-Install Docker
 
@@ -97,9 +104,9 @@ sudo usermod -aG docker $USER
 ```
 
 
-### Install at development environment
+### Install at development environment (in case of locally installed Apache server listening port 80)
 
-1) Create new website project's folder and setup apache configs manually or automatically using [script](https://github.com/demmonico/bash/blob/master/newsite.sh)
+1) Create new website project's folder and setup Apache configs manually or automatically using [script](https://github.com/demmonico/bash/blob/master/newsite.sh)
 ```sh
 # prepare
 sudo wget -q https://raw.githubusercontent.com/demmonico/bash/master/newsite.sh -O /var/www/newsite.sh
@@ -109,7 +116,7 @@ sudo chmod +x newsite.sh
 # create new site
 sudo ./newsite.sh -n SITENAME
 ```
-***Note*** to automatically remove website and clear up hosts and apache settings you can use [script](https://github.com/demmonico/bash/blob/master/rmsite.sh)
+***Note*** to automatically remove website and clear up hosts and Apache settings you can use [script](https://github.com/demmonico/bash/blob/master/rmsite.sh)
 ```sh
 # pulling script the same as newsite.sh
 # and afterward run it
@@ -119,16 +126,16 @@ sudo ./rmsite.sh -n SITENAME
 2) Pull this structure from git repo
 ```sh
 cd SITENAME/
-git remote add origin https://github.com/demmonico/docker-ci
+git remote add origin https://github.com/demmonico/docker-manager
 git pull origin master
 ```
 Now you could remove `.git`  folder to avoid nested git IDE errors
 
-3) Correct host's apache config and setup docker-ci host's settings.
+3) Correct host's Apache config and setup docker-manager host's settings.
 ```sh
 sudo ./bin/install-dev.sh SITENAME
 ```
-Run this script will provide you correct work with inner docker projects like with your exists apache projects.
+Run this script will provide you correct work both with inner docker projects and with your exists Apache projects. ***Note*** please, check whether Apache proxy mod is enabled.
 
 4) Copy your ssh keys and known hosts file into `config/ssh` folder to provide access to `github.com`
 
@@ -137,11 +144,11 @@ Run this script will provide you correct work with inner docker projects like wi
 ./bin/start.sh dev
 ```
 
-### Install at dev server environment
+### Install at server environment (for development purposes, not for production!)
 
 1) Just pull this structure from git repo into a folder e.g. `/var/docker` 
 ```sh
-git clone https://github.com/demmonico/docker-ci /var/docker
+git clone https://github.com/demmonico/docker-manager /var/docker
 ```
 Now you could remove `.git`  folder to avoid nested git IDE errors
 
@@ -166,23 +173,14 @@ If you want to download anything from git then you should create `config/ssh` fo
 Note that it is excluded from VCS.
 
 ### Host domain name
-Please, edit `config.yml` file to setup host's domain name(s).
+Please, edit `proxy/config.yml` file to setup host's domain name(s).
 
 ### Autostart
-If you want to start you virtual hosts automatically after system's loads then you should add `/var/docker/bin/start.sh` (or your custom CI folder) to your system scheduler.
+If you want to start you virtual hosts automatically after system's loads then you should add `/var/docker/bin/start.sh` (or your custom docker's folder) to your system scheduler.
 
 
 
 ## Usage
-
-### Project structure
-In common way internal folder usages:
-```
-PROJECT_NAME/app                    contains web-site files
-PROJECT_NAME/db                     contains db files
-PROJECT_NAME/data                   contains additional data files, e.g. moodledata folder
-PROJECT_NAME/docker-compose.yml     contains project build and run settings
-```
 
 ### Project settings
 You can drive your project settings via `PROJECT_NAME/docker-compose.yml` file. Use Docker Compose, exists pre-defined docker images and you custom Dockerfiles to build your containers.
@@ -193,7 +191,7 @@ Firstly you should replace all occurrences of your project's names at `docker-co
 
 ### Environment variables
 You can pass environment variables inside your container through the:
-- on first container's run there are creates `PROJECT_NAME/hosts.env` file with common environments variables automatically. You can use it using `env_file` section.
+- on first container's run there are creates `PROJECT_NAME/host.env` file with common environments variables automatically. You can use it using `env_file` section.
 - you can pass env variables via `docker-compose.yml` file using `environment` section.
 - you can define any env variables in your custom Dockerfile.
 

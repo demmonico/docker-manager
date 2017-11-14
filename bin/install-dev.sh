@@ -4,7 +4,7 @@
 # @link: https://github.com/demmonico
 # @package: https://github.com/demmonico/bash
 #
-# This script settings up docker-ci work on the DEV environment (Apache + Docker inside)
+# This script settings up docker-manager work on the DEV environment (Apache + Docker inside)
 # NOTE Please run newsite.sh script before
 #
 # Format: ./install-dev.sh SITENAME
@@ -46,6 +46,11 @@ function configApache
         echo "    CustomLog ${SITE_DIR}/log/access.log combined";
         echo "</VirtualHost>";
     ) | tee /etc/apache2/sites-available/$SITENAME.conf >/dev/null 2>&1;
+    echo -e "${GREEN}done${NC}";
+
+    # config apache
+    echo -n "Enabling apache mod proxy and proxy_http ... ";
+    a2enmod proxy && a2enmod proxy_http
     echo -e "${GREEN}done${NC}";
 
     # restart apache
@@ -95,12 +100,12 @@ SITE_DIR="/var/www/$SITENAME"
 # change apache config
 configApache;
 
-# setup docker-ci configs
+# setup docker-manager configs
 PROXY_CONFIG="$SITE_DIR/proxy/config.yml"
 PROXY_CONFIG_EXAMPLE="$SITE_DIR/proxy/config-example.yml"
 if [ ! -f "${PROXY_CONFIG}" ] && [ -f "${PROXY_CONFIG_EXAMPLE}" ]
 then
-    echo -n "Setting up docker-ci proxy config ... ";
+    echo -n "Setting up docker-manager proxy config ... ";
     # copy from example
     cp ${PROXY_CONFIG_EXAMPLE} ${PROXY_CONFIG} && chown -R `stat . -c %u:%g` ${PROXY_CONFIG}
     # remove example lines by pattern
@@ -116,7 +121,7 @@ fi;
 # finish
 echo "";
 echo "Now you can see your docker websites at \"http://$SITENAME/\" and it subdomains";
-echo -e "${YELLOW}Info: ${NC} to create new project just create unique ${YELLOW}projects/PROJECT_NAME/docker-compose.yml${NC} file. For more info visit ${YELLOW}https://github.com/demmonico/docker-ci${NC}";
+echo -e "${YELLOW}Info: ${NC} to create new project just create unique ${YELLOW}projects/PROJECT_NAME/docker-compose.yml${NC} file. For more info visit ${YELLOW}https://github.com/demmonico/docker-manager${NC}";
 echo -e "${YELLOW}Note: ${NC} to successful pulling from ${YELLOW}github.com${NC} you should copy your ${YELLOW}~/.ssh${NC} folder to ${YELLOW}config/ssh${NC} folder.";
 echo -e "${GREEN}All done. Have a nice day :)${NC}";
 echo "";
