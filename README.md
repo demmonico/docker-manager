@@ -28,6 +28,8 @@ This is a skeleton for automatically independent deploy different web-sites at d
     - [Stop all](#stop-all)
     - [Start one](#start-one)
     - [Stop one](#stop-one)
+- [Change log](#change-log)
+- [License](#license)
 
  
 
@@ -212,6 +214,7 @@ You can pass environment variables inside your container through the:
 ```
 127.0.0.1        PROJECT_NAME.DOCKER_HOSTNAME
 ```
+***Important*** When you create new project or pull exists project you should add file `app/src/.gitkeep` (inside the app container it placed at `/var/www/html/.gitkeep`) to root `.gitignore` file of your project. Note that you shouldn't remove/replace it to avoid VCS conflicts at your `dockerconfig` branch. 
 
 
 
@@ -244,3 +247,15 @@ To start only one project's container you should use command `/var/docker/bin/ad
 ### Stop one
 To stop one container you should use command `/var/docker/bin/stop.sh [PARAMS] -n PROJECT_NAME`.
 Available params are the same as in [Stop all](#stop-all) section.
+
+
+
+## Change log
+
+See the [CHANGELOG](CHANGELOG.md) file for change logs.
+
+
+
+## License
+
+See the [LICENSE](LICENSE) file for license rights and limitations (Apache License v2.0).
