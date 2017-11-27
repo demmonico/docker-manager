@@ -48,10 +48,31 @@ case "$PROXY_ENV" in
         ;;
 esac
 
+# run get_param_environment config_file_to_parse param_name category_name
+function get_env_param() {
+
+    # parse hosts config file
+    local YAML_CONFIG_FILE=$1
+    local PARAM_NAME=$2
+    local CATEGORY_NAME=$3
+    local YAML_PARSER_FILE="${DC_BIN_DIR}/parse_yaml.sh"
+
+    eval "$(${YAML_PARSER_FILE} ${YAML_CONFIG_FILE} config_)"
+
+    CATEGORY_NAME=${CATEGORY_NAME:+"${CATEGORY_NAME}_"}
+    param_full_name="config_${CATEGORY_NAME}${PARAM_NAME}"
+
+    echo "${!param_full_name}"
+}
+
+
 
 ########################
 ######### MAIN #########
 ########################
+
+# get tokens
+export GITHUB_TOKEN="$(get_env_param "$DC_ROOT_DIR/config/security/common.yml" "github" "tokens")"
 
 # init proxy gateway with common network
 docker-compose --file "$DC_ROOT_DIR/proxy/${PROXY_ENV}_${DC_FILENAME}" --project-name $NETWORK_PREFIX up -d --build

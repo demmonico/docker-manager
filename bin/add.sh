@@ -78,4 +78,24 @@ if [ ! -f $FILE_ENV_CONFIG ]; then
 fi
 
 # build && up
+
+# run get_param_environment config_file_to_parse param_name category_name
+function get_env_param() {
+
+    # parse hosts config file
+    local YAML_CONFIG_FILE=$1
+    local PARAM_NAME=$2
+    local CATEGORY_NAME=$3
+    local YAML_PARSER_FILE="${DC_BIN_DIR}/parse_yaml.sh"
+
+    eval "$(${YAML_PARSER_FILE} ${YAML_CONFIG_FILE} config_)"
+
+    CATEGORY_NAME=${CATEGORY_NAME:+"${CATEGORY_NAME}_"}
+    param_full_name="config_${CATEGORY_NAME}${PARAM_NAME}"
+
+    echo "${!param_full_name}"
+}
+
+export GITHUB_TOKEN="$(get_env_param "$DC_ROOT_DIR/config/security/common.yml" "github" "tokens")"
+
 docker-compose --file "$DC_PROJECT_DIR/$PROJECT/$DC_FILENAME" up -d --build

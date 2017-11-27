@@ -1,15 +1,19 @@
 #!/bin/bash
-# This file has executed after container's builds
-
-
-
-### set apache user ID equal to host's owner ID
-usermod -u ${HOST_USER_ID} www-data && groupmod -g ${HOST_USER_ID} www-data
+#
+# This file has executed after container's builds for custom code
+#
+# tech-stack: ubuntu / apache / php / Moodle
+# actions: install update Moodle, config, add cron tasks
+#
+# @author demmonico
+# @image ubuntu-apache-php
+# @version v2.0
 
 
 
 ### install moodle
 if [ ! -f "${PROJECT_DIR}/config-dist.php" ]; then
+
     # clone repo
     git clone ${MOODLE_REPOSITORY} ${PROJECT_DIR}
 
@@ -66,10 +70,3 @@ CRON_NEW_LINES=$(
 )
 CRON_LINES=$( crontab -u ${USER_NAME} -l > /dev/null 2>&1 )
 ( echo ${CRON_LINES} | ( grep -q -F "${CRON_LINE_MARKER}" > /dev/null 2>&1 || echo "${CRON_NEW_LINES}" ) ) | crontab -u ${USER_NAME} -
-
-
-### run custom script if exists
-if [ ! -z ${CUSTOM_RUN_SCRIPT_ONCE} ] && [ -f ${CUSTOM_RUN_SCRIPT_ONCE} ] && [ -x ${CUSTOM_RUN_SCRIPT_ONCE} ]
-then
-    /bin/bash ${CUSTOM_RUN_SCRIPT_ONCE}
-fi

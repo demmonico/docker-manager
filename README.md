@@ -141,7 +141,7 @@ sudo ./bin/install-dev.sh SITENAME
 ```
 Run this script will provide you correct work both with inner docker projects and with your exists Apache projects. ***Note*** please, check whether Apache proxy mod is enabled.
 
-4) Copy your ssh keys and known hosts file into `config/ssh` folder to provide access to `github.com`
+4) Copy your ssh keys and known hosts file into `config/security/ssh-keys` folder to provide access to `github.com`
 
 5) Build and start proxy, main and other containers. Note you should set environment to `dev` value
 ```sh
@@ -158,7 +158,7 @@ Now you could remove `.git`  folder to avoid nested git IDE errors
 
 2) Copy file `proxy/config-example.yml` to `proxy/config.yml` and edit host name(s)
 
-3) Copy your ssh keys and known hosts file into `config/ssh` folder to provide access to `github.com`
+3) Copy your ssh keys and known hosts file into `config/security/ssh-keys` folder to provide access to `github.com`
 
 4) Build and start proxy, main and other containers
 ```sh
@@ -173,7 +173,7 @@ cd /var/docker
 Here you can configure follow things:
 
 ### SSH keys of CI bot and known hosts
-If you want to download anything from git then you should create `config/ssh` folder and place ssh key files and known hosts file there.
+If you want to download anything from git then you should create `config/security/ssh-keys` folder and place ssh key files and known hosts file there.
 Note that it is excluded from VCS.
 
 ### Host domain name
@@ -201,11 +201,15 @@ You can pass environment variables inside your container through the:
 
 ### Add new project
 1) Create unique folder `projects/PROJECT_NAME` and `docker-compose.yml` file inside or you can copy it from `test` project.
-2) Correct your `projects/PROJECT_NAME/docker-compose.yml` file remembering:
+2) Create new app, db, proxy and etc. folders regarding to the parts of your applications. ***Recommended*** create separate folder for each container's role (app, db...).
+3) For app container create `app/src` folder which will contain app code, `app/data` for app data. For database container create `db/data` folder.
+4) Correct your `projects/PROJECT_NAME/docker-compose.yml` file remembering:
+    - match your container's role with folders from step 2
     - each container's name should be unique through all running containers
     - you can use inherits of exists docker images at `images/` or pull from `dockerhub.com` or use own
-3) Add app code, data, database sql dump or custom running scripts if you need they.
-4) Add new container to exists and run it
+    - to use own just create `dockerfiles` folder (e.g. `projects/PROJECT_NAME/app/dockerfiles`) which will contains `Dockerfile` and other custom scripts/files
+5) Add app code, data, database sql dump or custom running scripts if you need they.
+6) Add new container to exists and run it
 ```sh
 /var/docker/bin/add.sh PROJECT_NAME
 ```
@@ -213,8 +217,7 @@ You can pass environment variables inside your container through the:
 ***Important*** When you create new project at the local development environment you should add string to your local `/etc/hosts` file
 ```
 127.0.0.1        PROJECT_NAME.DOCKER_HOSTNAME
-```
-***Important*** When you create new project or pull exists project you should add file `app/src/.gitkeep` (inside the app container it placed at `/var/www/html/.gitkeep`) to root `.gitignore` file of your project. Note that you shouldn't remove/replace it to avoid VCS conflicts at your `dockerconfig` branch. 
+``` 
 
 
 

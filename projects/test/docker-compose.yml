@@ -9,7 +9,7 @@ services:
      context: ../../images/ubuntu-apache-php
      args:
       - PHP_VER=7.0
-      - GITHUB_TOKEN=58dd77fe95481ad1614a5644a105eaecce79b7d4
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
     image: ubuntu-apache-php7
 # rename!!! project name
     container_name: test
@@ -17,7 +17,7 @@ services:
       # webapp code
       - ./app:/var/www/html
       # ssh keys for git
-      - ../../config/ssh:/root/.ssh:ro
+      - ../../config/security/ssh-keys:/root/.ssh:ro
     networks:
       - proxy_common
       - internal
@@ -48,8 +48,6 @@ services:
       - ./db:/var/lib/mysql
       # custom scripts folder
       #- ./custom:/docker-custom
-      # NOTES: for correct work should be setted up CUSTOM_RUN_SCRIPT and/or CUSTOM_RUN_SCRIPT_ONCE env variables at the environment section
-      # e.g. CUSTOM_RUN_SCRIPT=/docker-custom/run.sh
     networks:
       - internal
     env_file:
@@ -57,9 +55,6 @@ services:
 #    environment:
 # rename!!! db name (for example set to project's name). If wont be setted then DB wont be created on first run
 #      - DB_NAME=test
-# remove if unused!!!
-#      - CUSTOM_RUN_SCRIPT=/docker-custom/run_db.sh
-#      - CUSTOM_RUN_SCRIPT_ONCE=/docker-custom/run_db_once.sh
     logging:
       driver: none
     stdin_open: true

@@ -102,5 +102,10 @@ chown -R www-data:www-data ${PROJECT_DIR}
 
 
 
+### FIX cron start
+cron
+
+
+
 ### run supervisord
 exec /usr/bin/supervisord -n

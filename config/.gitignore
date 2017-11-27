@@ -1,1 +1,3 @@
-/ssh
+# hide all privats
+security
+security/*
