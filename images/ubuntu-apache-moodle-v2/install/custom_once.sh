@@ -6,13 +6,8 @@
 # actions: install update Moodle, config, add cron tasks
 #
 # @author demmonico
-# @image ubuntu-apache-php
+# @image ubuntu-apache-moodle
 # @version v2.0
-
-
-
-### Yii2 requires
-composer global require "fxp/composer-asset-plugin:^1.2.0"
 
 
 

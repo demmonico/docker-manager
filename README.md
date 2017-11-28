@@ -234,7 +234,8 @@ You can pass environment variables inside your container through the:
     - you can use inherits of exists docker images at `images/` or pull from `dockerhub.com` or use own
     - to use own just create `dockerfiles` folder (e.g. `projects/PROJECT_NAME/app/dockerfiles`) which will contains `Dockerfile` and other custom scripts/files.
 5) Add app code, data, database sql dump or custom running scripts if you need they. You can add build argument `CUSTON_RUN_COMMAND` to run custom command while build docker image.
-6) Add new container to exists and run it.
+6) If you want add a dummy which will be shown while containers starting then you can create e.g. `apache-dummy` folder (see structure) and set build argument: `DUMMY=apache-dummy`.
+7) Add new container to exists and run it.
 ```sh
 /var/docker/bin/add.sh PROJECT_NAME
 ```

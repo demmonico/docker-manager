@@ -2,11 +2,11 @@
 #
 # This file has executed each time when container's starts for custom code.
 #
-# tech-stack: ubuntu / apache / php
+# tech-stack: ubuntu / apache / php / Moodle
 # actions: update code by Git and update composer relations
 #
 # @author demmonico
-# @image ubuntu-apache-php
+# @image ubuntu-apache-moodle
 # @version v2.0
 
 
