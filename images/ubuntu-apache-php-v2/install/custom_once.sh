@@ -42,7 +42,7 @@ fi
 ### config moodle
 
 # add configs
-mv -n /config.php "${PROJECT_DIR}/config.php"
+yes | cp -rf "${INSTALL_DIR}/config.php" "${PROJECT_DIR}/config.php"
 
 # FIX Moodle sitename for CLI scripts
 sed -i "s/MOODLE_HTTP_HOST/${VIRTUAL_HOST}/" "${PROJECT_DIR}/config.php"

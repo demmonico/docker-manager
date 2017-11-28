@@ -44,6 +44,11 @@ DC_PROJECT_DIR="$DC_ROOT_DIR/projects"
 
 
 
+# HOTFIX warning
+export GITHUB_TOKEN=""
+
+
+
 # one/all processing
 if [ ! -z "$PROJECT" ]
 then
