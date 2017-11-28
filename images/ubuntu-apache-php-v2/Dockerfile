@@ -58,7 +58,8 @@ RUN apt-get update \
 
     # composer
     && curl https://getcomposer.org/installer | php -- && mv composer.phar /usr/local/bin/composer && chmod +x /usr/local/bin/composer \
-    && composer global require "fxp/composer-asset-plugin:^1.2.0" \
+    # moved to run_once script
+    #&& composer global require "fxp/composer-asset-plugin:^1.2.0" \
     #&& composer config -g github-oauth.github.com ${GITHUB_TOKEN} \
     # composer config if token exists
     && ${COMPOSER_CONFIG_STRING:-":"} \
