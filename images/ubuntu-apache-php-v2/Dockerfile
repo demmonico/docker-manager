@@ -109,6 +109,10 @@ RUN if [ ! -z "${DUMMY}" ]; then cp -rf "${INSTALL_DIR}/${DUMMY}" "${DUMMY_DIR}"
 ENV RUN_ONCE_FLAG="${INSTALL_DIR}/run_once"
 RUN tee "${RUN_ONCE_FLAG}" && chmod +x "${INSTALL_DIR}/run_once.sh"
 
+# run custom run command if defined
+ARG CUSTON_RUN_COMMAND
+RUN ${CUSTON_RUN_COMMAND:-":"}
+
 # init run script
 ARG RUN_SCRIPT="${INSTALL_DIR}/run.sh"
 RUN chmod +x "${RUN_SCRIPT}" && if [ ! -z "${INSTALL_DIR}" ]; then ln -s "${RUN_SCRIPT}" /run.sh; fi

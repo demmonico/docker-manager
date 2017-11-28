@@ -10,6 +10,8 @@ services:
      args:
       - PHP_VER=7.0
       - GITHUB_TOKEN=${GITHUB_TOKEN}
+      # you can add command which will be runned in the end of build docker image
+      #- CUSTON_RUN_COMMAND=touch /111
     image: ubuntu-apache-php7
 # rename!!! project name
     container_name: test
