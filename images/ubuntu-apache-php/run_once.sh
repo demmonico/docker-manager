@@ -1,5 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# DEPRECATED
+#
 # This file has executed after container's builds
+#
+# tech-stack: ubuntu / apache / php
+#
+# @author demmonico
+# @image ubuntu-apache-php
+# @version v1.0
+
 
 
 ### set apache user ID equal to host's owner ID

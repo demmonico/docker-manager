@@ -5,7 +5,7 @@
 # tech-stack: ubuntu / apache / php / Moodle (IOMAD)
 #
 # @author demmonico
-# @image ubuntu-apache-php
+# @image ubuntu-apache-moodle
 # @version v1.1
 
 

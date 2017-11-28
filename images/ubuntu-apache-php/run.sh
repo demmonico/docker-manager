@@ -1,5 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# DEPRECATED
+#
 # This file has executed each time when container's starts
+#
+# tech-stack: ubuntu / apache / php
+#
+# @author demmonico
+# @image ubuntu-apache-php
+# @version v1.0
 
 
 

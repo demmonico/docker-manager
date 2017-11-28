@@ -1,5 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# DEPRECATED
+#
 # This file has executed after container's builds
+#
+# tech-stack: ubuntu / apache / php / Moodle
+#
+# @author demmonico
+# @image ubuntu-apache-moodle
+# @version v1.0
 
 
 
