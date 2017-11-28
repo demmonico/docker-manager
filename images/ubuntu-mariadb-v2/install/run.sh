@@ -21,7 +21,7 @@ fi
 ##### run once
 if [ -f "${RUN_ONCE_FLAG}" ]; then
   # run script once
-  /bin/bash run_once.sh
+  /bin/bash "${INSTALL_DIR}/run_once.sh"
   # rm flag
   /bin/rm -f ${RUN_ONCE_FLAG}
 fi
@@ -31,9 +31,9 @@ fi
 ##### run
 
 ### run custom script if exists
-if [ ! -z ${CUSTOM_RUN_SCRIPT} ] && [ -f ${CUSTOM_RUN_SCRIPT} ] && [ -x ${CUSTOM_RUN_SCRIPT} ]
-then
-    /bin/bash ${CUSTOM_RUN_SCRIPT}
+CUSTOM_SCRIPT="${INSTALL_DIR}/custom.sh"
+if [ -f ${CUSTOM_SCRIPT} ]; then
+    chmod +x ${CUSTOM_SCRIPT} && source ${CUSTOM_SCRIPT}
 fi
 
 ### run supervisord
