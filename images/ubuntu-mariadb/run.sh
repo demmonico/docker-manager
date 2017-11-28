@@ -1,5 +1,15 @@
 #!/bin/bash
+#
+# DEPRECATED
+#
 # This file has executed each time when container's starts
+#
+# tech-stack: ubuntu / mariadb
+#
+# @author demmonico
+# @image ubuntu-mariadb
+# @version v1.1
+
 
 
 # define DB_NAME

@@ -8,7 +8,7 @@
 #
 # @author demmonico
 # @image ubuntu-apache-moodle
-# @version v1.0
+# @version v1.1
 
 
 

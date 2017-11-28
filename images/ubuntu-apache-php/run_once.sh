@@ -8,7 +8,7 @@
 #
 # @author demmonico
 # @image ubuntu-apache-php
-# @version v1.0
+# @version v1.1
 
 
 

@@ -1,5 +1,14 @@
 #!/bin/bash
+#
+# DEPRECATED
+#
 # This file has executed after container's builds
+#
+# tech-stack: ubuntu / mariadb
+#
+# @author demmonico
+# @image ubuntu-mariadb
+# @version v1.1
 
 
 
