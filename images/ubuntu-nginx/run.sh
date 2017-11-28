@@ -1,5 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# DEPRECATED
+#
 # This file has executed each time when container's starts
+#
+# tech-stack: ubuntu / nginx
+#
+# @author demmonico
+# @image ubuntu-nginx
+# @version v1.1
 
 
 
