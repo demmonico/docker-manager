@@ -33,29 +33,54 @@ This is a skeleton for automatically independent deploy different web-sites at d
 
  
 
-## Directory Structure
+## Directory Structure (actual from version 0.2)
 ```
 bin/            contains management scripts
 config/         contains common configs
-    ssh/        contains ssh keys of CI bot account and known hosts file. Will be bound to each virtual host
+|-- security/   contains security settings and ssh keys of CI bot account and known hosts file. 
+    |-- ssh/    contains ssh keys of CI bot account and known hosts file.
+                For using common defined ssh key through the all projects this folder should be bound as volume to each virtual host via `docker-compose` file.
 images/         contains docker images which further will be used at the projects
     ...
 main/           contains docker container for main dev-server's host, which can be contains docker web-console etc.
 projects/       contains docker containers for all virtual hosts (your web-sites) + test container. Excluded from VCS
-    PROJECT_NAME/
-        ...
-        app/                contains web-site files
-        custom/             contains custom run/run_once bin scripts or another files
-        data/               contains additional data files, e.g. moodledata folder
-        db/                 contains db files
-        shared/             contains files shared between this project's containers as "/docker-shared/FILES"
-        docker-compose.yml  contains project build and run settings
-        host.env            contains environment's variables. NOTE it generates automatically
-        ...
-    ...
-proxy/          contains docker container for proxy
-    config.yml/ contains settings for domain name of hosts gateway
-    ...
+|-- PROJECT_NAME/                   contains project's files. All sub-folders are optional.
+|   |-- ...
+|   |-- app/                        contains web-site's code, data files and docker params
+|   |   |-- data/                   contains app's data files, e.g. moodledata folder
+|   |   |-- dockerfiles/            contains Dockerfile and additional data files
+|   |   |   |-- install/            contains additional docker files, e.g. custom run/run_once bin scripts etc
+|   |   |   |   |-- apache-dummy/   contains dummy files. Could be pulled from dummy's repo or created manually
+|   |   |   |   |   |-- .htaccess   dummy's htaccess
+|   |   |   |   |   |-- uc.jpg      dummy's image
+|   |   |   |   |   |-- uc.php      dummy's php code
+|   |   |   |   |-- custom.sh       custom run bin script
+|   |   |   |   |-- custom_once.sh  custom run_once bin script
+|   |   |   |   |-- run.sh          run bin script
+|   |   |   |   |-- run_once.sh     run_once bin script
+|   |   |   |   |-- ...
+|   |   |   |-- Dockerfile          Dockerfile
+|   |   |   |-- supervisord.conf    supervisord's config file for container
+|   |   |-- src                     contains app's code. Should be created manually during installation new project
+|   |   |-- ...
+|   |-- db/                         contains db files
+|   |   |-- data/                   contains db's data files, e.g. MYSQL's tables' data
+|   |   |-- dockerfiles/            contains Dockerfile and additional data files
+|   |   |   |-- ...
+|   |-- proxy/                      contains project's proxy files
+|   |   |-- nginx-conf/             contains NGINX config files
+|   |   |   |-- proxy.conf          NGINX config file
+|   |-- shared/                     contains files shared between this project's containers as "/docker-shared" alias folder
+|   |-- docker-compose.yml          contains project build and run settings, container's list etc.
+|   |-- host.env                    contains environment's variables. NOTE: generates automatically!!!
+|-- ...
+proxy/                              contains docker container for common DM proxy (see jwilder/nginx-proxy docker image for details)
+|-- config.yml                      settings for domain name of hosts gateway. Should be copied from "config-example.yml" manually
+|-- config-example.yml              example of settings for "config.yml" file
+|-- custom.conf                     rewrite some default nginx settings, e.g. client_max_body_size
+|-- default_location                hack for NGINX's virtual hosts shared robots.txt file
+|-- dev_docker-compose.yml          contains common DM build and run settings for "dev" environment
+|-- server_docker-compose.yml       contains common DM build and run settings for "server" environment
 ```
 
 
