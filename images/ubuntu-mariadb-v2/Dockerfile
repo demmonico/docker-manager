@@ -1,12 +1,10 @@
-# DEPRECATED
-#
 # Dockerfile for build app container
 #
 # tech-stack: ubuntu / mariadb
 #
 # @author demmonico
 # @image ubuntu-mariadb
-# @version v1.1
+# @version v2.0
 
 
 FROM ubuntu:14.04
@@ -57,12 +55,6 @@ RUN apt-get update \
     && mkdir -p /var/log/supervisor
 
 
-# config DB
-COPY mariadb.cnf /etc/mysql/my.cnf
-RUN chmod 600 /etc/mysql/my.cnf
-COPY mariadb-debian.cnf /etc/mysql/debian.cnf
-
-
 EXPOSE 3306
 
 
@@ -71,12 +63,25 @@ EXPOSE 3306
 # copy supervisord config file
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 
+# copy files to install container (@version v2.0)
+ARG INSTALL_DIR="/docker-install"
+ENV INSTALL_DIR="${INSTALL_DIR}"
+COPY install "${INSTALL_DIR}/"
+
+# config DB
+RUN yes | cp -rf "${INSTALL_DIR}/mariadb.cnf" /etc/mysql/my.cnf \
+    && chmod 600 /etc/mysql/my.cnf \
+    && yes | cp -rf "${INSTALL_DIR}/mariadb-debian.cnf" /etc/mysql/debian.cnf
+
 # init run once flag
-COPY run_once.sh /run_once.sh
-ENV RUN_ONCE_FLAG "/run_once"
-RUN tee ${RUN_ONCE_FLAG} && chmod +x /run_once.sh
+ENV RUN_ONCE_FLAG="${INSTALL_DIR}/run_once"
+RUN tee "${RUN_ONCE_FLAG}" && chmod +x "${INSTALL_DIR}/run_once.sh"
+
+# run custom run command if defined
+ARG CUSTON_RUN_COMMAND
+RUN ${CUSTON_RUN_COMMAND:-":"}
 
 # init run script
-COPY run.sh /run.sh
-RUN chmod +x /run.sh
+ARG RUN_SCRIPT="${INSTALL_DIR}/run.sh"
+RUN chmod +x "${RUN_SCRIPT}" && if [ ! -z "${INSTALL_DIR}" ]; then ln -s "${RUN_SCRIPT}" /run.sh; fi
 CMD ["/run.sh"]
