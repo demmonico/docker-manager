@@ -15,7 +15,7 @@ services:
       - ./app-simple/src:/var/www/html
     networks:
       # connect to common docker network
-      - proxy_common
+      - common
       # connect to private internal project network
       - internal
     links:
@@ -36,11 +36,6 @@ services:
     build:
      # image's sources should be placed at PROJECT_NAME/app/dockerfiles or images/IMAGE_NAME folder
      context: ./app-advanced/dockerfiles
-     args:
-      # [optional] GitHub token for pulling code from git. Token should be configured in config/security/common.yml file
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-      # [optional] command which will be runned in the end of build docker image
-      - CUSTON_RUN_COMMAND=touch /111
     # [optional] customize container's name. Should be unique throught all docker containers from all projects.
     container_name: app-advanced
     volumes:
@@ -52,7 +47,7 @@ services:
       - ./shared:/docker-shared
     networks:
       # connect to common docker network
-#      - proxy_common
+#      - common
       # connect to private internal project network
       - internal
     links:
@@ -95,9 +90,6 @@ services:
 
 
 networks:
-  # connect to common docker network
-  proxy_common:
-    external: true
   # connect to private internal project network
   internal:
     driver: bridge

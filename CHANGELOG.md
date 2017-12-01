@@ -1,3 +1,12 @@
+# 0.3.0 (UNRELEASED)
+
+- refactor start.sh script, remove add.sh script
+- add dynamical host's port binding
+- add key -f to forced remove images and containers
+- create common settings file - `config/local.yml`
+- move host configs to common settings file, clear proxy's folder
+
+
 # 0.2.0 (2017-12-01)
 
 - add CHANGELOG.md :)

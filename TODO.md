@@ -1,6 +1,6 @@
 - [x] TODO add images to DockerHub
-- [ ] TODO add common config, refactor proxy config, docker-compose files
-- [ ] TODO common start.sh script (check services onstart, start proxy only)
+- [x] TODO add common config, refactor proxy config, docker-compose files
+- [x] TODO common start.sh script (check services onstart, start proxy only)
 - [ ] TODO docker-compose inheritance
 - [ ] TODO add env var upload_max_filesize (nginx+app)
 - [ ] TODO add download dummy by URL

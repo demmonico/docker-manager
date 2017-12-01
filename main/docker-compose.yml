@@ -3,14 +3,9 @@ version: '3'
 services:
 
   main:
-    image:
-      tutum/lamp
-    container_name:
-      main
-#    ports:
-#      - "8080:80"
+    image: tutum/lamp
     networks:
-      - proxy_common
+      - common
     volumes:
       # webapp code
       - ./app:/var/www/html
@@ -18,7 +13,3 @@ services:
       - host.env
     logging:
       driver: none
-
-networks:
-  proxy_common:
-    external: true

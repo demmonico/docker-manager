@@ -1,3 +1,6 @@
-# hide all privats
+# hide all secrets
 security
 security/*
+
+# local params
+local.yml

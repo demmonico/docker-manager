@@ -1,0 +1,5 @@
+name: docker-manager-example
+network:
+  host_port: 80
+  hosts:
+    - example.com

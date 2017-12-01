@@ -1,122 +1,139 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #-----------------------------------------------------------#
 # @author: dep
 # @link: https://github.com/demmonico
-# @package: https://github.com/demmonico/docker-ci
+# @package: https://github.com/demmonico/docker-manager
 #
 # This script starts all available docker container(s) and networks
 #
-# Format: ./start.sh [PROXY_ENV=server]
+# Format: ./start.sh [-n PROJECT_NAME]
 #-----------------------------------------------------------#
+
+
+
+### get arguments
+while [[ $# -gt 0 ]]
+do
+    key="$1"
+    case $key in
+        -n)
+            if [ ! -z "$2" ]; then
+                export PROJECT="$2"
+            fi
+            shift
+            ;;
+        *)
+            echo "Invalid option -$1"
+            exit
+            ;;
+    esac
+        shift
+done
+
+
+
+### configure
 
 ## set filenames and paths
 # docker compose filename
-DC_FILENAME="docker-compose.yml"
+DM_FILENAME="docker-compose.yml"
 # filename for hostname environment config
-DC_HOST_ENV_CONFIG="host.env"
+DM_HOST_ENV_CONFIG="host.env"
 # bin dir
-DC_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DM_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # docker containers root dir
-DC_ROOT_DIR="$(dirname "$DC_BIN_DIR")"
+DM_ROOT_DIR="$(dirname "${DM_BIN_DIR}")"
+# DM projects dir
+DM_PROJECT_DIR="${DM_ROOT_DIR}/projects"
 
 # get host user info
 HOST_USER_NAME="$( whoami )"
 HOST_USER_ID="$( id -u "${HOST_USER_NAME}" )"
 
-# common network prefix used when create network inside the proxy container
-NETWORK_PREFIX="proxy"
-
-# include virtual host getter
-source "$DC_BIN_DIR/vhosts.sh"
-
 # set colors
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# define default PROXY_ENV value
-PROXY_ENV="$1"
-case "$PROXY_ENV" in
-    dev)
-     shift ;;
-    server)
-     shift ;;
-    "") PROXY_ENV='server'
-     shift ;;
-    *)
-        echo "Invalid environment '$PROXY_ENV'"
-        exit
-        ;;
-esac
 
-# run get_param_environment config_file_to_parse param_name category_name
-function get_env_param() {
 
-    # parse hosts config file
-    local YAML_CONFIG_FILE=$1
-    local PARAM_NAME=$2
-    local CATEGORY_NAME=$3
-    local YAML_PARSER_FILE="${DC_BIN_DIR}/parse_yaml.sh"
+# include virtual host getter
+LOCAL_CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
+source "$DM_BIN_DIR/lib_config.sh"
 
-    eval "$(${YAML_PARSER_FILE} ${YAML_CONFIG_FILE} config_)"
+# docker manager name
+export DM_NAME="$(getConfig ${LOCAL_CONFIG_FILE} "name")"
 
-    CATEGORY_NAME=${CATEGORY_NAME:+"${CATEGORY_NAME}_"}
-    param_full_name="config_${CATEGORY_NAME}${PARAM_NAME}"
+# get tokens. Use at app's *.yml
+export GITHUB_TOKEN="$(getConfig "${DM_ROOT_DIR}/config/security/common.yml" "github" "tokens")"
 
-    echo "${!param_full_name}"
+
+
+# run startProject projectName
+function startProject() {
+    local _PROJECT=$1
+
+    # check whether folder has docker-compose file
+    DM_FILE="${DM_PROJECT_DIR}/${_PROJECT}/${DM_FILENAME}"
+    if [ -f ${DM_FILE} ]; then
+        # check whether container doesn't run yet
+        if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${_PROJECT}_")" ]; then
+            # setup subdomain's env settings
+            touchVhostEnv "${DM_PROJECT_DIR}" "${_PROJECT}"
+            # build && up
+            docker-compose --file ${DM_FILE} --file "${DM_ROOT_DIR}/proxy/common-network.yml" up -d --build
+        else
+            echo "Container named ${_PROJECT} is already running"
+        fi
+    fi
 }
 
 
 
-########################
-######### MAIN #########
-########################
+########################################################################
+#######################           MAIN           #######################
+########################################################################
 
-# get tokens
-export GITHUB_TOKEN="$(get_env_param "$DC_ROOT_DIR/config/security/common.yml" "github" "tokens")"
 
-# init proxy gateway with common network
-docker-compose --file "$DC_ROOT_DIR/proxy/${PROXY_ENV}_${DC_FILENAME}" --project-name $NETWORK_PREFIX up -d --build
+
+### init proxy gateway with common network
+
+# port at host which will be bind with docker network. Use at proxy.yml
+export DM_HOST_PORT="$(getConfig ${LOCAL_CONFIG_FILE} "host_port" "network")"
+# run if doesn't exists yet
+if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${DM_NAME}_proxy_")" ]; then
+    docker-compose --file "${DM_ROOT_DIR}/proxy/${DM_FILENAME}" --project-name ${DM_NAME} up -d --build
+fi
+
+
 
 #### init main host with parent domain name
-# setup domain name env settings
-VIRTUAL_HOST="$(get_vhosts_environment "$DC_ROOT_DIR/$NETWORK_PREFIX/config.yml")"
-if [ -z $VIRTUAL_HOST ]; then echo -e "${RED}Error: file proxy/config.yml with domain settings is absent!${NC}" 1>&2; exit 1; fi
-echo $VIRTUAL_HOST > "$DC_ROOT_DIR/main/$DC_HOST_ENV_CONFIG"
-echo "PROJECT=main" >> "$DC_ROOT_DIR/main/$DC_HOST_ENV_CONFIG"
-echo "HOST_USER_NAME=${HOST_USER_NAME}" >> "$DC_ROOT_DIR/main/$DC_HOST_ENV_CONFIG"
-echo "HOST_USER_ID=${HOST_USER_ID}" >> "$DC_ROOT_DIR/main/$DC_HOST_ENV_CONFIG"
-# build && up
-docker-compose --file "$DC_ROOT_DIR/main/$DC_FILENAME" up -d --build
 
-# init projects
-DC_PROJECT_DIR="$DC_ROOT_DIR/projects"
-cd $DC_PROJECT_DIR
-for PROJECT in $(ls -d */)
-do
-    # trim /
-    PROJECT=${PROJECT%%/}
+# run if doesn't exists yet
+if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${DM_NAME}_main_")" ]; then
+    # setup domain's env settings
+    touchVhostEnv "${DM_ROOT_DIR}/main"
+    # build && up
+    docker-compose --file "${DM_ROOT_DIR}/main/${DM_FILENAME}" \
+        --file "${DM_ROOT_DIR}/proxy/common-network.yml" \
+        --project-name ${DM_NAME} up -d --build
+fi
 
-    # check whether docker project
-    DC_FILE="$DC_PROJECT_DIR/$PROJECT/$DC_FILENAME"
-    if [ -f $DC_FILE ]; then
 
-        # setup subdomain env settings
-        FILE_ENV_CONFIG="$DC_PROJECT_DIR/$PROJECT/$DC_HOST_ENV_CONFIG"
-        if [ ! -f $FILE_ENV_CONFIG ]; then
-            # virtual hosts
-            VIRTUAL_HOST="$(get_vhosts_environment "$DC_ROOT_DIR/$NETWORK_PREFIX/config.yml" "$PROJECT")"
-            if [ -z $VIRTUAL_HOST ]; then echo -e "${RED}Error: file proxy/config.yml with domain settings is absent!${NC}" 1>&2; exit 1; fi
-            echo $VIRTUAL_HOST > $FILE_ENV_CONFIG
-            # project name
-            echo "PROJECT=${PROJECT}" >> $FILE_ENV_CONFIG
-            # script's owner name
-            echo "HOST_USER_NAME=${HOST_USER_NAME}" >> $FILE_ENV_CONFIG
-            # script's owner ID
-            echo "HOST_USER_ID=${HOST_USER_ID}" >> $FILE_ENV_CONFIG
-        fi
 
-        # build && up
-        docker-compose --file $DC_FILE up -d --build
+### init projects
+cd ${DM_PROJECT_DIR}
 
-    fi
-done
+# single project
+if [ ! -z "${PROJECT}" ]; then
+    startProject "${PROJECT}"
+
+# all projects
+else
+    for PROJECT in $(ls -d */)
+    do
+        # trim /
+        PROJECT=${PROJECT%%/}
+        # start project
+        startProject "${PROJECT}"
+    done
+fi
