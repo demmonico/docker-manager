@@ -12,7 +12,7 @@
     - add new app apache-php-based container with refactored structure
     - add new app apache-Moodle-based container with refactored structure
     - add new app apache-Yii2-based container with refactored structure
-    - move docker images to separate repository
+    - move docker images to separate repository and Docker Hub
 - create common security's config folder at `/config` and replace `ssh` folder there
 - add TODO.md
 
