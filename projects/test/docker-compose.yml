@@ -1,69 +1,103 @@
+# Project structure file
+#
+# @project test
+# @author demmonico
+# @version v1.0
+
 version: '3'
 
 services:
 
-# rename!!! project name. Should be unique throught all docker containers and equal to container_name
-  test:
-    build:
-     # image source
-     context: ../../images/ubuntu-apache-php
-     args:
-      - PHP_VER=7.0
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-      # you can add command which will be runned in the end of build docker image
-      #- CUSTON_RUN_COMMAND=touch /111
-    image: ubuntu-apache-php7
-# rename!!! project name
-    container_name: test
+  app-simple:
+    image: demmonico/ubuntu-apache-php:7.0
     volumes:
       # webapp code
-      - ./app:/var/www/html
-      # ssh keys for git
-      - ../../config/security/ssh-keys:/root/.ssh:ro
+      - ./app-simple/src:/var/www/html
     networks:
+      # connect to common docker network
       - proxy_common
+      # connect to private internal project network
       - internal
     links:
-# rename!!! first = db container name
+      # create alias for DB container (db container name : internal alias at app container)
       - test-db:db
     env_file:
+      # generates automatically. Provides values for ENV variables VIRTUAL_HOST, PROJECT, HOST_USER_NAME, HOST_USER_ID
       - host.env
     environment:
-      #- REPOSITORY=git@bitbucket.org:some_repo.git
-      - REPO_BRANCH=master
-      # name of internal DB host
+      # alias name of internal DB host
       - DB_HOST=db
     logging:
       driver: none
     stdin_open: true
     tty: true
 
-# rename!!! db container name
-  test-db:
+  app-advanced:
     build:
-     context: ../../images/ubuntu-mariadb
-    image: ubuntu-mariadb
-# rename!!! db container name
-    container_name: test-db
+     # image's sources should be placed at PROJECT_NAME/app/dockerfiles or images/IMAGE_NAME folder
+     context: ./app-advanced/dockerfiles
+     args:
+      # [optional] GitHub token for pulling code from git. Token should be configured in config/security/common.yml file
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      # [optional] command which will be runned in the end of build docker image
+      - CUSTON_RUN_COMMAND=touch /111
+    # [optional] customize container's name. Should be unique throught all docker containers from all projects.
+    container_name: app-advanced
     volumes:
-      # db tables
-      - ./db:/var/lib/mysql
-      # custom scripts folder
-      #- ./custom:/docker-custom
+      # webapp code
+      - ./app-advanced/src:/var/www/html
+      # ssh keys for git
+      - ../../config/security/ssh-keys:/root/.ssh:ro
+      # [optional] shared folder between all project's containers (e.g. for collect logs etc.)
+      - ./shared:/docker-shared
     networks:
+      # connect to common docker network
+#      - proxy_common
+      # connect to private internal project network
       - internal
+    links:
+      # create alias for DB container (db container name : internal alias at app container)
+      - test-db:db
     env_file:
+      # generates automatically. Provides values for ENV variables VIRTUAL_HOST, PROJECT, HOST_USER_NAME, HOST_USER_ID
       - host.env
-#    environment:
-# rename!!! db name (for example set to project's name). If wont be setted then DB wont be created on first run
-#      - DB_NAME=test
+    environment:
+      # alias name of internal DB host
+      - DB_HOST=db
+      # [optional] repository info for automatical update while start container
+      #- REPOSITORY=git@bitbucket.org:some_repo.git
+      #- REPO_BRANCH=master
     logging:
       driver: none
     stdin_open: true
     tty: true
 
+  test-db:
+    image: demmonico/ubuntu-mariadb:10.1
+    volumes:
+      # db tables
+      - ./db/data:/var/lib/mysql
+      # [optional] customize DB configs
+      #- ./mariadb.cnf:/etc/mysql/my.cnf
+    networks:
+      # connect to private internal project network
+      - internal
+    env_file:
+      # generates automatically. Provides values for ENV variables VIRTUAL_HOST, PROJECT, HOST_USER_NAME, HOST_USER_ID
+      - host.env
+    #environment:
+      # [optional] db name (default sets to project's name)
+      #- DB_NAME=test
+    logging:
+      driver: none
+    stdin_open: true
+    tty: true
+
+
 networks:
+  # connect to common docker network
   proxy_common:
     external: true
+  # connect to private internal project network
   internal:
     driver: bridge

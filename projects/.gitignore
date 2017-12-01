@@ -1,4 +1,6 @@
-/*
-!/test/
-/test/host.env
+*
 !.gitignore
+
+# exclude test example from gitignore
+!test
+!test/*

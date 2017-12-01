@@ -1,0 +1,10 @@
+# ENV variables
+host.env
+
+# data sub-folder which could be mounted into container
+*/data/*
+!*/data/.gitkeep
+
+# shared folder content
+shared/*
+!shared/.gitkeep
