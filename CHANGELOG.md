@@ -1,4 +1,4 @@
-# 0.2.0 (UNRELEASED)
+# 0.2.0 (2017-12-01)
 
 - add CHANGELOG.md :)
 - add LICENSE
