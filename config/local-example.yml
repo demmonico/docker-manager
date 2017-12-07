@@ -1,5 +1,5 @@
-name: docker-manager-example
+name: {{ DM_NAME }}
 network:
-  host_port: 80
+  host_port: {{ HOST_PORT }}
   hosts:
-    - example.com
+    - {{ HOST_NAME }}

@@ -41,7 +41,7 @@ DM_FILENAME="docker-compose.yml"
 DM_HOST_ENV_CONFIG="host.env"
 # bin dir
 DM_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-# docker containers root dir
+# docker manager root dir
 DM_ROOT_DIR="$(dirname "${DM_BIN_DIR}")"
 # DM projects dir
 DM_PROJECT_DIR="${DM_ROOT_DIR}/projects"
@@ -129,7 +129,7 @@ if [ ! -z "${PROJECT}" ]; then
 
 # all projects
 else
-    for PROJECT in $(ls -d */)
+    for PROJECT in $( find . -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | sort )
     do
         # trim /
         PROJECT=${PROJECT%%/}
