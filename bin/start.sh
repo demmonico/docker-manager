@@ -80,7 +80,9 @@ function startProject() {
             # setup subdomain's env settings
             touchVhostEnv "${DM_PROJECT_DIR}" "${_PROJECT}"
             # build && up
-            docker-compose --file ${DM_FILE} --file "${DM_ROOT_DIR}/proxy/common-network.yml" up -d --build
+            docker-compose --file ${DM_FILE} \
+                --file "${DM_ROOT_DIR}/proxy/common-network.yml" \
+                --project-name "${DM_NAME}2${_PROJECT}" up -d --build
         else
             echo "Container named ${_PROJECT} is already running"
         fi
@@ -115,7 +117,7 @@ if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${DM_NAME}_main_")" ]; the
     # build && up
     docker-compose --file "${DM_ROOT_DIR}/main/${DM_FILENAME}" \
         --file "${DM_ROOT_DIR}/proxy/common-network.yml" \
-        --project-name ${DM_NAME} up -d --build
+        --project-name "${DM_NAME}2main" up -d --build
 fi
 
 

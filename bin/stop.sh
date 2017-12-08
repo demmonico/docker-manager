@@ -47,6 +47,15 @@ DM_PROJECT_DIR="${DM_ROOT_DIR}/projects"
 
 
 
+# include virtual host getter
+LOCAL_CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
+source "$DM_BIN_DIR/lib_config.sh"
+
+# docker manager name
+export DM_NAME="$(getConfig ${LOCAL_CONFIG_FILE} "name")"
+
+
+
 # HOTFIX warning
 export GITHUB_TOKEN=""
 
@@ -76,7 +85,19 @@ then
     fi
 else
     cd "${DM_ROOT_DIR}"
-    CONTAINERS=$(docker ps -a -q)
+
+    # find all containers
+    #CONTAINERS=$(docker ps -a -q)
+
+    ### attempt with project name
+    #PROJ=dev; PROJ=$(docker ps -a --format '{{ .Label "com.docker.compose.project" }}' | grep "^${PROJ}2\|^${PROJ}$" | sort | uniq);
+    #for PR in ${PROJ}
+    #do
+    #    CC=$( docker ps -a -q --filter "label=com.docker.compose.project=${PR}" )
+    #done
+
+    # find all containers related to this manager
+    CONTAINERS=$(docker ps -a --format '{{.ID}} {{.Names}} ==={{.Label "com.docker.compose.project"}}===' | grep "===${DM_NAME}2.*===\|===${DM_NAME}===" | awk '{print $1}' );
 
     # stop all containers
     echo "Stopped containers (id):"
