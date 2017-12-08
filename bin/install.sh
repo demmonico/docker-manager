@@ -83,6 +83,20 @@ if [ ! -z "$( netstat -ln | grep ":${HOST_PORT} " )" ]; then
     exit
 fi
 
+# validate is DM_NAME free and match [A-Za-z0-9] pattern
+until
+    [ ! -z "${DM_NAME}" ] && [ "${DM_NAME}" == "${DM_NAME//[^A-Za-z0-9]/}" ] &&
+    [ -z "$( docker ps --format '{{.Label "com.docker.compose.project"}}' | grep "^${DM_NAME}\$" )" ]
+do
+    if [ -z "$( docker ps --format '{{.Label "com.docker.compose.project"}}' | grep "^${DM_NAME}\$" )" ]; then
+        REASON="should match [A-Za-z0-9] pattern"
+    else
+        REASON="already exists"
+    fi
+    echo -n -e "${RED}Error:${NC} DM name ${YELLOW}${DM_NAME:-''}${NC} ${REASON}. Please re-enter: "
+    read -p '' DM_NAME
+done;
+
 #-----------------------------------------------------------#
 
 
