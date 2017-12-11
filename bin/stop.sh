@@ -38,6 +38,8 @@ do
         shift
 done
 
+# docker compose filename
+DM_FILENAME="docker-compose.yml"
 # bin dir
 DM_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # docker containers root dir
@@ -67,19 +69,23 @@ then
     # if project exists
     if [ -d "${DM_PROJECT_DIR}/${PROJECT}" ]
     then
-        cd "${DM_PROJECT_DIR}/${PROJECT}"
+        DM_FILE="${DM_PROJECT_DIR}/${PROJECT}/${DM_FILENAME}"
+
         # remove all
         if [ ! -z "${isRemoveAll}" ]
         then
-            docker-compose down --rmi all
+            COMMAND='down --rmi all'
         # remove containers
         elif [ ! -z "${isRemoveContainers}" ]
         then
-            docker-compose down
+            COMMAND='down'
         # only stop containers
         else
-            docker-compose stop
+            COMMAND='stop'
         fi
+
+        CONFIGS="--file ${DM_FILE} --file ${DM_ROOT_DIR}/proxy/common-network.yml"
+        docker-compose ${CONFIGS} --project-name "${DM_NAME}2${PROJECT}" ${COMMAND}
     else
         echo "Invalid project - ${PROJECT}"
     fi
