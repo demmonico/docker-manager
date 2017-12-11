@@ -103,6 +103,9 @@ function startProject() {
 export DM_HOST_PORT="$(getConfig ${LOCAL_CONFIG_FILE} "host_port" "network")"
 # run if doesn't exists yet
 if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${DM_NAME}_proxy_")" ]; then
+    # setup domain's env settings
+    touchVhostEnv "${DM_ROOT_DIR}/proxy"
+    # build && up
     docker-compose --file "${DM_ROOT_DIR}/proxy/${DM_FILENAME}" --project-name ${DM_NAME} up -d --build
 fi
 

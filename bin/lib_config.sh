@@ -75,7 +75,7 @@ function touchVhostEnv() {
 
     local _BASE_DIR_NAME=$1
     local _PROJECT_NAME=$2
-    local _EXPORT_FILE="${_BASE_DIR_NAME}/${_PROJECT_NAME}/${DM_HOST_ENV_CONFIG}"
+    local _EXPORT_FILE="$( echo ${_BASE_DIR_NAME}${_PROJECT_NAME:+"/${_PROJECT_NAME}"} )/${DM_HOST_ENV_CONFIG}"
 
     if [ ! -f ${_EXPORT_FILE} ]; then
         # virtual hosts
