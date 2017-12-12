@@ -46,6 +46,8 @@ DM_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DM_ROOT_DIR="$(dirname "${DM_BIN_DIR}")"
 # dir of projects
 DM_PROJECT_DIR="${DM_ROOT_DIR}/projects"
+# DM project/service name splitter (used for docker labels when start/stop containers)
+DM_PROJECT_SPLITTER='000'
 
 
 
@@ -85,7 +87,7 @@ then
         fi
 
         CONFIGS="--file ${DM_FILE} --file ${DM_ROOT_DIR}/proxy/common-network.yml"
-        docker-compose ${CONFIGS} --project-name "${DM_NAME}2${PROJECT}" ${COMMAND}
+        docker-compose ${CONFIGS} --project-name "${DM_NAME}${DM_PROJECT_SPLITTER}${PROJECT}" ${COMMAND}
     else
         echo "Invalid project - ${PROJECT}"
     fi
@@ -96,14 +98,14 @@ else
     #CONTAINERS=$(docker ps -a -q)
 
     ### attempt with project name
-    #PROJ=dev; PROJ=$(docker ps -a --format '{{ .Label "com.docker.compose.project" }}' | grep "^${PROJ}2\|^${PROJ}$" | sort | uniq);
+    #PROJ=dev; PROJ=$(docker ps -a --format '{{ .Label "com.docker.compose.project" }}' | grep "^${PROJ}${DM_PROJECT_SPLITTER}\|^${PROJ}$" | sort | uniq);
     #for PR in ${PROJ}
     #do
     #    CC=$( docker ps -a -q --filter "label=com.docker.compose.project=${PR}" )
     #done
 
     # find all containers related to this manager
-    CONTAINERS=$(docker ps -a --format '{{.ID}} {{.Names}} ==={{.Label "com.docker.compose.project"}}===' | grep "===${DM_NAME}2.*===\|===${DM_NAME}===" | awk '{print $1}' );
+    CONTAINERS=$(docker ps -a --format '{{.ID}} {{.Names}} ==={{.Label "com.docker.compose.project"}}===' | grep "===${DM_NAME}${DM_PROJECT_SPLITTER}.*===\|===${DM_NAME}===" | awk '{print $1}' );
 
     # stop all containers
     echo "Stopped containers (id):"

@@ -45,6 +45,8 @@ DM_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DM_ROOT_DIR="$(dirname "${DM_BIN_DIR}")"
 # DM projects dir
 DM_PROJECT_DIR="${DM_ROOT_DIR}/projects"
+# DM project/service name splitter (used for docker labels when start/stop containers)
+DM_PROJECT_SPLITTER='000'
 
 # get host user info
 HOST_USER_NAME="$( whoami )"
@@ -86,7 +88,7 @@ function startProject() {
             # build && up
             docker-compose --file ${DM_FILE} \
                 --file "${DM_ROOT_DIR}/proxy/common-network.yml" \
-                --project-name "${DM_NAME}2${_PROJECT}" up -d --build
+                --project-name "${DM_NAME}${DM_PROJECT_SPLITTER}${_PROJECT}" up -d --build
         else
             echo "Container named ${_PROJECT} is already running"
         fi
@@ -124,7 +126,7 @@ if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${DM_NAME}_main_")" ]; the
     # build && up
     docker-compose --file "${DM_ROOT_DIR}/main/${DM_FILENAME}" \
         --file "${DM_ROOT_DIR}/proxy/common-network.yml" \
-        --project-name "${DM_NAME}2main" up -d --build
+        --project-name "${DM_NAME}${DM_PROJECT_SPLITTER}main" up -d --build
 fi
 
 
