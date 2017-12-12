@@ -24,7 +24,7 @@ function getConfig() {
     CATEGORY_NAME=${CATEGORY_NAME:+"${CATEGORY_NAME}_"}
     PARAM_FULL_NAME="${PREFIX}${CATEGORY_NAME}${PARAM_NAME}"
     # tune for array values
-    if [[ "$(declare -p ${PARAM_FULL_NAME})" =~ "declare -a" ]]; then
+    if [ ! -z "${!PARAM_FULL_NAME}" ] && [[ "$(declare -p ${PARAM_FULL_NAME})" =~ "declare -a" ]]; then
         PARAM_FULL_NAME="${PARAM_FULL_NAME}[@]"
     fi
 

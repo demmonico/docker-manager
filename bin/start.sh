@@ -52,6 +52,7 @@ HOST_USER_ID="$( id -u "${HOST_USER_NAME}" )"
 
 # set colors
 RED='\033[0;31m'
+YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 
@@ -65,6 +66,9 @@ export DM_NAME="$(getConfig ${LOCAL_CONFIG_FILE} "name")"
 
 # get tokens. Use at app's *.yml
 export GITHUB_TOKEN="$(getConfig "${DM_ROOT_DIR}/config/security/common.yml" "github" "tokens")"
+if [ -z "${GITHUB_TOKEN}" ]; then
+    echo -e "${YELLOW}Warning:${NC} parameter ${YELLOW}tokens->github${NC} which could be used at one of projects wasn't defined at config file ${YELLOW}config/security/common.yml${NC}. Something could go wrong ...";
+fi
 
 
 
