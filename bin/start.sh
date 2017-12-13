@@ -66,6 +66,9 @@ source "$DM_BIN_DIR/lib_config.sh"
 # docker manager name
 export DM_NAME="$(getConfig ${LOCAL_CONFIG_FILE} "name")"
 
+# port at host which will be bind with docker network
+export DM_HOST_PORT="$(getConfig ${LOCAL_CONFIG_FILE} "host_port" "network")"
+
 # get tokens. Use at app's *.yml
 export GITHUB_TOKEN="$(getConfig "${DM_ROOT_DIR}/config/security/common.yml" "github" "tokens")"
 if [ -z "${GITHUB_TOKEN}" ]; then
@@ -105,8 +108,6 @@ function startProject() {
 
 ### init proxy gateway with common network
 
-# port at host which will be bind with docker network. Use at proxy.yml
-export DM_HOST_PORT="$(getConfig ${LOCAL_CONFIG_FILE} "host_port" "network")"
 # run if doesn't exists yet
 if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${DM_NAME}_proxy_")" ]; then
     # setup domain's env settings
@@ -120,7 +121,7 @@ fi
 #### init main host with parent domain name
 
 # run if doesn't exists yet
-if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${DM_NAME}_main_")" ]; then
+if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${DM_NAME}${DM_PROJECT_SPLITTER}main_")" ]; then
     # setup domain's env settings
     touchVhostEnv "${DM_ROOT_DIR}/main"
     # build && up
