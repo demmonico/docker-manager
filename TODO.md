@@ -5,3 +5,5 @@
 - [ ] TODO add env var upload_max_filesize (nginx+app)
 - [ ] TODO add download dummy by URL
 - [ ] TODO secrets storage
+- [ ] TODO overlay network & Docker swarm mode
+- [ ] TODO GUI for management projects/containers

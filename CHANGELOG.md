@@ -1,10 +1,14 @@
-# 0.3.0 (UNRELEASED)
+# 0.3.0 (2017-12-29)
 
-- refactor start.sh script, remove add.sh script
-- add dynamical host's port binding
+- refactor start.sh script, remove add.sh script, optimize all scripts
+- multiple Docker Manager apps:
+    - add dynamical host's port binding
+    - realize overlay for run several Docker Manager apps simultaneously
 - add key -f to forced remove images and containers
 - create common settings file - `config/local.yml`
 - move host configs to common settings file, clear proxy's folder
+- add install.sh script for common (server/local) purposes
+- edit nginx config template
 
 
 # 0.2.0 (2017-12-01)
