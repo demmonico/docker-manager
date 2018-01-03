@@ -22,10 +22,12 @@ Current mode will be detected automatically through analyzing `netstat` results 
 
 - [Description](#description)
 - [Installation](#installation)
-    - [Prepare local host environment](#prepare-local-host-environment)
-    - [Prepare remote server environment](#prepare-remote-server-environment)
-    - [Automated installation](#automated-installation)
-    - [Manual installation](#manual-installation)
+    - [1. Prepare environment](#1-prepare-environment)
+        - [Prepare local host environment](#prepare-local-host-environment)
+        - [Prepare remote server environment](#prepare-remote-server-environment)
+    - [2. Run installation](#2-run-installation)
+        - [Automated installation](#automated-installation)
+        - [Manual installation](#manual-installation)
     
     - [Copy or pull projects](#copy-or-pull-projects)
     
@@ -56,6 +58,8 @@ Installation steps and `bin/install.sh` script are actual for Ubuntu 16.04 OS on
 
 Depending on installation placement (local host or remote server) you must choice follow preparing installation steps.
 
+
+### 1. Prepare environment
 
 #### Prepare local host environment
 
@@ -121,7 +125,7 @@ rm -rf .git && rm -f .gitignore
 ```
 
 
-#### Run installation
+### 2. Run installation
 
 While installation process you should do follow steps:
 - configure Docker Manager
