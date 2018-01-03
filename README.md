@@ -157,15 +157,35 @@ OPTIONS:
  - port pointed at `HOST_PORT` value must be available 
  - via using `-c` option you could use `install.sh` script for configuration purposes only and passing Docker environment installation
 
-***Example***
+***Example 1***
+
+This instance of the Docker Manager will be named as `test`. It placed at `/var/docker-manager` folder.
  
-*You could replace `docker-manager` with custom name or change Docker Manager installation path `/var`.*
+Main domain's name of the project, which is hosted by Docker Manager, is `docker.localhost`. 
+Docker Manager main project will be accessible as this address. 
+All sub-projects will be accessible as sub-domains (e.g. `subdomain.docker.localhost`). 
 
 ```sh
 sudo /var/docker-manager/bin/install.sh -h docker.localhost -n test
 ```
 
-Here `docker.localhost` is a domain where will be available all Docker Manager content and `test` is a name of this instance of Docker Manager.
+***Example 2***
+
+If name of the Docker Manager's instance isn't set then folder's name will be used as name - `docker-manager` here.
+Port is changed to `8080`.
+
+```sh
+sudo /var/docker-manager/bin/install.sh -h docker.localhost -p 8080
+```
+
+***Example 3***
+
+If we want just re-configure Docker Manager, e.g. to another port, we could use `-c` option.
+Port is changed to `8081`, configuration is refreshed and no installation did.
+
+```sh
+sudo /var/docker-manager/bin/install.sh -c -h docker.localhost -p 8081
+```
 
 
 2.2) Re-login
@@ -176,37 +196,22 @@ Re-evaluated your group membership to fixing docker group permissions and avoid 
 - Couldn't connect to Docker daemon at http+unix://var/run/docker.sock - is it running?
 ```
 
-- re-login your SSH session for remote usage
-- restart/re-login machine for local usage
+- in case of **remote usage** re-login your SSH session 
+- in case of **local usage** restart/re-login machine 
 
 [Source](https://stackoverflow.com/questions/29101043/cant-connect-to-docker-from-docker-compose)
 
 
 #### Manual installation
 
-2.1) Prepare host environment
+<details><summary>2.1) Prepare host environment</summary>
+<p>
 
 At the Debian's OS please, follow steps below or see [guide](https://docs.docker.com/engine/installation/)
 
+</p>
+</details>
 
-
-
-
-
-
-
-2.2) Re-login
-
-Re-evaluated your group membership to fixing docker group permissions and avoid following errors in the future:
- 
-```diff
-- Couldn't connect to Docker daemon at http+unix://var/run/docker.sock - is it running?
-```
-
-- re-login your SSH session for remote usage
-- restart/re-login machine for local usage
-
-[Source](https://stackoverflow.com/questions/29101043/cant-connect-to-docker-from-docker-compose)
 
 
 
