@@ -499,7 +499,7 @@ Sub-project's files should be placed at `projects/your_sub_domain` folder
 You can drive your project settings via `docker-compose.yml` file placed your project's folder (`main` or `projects/SUB_PROJECT_NAME`). 
 
 Create (or copy from `test` sub-project) `docker-compose.yml` file and configure it. 
-As a base of Docker container you should use:
+As a base of Docker container you could use:
 - pre-defined docker's images pulled from `dockerhub.com`
 - pre-defined common docker's images at `images/` folder
 - custom build image based on your custom Dockerfiles - just create `dockerfiles` folder (e.g. `projects/SUB_PROJECT_NAME/app/dockerfiles` - see [DM's structure](#structure)) and put `Dockerfile` and all additional custom scripts or files there
@@ -512,7 +512,9 @@ If you want to add a Apache dummy (like "Waiting" message) which will be shown w
 - create at your project's folder e.g. `app/dockerfiles/install/apache-dummy` folder (see [DM's structure](#structure)) with dummy files or pull from [repository](https://github.com/demmonico/apache-dummy)
 - set build argument `DUMMY=apache-dummy` at the `docker-compose.yml` file.
 
-***Note*** Check project's folder permissions. It should be owned by you current user (***NOT ROOT!***), which will run `bin/start.sh`, `bin/stop.sh` scripts further.
+***Important*** Check project's folder permissions. It should be owned by you current user (***NOT ROOT!***), which will run `bin/start.sh`, `bin/stop.sh` scripts further.
+
+*Tip: you could save project configuration to the separate repository or separate branch of the project's repository*
 
 
 
