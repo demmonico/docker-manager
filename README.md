@@ -39,9 +39,7 @@ Current mode will be detected automatically through analyzing `netstat` results 
     - [Configure project](#configure-project)
     - [Environment variables](#environment-variables)
     - [Start project(s)](#start-projects)
-- [Commands](#commands)
-    - [Stop all](#stop-all)
-    - [Stop one](#stop-one)
+    - [Stop project(s)](#stop-projects)
 - [Change log](#change-log)
 - [License](#license)
 
@@ -549,38 +547,71 @@ Process "init" includes:
 - start internal network for this project - via Docker Compose engine
 - start Docker container - via Docker Compose engine
 
-If you want to run you Docker Manager automatically when OS loads (e.g. for dev-server environment) then you could add `/var/docker-manager/bin/start.sh` script to your system scheduler.
+*Tip: If you want to run you Docker Manager automatically when OS loads (e.g. for dev-server environment) then you could add `/var/docker-manager/bin/start.sh` script to your system scheduler.*
 
 
 
+### Stop project(s)
 
+To build and start proxy, main container and all (or one selected) project's containers you should use command:
+```sh
+/var/docker-manager/bin/stop.sh [PARAMS] [-n SUB_PROJECT_NAME]
+```
 
+Available `[PARAMS]` values:
+- `-c` - remove containers after they stops
+- `-a` - remove containers and images after they stops
+- `-f` - forced mode (see Docker documentation)
 
+Single mode (if option `-n` is defined):
+- get Docker Manager settings and define project's name
+- build chain of the docker-compose files
+- stop Docker container - *via Docker Compose engine*
+- remove Docker container (if need it) - *via Docker Compose engine*
+- remove Docker image (if need it) - *via Docker Compose engine*
+- remove all unused networks - *via Docker engine*
 
+Multiple mode (if option `-n` isn't defined):
+- get Docker Manager settings and define project's name
+- find all containers related to this project  
+- stop containers - *via Docker engine*
+- remove containers (if need it) - *via Docker engine*
+- remove images (if need it) - *via Docker engine*
+- remove all unused networks - *via Docker engine*
 
+***Example 1***
 
+Stop main project, DM proxy, all sub-projects.
 
+```sh
+/var/docker-manager/bin/stop.sh
+```
 
+***Example 2***
 
+Stop and remove all containers related to main project, DM proxy, all sub-projects. 
+For example, you want to re-build some container from the main project or DM proxy. 
 
+```sh
+/var/docker-manager/bin/stop.sh -c
+```
 
+***Example 3***
 
-## Commands
+Stop single sub-project.
 
+```sh
+/var/docker-manager/bin/stop.sh -n sub_project_name
+```
 
-Here follows up available commands:
+***Example 4***
 
+Stop and remove all containers with all base images related to the single sub-project. 
+For example, you want to change container base image of the some container and re-build it. 
 
-### Stop all
-To stop all containers (included proxy and main) you should use command `/var/docker/bin/stop.sh [PARAMS]`.
-Available params (you'd use one of following):
-- -c - remove containers after they stops
-- -a - remove containers and their images after they stops
-
-
-### Stop one
-To stop one container you should use command `/var/docker/bin/stop.sh [PARAMS] -n PROJECT_NAME`.
-Available params are the same as in [Stop all](#stop-all) section.
+```sh
+/var/docker-manager/bin/stop.sh -f -a -n sub_project_name
+```
 
 
 
