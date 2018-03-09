@@ -1,3 +1,9 @@
+# 0.4.0 (2018-03-09)
+
+- test project was moved to the separate `demo/` folder
+- main project was moved to the common `projects/` folder (auto-creates while auto-installation)
+ 
+ 
 # 0.3.0 (2018-01-04)
 
 - refactor `start.sh` script, remove `add.sh` script, optimize all scripts

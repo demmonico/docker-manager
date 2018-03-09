@@ -246,6 +246,19 @@ fi
 
 
 
+#-----------------------------------------------------------#
+# create main project stub
+
+DM_MAIN_DIR="${DM_ROOT_DIR}/projects/main"
+if [ ! -d ${DM_MAIN_DIR} ] && [ -d "${DM_ROOT_DIR}/demo/maintenance" ]; then
+    echo -e "${YELLOW}Info:${NC} creating main project folder ... ";
+    yes 2>/dev/null | sudo cp -rp "${DM_ROOT_DIR}/demo/maintenance" "${DM_MAIN_DIR}"
+fi
+
+#-----------------------------------------------------------#
+
+
+
 # finish
 echo "";
 echo -e "${GREEN}All done.${NC}";

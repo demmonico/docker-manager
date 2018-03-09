@@ -75,19 +75,19 @@ function touchVhostEnv() {
 
     local _BASE_DIR_NAME=$1
     local _PROJECT_NAME=$2
-    local _EXPORT_FILE="$( echo ${_BASE_DIR_NAME}${_PROJECT_NAME:+"/${_PROJECT_NAME}"} )/${DM_HOST_ENV_CONFIG}"
+    local _ENV_FILE="$( echo ${_BASE_DIR_NAME}${_PROJECT_NAME:+"/${_PROJECT_NAME}"} )/${DM_HOST_ENV_CONFIG}"
 
-    if [ ! -f ${_EXPORT_FILE} ]; then
+    if [ ! -f ${_ENV_FILE} ]; then
         # virtual hosts
         local VIRTUAL_HOST="$(getVhostsEnv "${LOCAL_CONFIG_FILE}" "${_PROJECT_NAME}")"
         if [ -z ${VIRTUAL_HOST} ]; then echo -e "${RED}Error: file ${LOCAL_CONFIG_FILE} with domain settings is absent!${NC}" 1>&2; exit 1; fi
-        echo ${VIRTUAL_HOST} > ${_EXPORT_FILE}
+        echo ${VIRTUAL_HOST} > ${_ENV_FILE}
         # project name
-        echo "PROJECT=${_PROJECT_NAME:-main}" >> ${_EXPORT_FILE}
+        echo "PROJECT=${_PROJECT_NAME:-main}" >> ${_ENV_FILE}
         # script's owner name
-        echo "HOST_USER_NAME=${HOST_USER_NAME}" >> ${_EXPORT_FILE}
+        echo "HOST_USER_NAME=${HOST_USER_NAME}" >> ${_ENV_FILE}
         # script's owner ID
-        echo "HOST_USER_ID=${HOST_USER_ID}" >> ${_EXPORT_FILE}
+        echo "HOST_USER_ID=${HOST_USER_ID}" >> ${_ENV_FILE}
     fi
 
     # check for virtual hosts accessible at /etc/hosts whether local environment

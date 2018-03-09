@@ -69,56 +69,55 @@ config/                 contains common configs
  
 demo/                           contains test projects and docker/docker-compose configs and data files
 |-- advanced-project/           contains test example of advanced project usage
-|   |-- ...                     see "main" folder structure for details
+|   |-- ...                     see "projects/main" folder structure for details
 |-- simple-project/             contains test example of simple project usage
-|   |-- ...                     see "main" folder structure for details
+|   |-- ...                     see "projects/main" folder structure for details
  
 images/             contains docker images which further will be used at the projects
 |-- some_image/     [GIT IGNORED]
 |-- ...
  
-main/                           contains docker/docker-compose configs and data files for main project, accessible at main domain of this DM
-| 
-|   Following template of the structure consider an idea: one docker service - one folder,
-|   e.g. if project has 3 servises (app, db and reverse proxy) then there are 3 sub-folders here (app, db, proxy) + folder for shared files.
-|   So all sub-folders are OPTIONAL.
-| 
-|-- app/                        contains app's code, data files and docker params
-|   |-- data/                   contains app's data files, e.g. moodledata folder or upload folder
-|   |-- dockerfiles/            contains custom Dockerfile and additional files for build/run app's Docker container
-|   |   |-- install/            contains additional files, e.g. custom run/run_once scripts etc
-|   |   |   |-- apache-dummy/   contains Apache dummy files. Could be pulled from dummy's repo or created manually
-|   |   |   |   |-- .htaccess   dummy's htaccess
-|   |   |   |   |-- uc.jpg      dummy's image
-|   |   |   |   |-- uc.php      dummy's php code
-|   |   |   |-- custom.sh       additional custom run script
-|   |   |   |-- custom_once.sh  additional custom run_once script
-|   |   |   |-- run.sh          script runs each time when Docker container starts
-|   |   |   |-- run_once.sh     script runs once when Docker container starts at first time
-|   |   |   |-- ...
-|   |   |-- Dockerfile          contains Docker's build/run params
-|   |   |-- supervisord.conf    supervisord's config file for container
-|   |-- src                     contains app's code. Should be created manually during installation new project
+projects/                           contains docker containers for all virtual hosts (your web-sites). Should be excluded from VCS
+|-- main/                           contains docker/docker-compose configs and data files for main project, accessible at main domain of this DM
+|   | 
+|   |   Following template of the structure consider an idea: one docker service - one folder,
+|   |   e.g. if project has 3 servises (app, db and reverse proxy) then there are 3 sub-folders here (app, db, proxy) + folder for shared files.
+|   |   So all sub-folders are OPTIONAL.
+|   | 
+|   |-- app/                        contains app's code, data files and docker params
+|   |   |-- data/                   contains app's data files, e.g. moodledata folder or upload folder
+|   |   |-- dockerfiles/            contains custom Dockerfile and additional files for build/run app's Docker container
+|   |   |   |-- install/            contains additional files, e.g. custom run/run_once scripts etc
+|   |   |   |   |-- apache-dummy/   contains Apache dummy files. Could be pulled from dummy's repo or created manually
+|   |   |   |   |   |-- .htaccess   dummy's htaccess
+|   |   |   |   |   |-- uc.jpg      dummy's image
+|   |   |   |   |   |-- uc.php      dummy's php code
+|   |   |   |   |-- custom.sh       additional custom run script
+|   |   |   |   |-- custom_once.sh  additional custom run_once script
+|   |   |   |   |-- run.sh          script runs each time when Docker container starts
+|   |   |   |   |-- run_once.sh     script runs once when Docker container starts at first time
+|   |   |   |   |-- ...
+|   |   |   |-- Dockerfile          contains Docker's build/run params
+|   |   |   |-- supervisord.conf    supervisord's config file for container
+|   |   |-- src                     contains app's code. Should be created manually during installation new project
+|   |   |-- ...
+|   |-- db/                         contains db's files
+|   |   |-- data/                   contains db's data files, e.g. MYSQL's tables' data
+|   |   |-- dockerfiles/            contains custom Dockerfile and additional files for build/run db's Docker container
+|   |   |   |-- ...                 see above for app service
+|   |-- proxy/                      contains reverse proxy's files
+|   |   |-- nginx-conf/             contains NGINX config files
+|   |   |   |-- proxy.conf          NGINX config file
+|   |-- shared/                     contains files shared between project's containers as e.g. "/docker-shared" alias folder
+|   |-- docker-compose.yml          contains project's build and run settings, e.g. services' (container's) list etc
+|   |-- host.env                    contains environment's variables
 |   |-- ...
-|-- db/                         contains db's files
-|   |-- data/                   contains db's data files, e.g. MYSQL's tables' data
-|   |-- dockerfiles/            contains custom Dockerfile and additional files for build/run db's Docker container
-|   |   |-- ...                 see above for app service
-|-- proxy/                      contains reverse proxy's files
-|   |-- nginx-conf/             contains NGINX config files
-|   |   |-- proxy.conf          NGINX config file
-|-- shared/                     contains files shared between project's containers as e.g. "/docker-shared" alias folder
-|-- docker-compose.yml          contains project's build and run settings, e.g. services' (container's) list etc
-|-- host.env                    contains environment's variables
+|   |
+|   |   NOTE: host.env file generates automatically when start.sh script is used!!!
+|   |
 |
-|   NOTE: host.env file generates automatically when start.sh script is used!!!
-|
-|-- ...
- 
-projects/                       contains docker containers for all virtual hosts (your web-sites). Should be excluded from VCS
-|
-|-- SUB_PROJECT_NAME/           contains docker/docker-compose configs and data files for sub-project. Shoud be UNIQUE through the current DM's instance
-|   |-- ...                     see "main" folder structure for details
+|-- SUB_PROJECT_NAME/               contains docker/docker-compose configs and data files for sub-project. Shoud be UNIQUE through the current DM's instance
+|   |-- ...                         see "main" folder structure for details
 |
 |-- ...
  
@@ -476,12 +475,12 @@ Further this sub-project will be available as `sub_project.your_docker_manager.d
 
 3) Copy or pull (via git for example) your project's code and data regarding the [DM's structure](#structure).
 
-Main project's files should be placed at `main` folder 
+Main project's files should be placed at `projects/main` folder 
 (accessible as main domain's name of the project e.g. `your_docker_manager.dev-server.com` - see [Automated installation](#automated-installation)).
 
-- put app's code to `main/app/src` folder
-- put app's data to `main/app/data` folder
-- put db's data to `main/db/data` folder
+- put app's code to `projects/main/app/src` folder
+- put app's data to `projects/main/app/data` folder
+- put db's data to `projects/main/db/data` folder
 
 Sub-project's files should be placed at `projects/your_sub_domain` folder 
 (accessible as sub-domain e.g. `sub-domain.your_docker_manager.dev-server.com`). 
@@ -495,7 +494,7 @@ Sub-project's files should be placed at `projects/your_sub_domain` folder
 
 ### Configure project
 
-You can drive your project settings via `docker-compose.yml` file placed your project's folder (`main` or `projects/SUB_PROJECT_NAME`). 
+You can drive your project settings via `docker-compose.yml` file placed your project's folder (`projects/SUB_PROJECT_NAME`). 
 
 Create (or copy sub-project from `demo/`) `docker-compose.yml` file and configure it. 
 As a base of Docker container you could use:

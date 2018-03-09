@@ -80,18 +80,25 @@ fi
 # run startProject projectName
 function startProject() {
     local _PROJECT=$1
+    local _PROJECT_PREFIX="${DM_NAME}${DM_PROJECT_SPLITTER}${_PROJECT}"
 
     # check whether folder has docker-compose file
     DM_FILE="${DM_PROJECT_DIR}/${_PROJECT}/${DM_FILENAME}"
     if [ -f ${DM_FILE} ]; then
         # check whether container doesn't run yet
-        if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${_PROJECT}_")" ]; then
+        if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${_PROJECT_PREFIX}_")" ]; then
+
             # setup subdomain's env settings
-            touchVhostEnv "${DM_PROJECT_DIR}" "${_PROJECT}"
+            if [ "${_PROJECT}" != 'main' ]; then
+                touchVhostEnv "${DM_PROJECT_DIR}" "${_PROJECT}"
+            else
+                touchVhostEnv "${DM_PROJECT_DIR}/${_PROJECT}"
+            fi
+
             # build && up
             docker-compose --file ${DM_FILE} \
                 --file "${DM_ROOT_DIR}/proxy/common-network.yml" \
-                --project-name "${DM_NAME}${DM_PROJECT_SPLITTER}${_PROJECT}" up -d --build
+                --project-name "${_PROJECT_PREFIX}" up -d --build
         else
             echo "Container named ${_PROJECT} is already running"
         fi
@@ -119,16 +126,7 @@ fi
 
 
 #### init main host with parent domain name
-
-# run if doesn't exists yet
-if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${DM_NAME}${DM_PROJECT_SPLITTER}main_")" ]; then
-    # setup domain's env settings
-    touchVhostEnv "${DM_ROOT_DIR}/main"
-    # build && up
-    docker-compose --file "${DM_ROOT_DIR}/main/${DM_FILENAME}" \
-        --file "${DM_ROOT_DIR}/proxy/common-network.yml" \
-        --project-name "${DM_NAME}${DM_PROJECT_SPLITTER}main" up -d --build
-fi
+startProject 'main'
 
 
 
@@ -145,7 +143,9 @@ else
     do
         # trim /
         PROJECT=${PROJECT%%/}
-        # start project
-        startProject "${PROJECT}"
+        # start sub-project
+        if [ "${PROJECT}" != 'main' ]; then
+            startProject "${PROJECT}"
+        fi
     done
 fi
