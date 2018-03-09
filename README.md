@@ -180,7 +180,7 @@ git init && git remote add origin https://github.com/demmonico/docker-manager &&
 
 1.3) Remove git dependencies
 
-Remove `.git` folder and `.gitignore` file to avoid nested git IDE errors. *You could pass this step if you plan to make some pull requests ;)*
+Remove `.git` folder and `.gitignore` file to avoid nested git IDE errors. *You could pass this step if you planning to get updates or make some pull requests in the future ;)*
 
 ```sh
 rm -rf .git && rm -f .gitignore
@@ -204,9 +204,9 @@ sudo git clone https://github.com/demmonico/docker-manager /var/docker-manager &
 cd /var/docker-manager
 ```
 
-1.2) Remove git dependencies
+1.2) Remove git dependencies (optional step for remote installations)
 
-Remove `.git` folder and `.gitignore` file to avoid nested git IDE errors. *You could pass this step if you plan to make some pull requests ;)*
+Remove `.git` folder and `.gitignore` file to avoid nested git IDE errors. *You could pass this step if you planning to get updates in the future*
 
 ```sh
 rm -rf .git && rm -f .gitignore
@@ -240,8 +240,7 @@ OPTIONS:
 
 ***Note***
  - root permissions are required
- - `HOST_NAME` parameter is required
- - `HOST_NAME` value must be unique and match [A-Za-z0-9] pattern
+ - `HOST_NAME` parameter is required, value must be unique and match [A-Za-z0-9] pattern (by default use current folder's name)
  - installation mode (`server`/`local`) will be detected automatically through analyzing `netstat` results for port `80` and either Apache installed
  - default `HOST_PORT` value is `80` so for `local` mode it's getting required for re-assign default value :)
  - port pointed at `HOST_PORT` value must be available 
