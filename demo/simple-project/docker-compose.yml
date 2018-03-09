@@ -1,0 +1,55 @@
+# Project structure file
+#
+# @project test
+# @author demmonico
+# @version v0.1.0
+
+version: '3'
+
+services:
+
+  app:
+    image: demmonico/ubuntu-apache-php:7.0
+    volumes:
+      # webapp code
+      - ./app/src:/var/www/html
+    networks:
+      # connect to common docker network
+      - common
+      # connect to private internal project network
+      - internal
+    links:
+      # create alias for DB container (db container name : internal alias at app container)
+      - db:db
+    env_file:
+      # generates automatically. Provides values for ENV variables VIRTUAL_HOST, PROJECT, HOST_USER_NAME, HOST_USER_ID
+      - host.env
+    environment:
+      # alias name of internal DB host
+      - DB_HOST=db
+    logging:
+      driver: none
+    stdin_open: true
+    tty: true
+
+  db:
+    image: demmonico/ubuntu-mariadb:10.1
+    volumes:
+      # db tables
+      - ./db/data:/var/lib/mysql
+    networks:
+      # connect to private internal project network
+      - internal
+    env_file:
+      # generates automatically. Provides values for ENV variables VIRTUAL_HOST, PROJECT, HOST_USER_NAME, HOST_USER_ID
+      - host.env
+    logging:
+      driver: none
+    stdin_open: true
+    tty: true
+
+
+networks:
+  # connect to private internal project network
+  internal:
+    driver: bridge

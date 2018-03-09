@@ -1,7 +1,7 @@
 # ENV variables
 host.env
 
-# data sub-folder which could be mounted into container
+# db data sub-folder which will be mounted into container
 */data/*
 !*/data/.gitkeep
 

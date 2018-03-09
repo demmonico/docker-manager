@@ -67,6 +67,12 @@ config/                 contains common configs
 |-- local.yml           [GIT IGNORED] contains settings of current instance of the DM
 |-- local-example.yml   contains example of settings of the DM
  
+demo/                           contains test projects and docker/docker-compose configs and data files
+|-- advanced-project/           contains test example of advanced project usage
+|   |-- ...                     see "main" folder structure for details
+|-- simple-project/             contains test example of simple project usage
+|   |-- ...                     see "main" folder structure for details
+ 
 images/             contains docker images which further will be used at the projects
 |-- some_image/     [GIT IGNORED]
 |-- ...
@@ -109,13 +115,7 @@ main/                           contains docker/docker-compose configs and data 
 |
 |-- ...
  
-projects/                       contains docker containers for all virtual hosts (your web-sites) + test container. Excluded from VCS
-|
-|-- test/                       contains docker/docker-compose configs and data files for test sub-project
-| 
-|   This is test sub-project. You can remove it or rename.
-| 
-|   |-- ...                     see "main" folder structure for details
+projects/                       contains docker containers for all virtual hosts (your web-sites). Should be excluded from VCS
 |
 |-- SUB_PROJECT_NAME/           contains docker/docker-compose configs and data files for sub-project. Shoud be UNIQUE through the current DM's instance
 |   |-- ...                     see "main" folder structure for details
@@ -497,13 +497,13 @@ Sub-project's files should be placed at `projects/your_sub_domain` folder
 
 You can drive your project settings via `docker-compose.yml` file placed your project's folder (`main` or `projects/SUB_PROJECT_NAME`). 
 
-Create (or copy from `test` sub-project) `docker-compose.yml` file and configure it. 
+Create (or copy sub-project from `demo/`) `docker-compose.yml` file and configure it. 
 As a base of Docker container you could use:
 - pre-defined docker's images pulled from `dockerhub.com`
 - pre-defined common docker's images at `images/` folder
 - custom build image based on your custom Dockerfiles - just create `dockerfiles` folder (e.g. `projects/SUB_PROJECT_NAME/app/dockerfiles` - see [DM's structure](#structure)) and put `Dockerfile` and all additional custom scripts or files there
 
-Example of the Docker Compose config you could find at `projects/test/docker-compose.yml` file. 
+Example of the Docker Compose config you could find at `demo/` folder. 
 At `docker-compose.yml` file you could config services, mount volumes, network links, define build arguments and environment variables etc. 
 ***Note*** if you rename container's name then it should be unique through the all running Docker containers.
 
