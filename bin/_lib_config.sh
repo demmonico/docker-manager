@@ -5,6 +5,7 @@
 # @package: https://github.com/demmonico/docker-manager
 #
 # Library for work with configs
+#
 #-----------------------------------------------------------#
 
 
@@ -17,7 +18,7 @@ function getConfig() {
     local YAML_CONFIG_FILE=$1
     local PARAM_NAME=$2
     local CATEGORY_NAME=$3
-    local YAML_PARSER_FILE="${DM_BIN_DIR}/parse_yaml.sh"
+    local YAML_PARSER_FILE="${DM_BIN_DIR}/_parse_yaml.sh"
 
     eval "$(${YAML_PARSER_FILE} ${YAML_CONFIG_FILE} ${PREFIX})"
 
@@ -38,7 +39,7 @@ function getVhostsEnv() {
 
     # parse hosts config file
     local YAML_CONFIG_FILE=$1
-    local YAML_PARSER_FILE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/parse_yaml.sh"
+    local YAML_PARSER_FILE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/_parse_yaml.sh"
     eval "$(${YAML_PARSER_FILE} ${YAML_CONFIG_FILE} config_)"
 
     # virtual host environment string as template

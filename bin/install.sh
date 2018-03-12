@@ -261,6 +261,21 @@ fi
 
 
 
+#-----------------------------------------------------------#
+# add bash completions for script wrapper
+
+BASH_COMPLETIONS_DIR='/etc/bash_completion.d'
+BASH_COMPLETIONS_LINK="${BASH_COMPLETIONS_DIR}/dm"
+BASH_COMPLETIONS_FILE="${DM_BIN_DIR}/_bash_completions.sh"
+if [ -d "${BASH_COMPLETIONS_DIR}" ] && [ ! -L "${BASH_COMPLETIONS_LINK}" ] && [ -f "${BASH_COMPLETIONS_FILE}" ]; then
+    echo -e "${YELLOW}Info:${NC} creating symlink for bash completions ... ";
+    sudo ln -s ${BASH_COMPLETIONS_FILE} ${BASH_COMPLETIONS_LINK}
+fi
+
+#-----------------------------------------------------------#
+
+
+
 # finish
 echo "";
 echo -e "${GREEN}All done.${NC}";

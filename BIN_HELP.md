@@ -89,3 +89,19 @@ Multiple mode (if option `-n` isn't defined):
 - remove containers (if need it) - *via Docker engine*
 - remove images (if need it) - *via Docker engine*
 - remove all unused networks - *via Docker engine*
+
+
+##### Help
+
+To show CLI help you should use command:
+```sh
+FORMAT:
+    # show help
+    ./dm help
+    
+    # show commands list
+    ./dm help/commands
+    
+    # show commands list without service commands
+    ./dm help/commands -s
+```

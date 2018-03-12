@@ -61,7 +61,7 @@ NC='\033[0m' # No Color
 
 # include virtual host getter
 LOCAL_CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
-source "$DM_BIN_DIR/lib_config.sh"
+source "$DM_BIN_DIR/_lib_config.sh"
 
 # docker manager name
 export DM_NAME="$(getConfig ${LOCAL_CONFIG_FILE} "name")"
