@@ -51,7 +51,7 @@ Current mode will be detected automatically through analyzing `netstat` results 
 <p>
 
 ```
-bin/                contains management scripts
+bin/                contains bin scripts for management purposes
 |-- install.sh      installation script
 |-- start.sh        script for build/start one/all projects
 |-- stop.sh         script for stop one/all projects
@@ -128,6 +128,8 @@ proxy/                          contains docker container for common DM proxy (s
 |-- docker-compose.yml          contains reverse proxy's build and run settings
 |-- host.env                    contains environment's variables
 |-- nginx.tmpl                  contains custom template for NGINX's configs
+ 
+|-- dm                          bin scripts wrapper
 ```
 
 *Note: actual started from version 0.3*
@@ -139,8 +141,8 @@ proxy/                          contains docker container for common DM proxy (s
 
 ## Installation
 
-Installation steps and `bin/install.sh` script are actual for Ubuntu 16.04 OS only! On the other OS they weren't tested!
-
+Installation steps, CLI command `./dm install` and `bin/install.sh` script are actual for Ubuntu 16.04 OS only! On the other OS didn't tested!
+ 
 Depending on installation placement (local host or remote server) you must choice follow preparing installation steps.
 
 
@@ -221,7 +223,7 @@ While installation process you should do follow steps:
 - install Docker CE and Docker Compose
 - add current user to `docker` group (to fix group membership [error](https://stackoverflow.com/questions/29101043/cant-connect-to-docker-from-docker-compose))
 
-You could do it automatically using `bin/install.sh` script or manually. Please, follow to the related steps.
+You could do it automatically using CLI command `dm install` or manually. Please, follow to the related steps.
 
 
 
@@ -230,20 +232,10 @@ You could do it automatically using `bin/install.sh` script or manually. Please,
 ##### 2.1) Run install script
 
 ```sh
-Format:
-    sudo ./install.sh [OPTIONS] -h HOST_NAME [-n DM_NAME] [-p HOST_PORT]
- 
-OPTIONS:
-    -c - configurate only (no prepare environment actions)
+sudo ./dm install [OPTIONS] -h HOST_NAME [-n DM_NAME] [-p HOST_PORT]
 ```
 
-***Note***
- - root permissions are required
- - `HOST_NAME` parameter is required, value must be unique and match [A-Za-z0-9] pattern (by default use current folder's name)
- - installation mode (`server`/`local`) will be detected automatically through analyzing `netstat` results for port `80` and either Apache installed
- - default `HOST_PORT` value is `80` so for `local` mode it's getting required for re-assign default value :)
- - port pointed at `HOST_PORT` value must be available 
- - via using `-c` option you could use `install.sh` script for configuration purposes only and passing Docker environment installation
+See the [BIN HELP](BIN_HELP.md#install) file for details.
 
 ***Example 1***
 
@@ -254,7 +246,7 @@ Docker Manager main project will be accessible as this address.
 All sub-projects will be accessible as sub-domains (e.g. `subdomain.docker.localhost`). 
 
 ```sh
-sudo /var/docker-manager/bin/install.sh -h docker.localhost -n test
+sudo /var/docker-manager/dm install -h docker.localhost -n test
 ```
 
 ***Example 2***
@@ -263,16 +255,16 @@ If name of the Docker Manager's instance isn't set then folder's name will be us
 Port is changed to `8080`.
 
 ```sh
-sudo /var/docker-manager/bin/install.sh -h docker.localhost -p 8080
+sudo /var/docker-manager/dm install -h docker.localhost -p 8080
 ```
 
 ***Example 3***
 
 If we want just re-configure Docker Manager, e.g. to another port, we could use `-c` option.
-Port is changed to `8081`, configuration is refreshed and no installation did.
+Port is changed to `8081`, configuration is refreshed and no installation was done.
 
 ```sh
-sudo /var/docker-manager/bin/install.sh -c -h docker.localhost -p 8081
+sudo /var/docker-manager/dm install -c -h docker.localhost -p 8081
 ```
 
 ##### 2.2) Configure Docker Manager
@@ -405,7 +397,7 @@ Re-evaluated your group membership to fixing docker group permissions and avoid 
 
 ### Uninstall
 
-1) Stop all containers of this Docker Manager instance using `bin/stop.sh` script
+1) Stop all containers of this Docker Manager instance using CLI command `dm stop`
 
 2) Remove Docker Manager folder
 ```sh
@@ -440,7 +432,7 @@ sudo groupdel docker
 If you've install Docker Manager via [Automated installation](#automated-installation) you could skip this step.
 
 There are 2 ways to configure Docker Manager: 
-- automatically using `bin/install.sh` script (see [Automated installation](#automated-installation) section) with `-c` key 
+- automatically using CLI command `dm install -c` (see [Automated installation](#automated-installation) section) 
 - manually copying file `config/local-example.yml` to `config/local.yml` and set values
 
 
@@ -510,7 +502,7 @@ If you want to add a Apache dummy (like "Waiting" message) which will be shown w
 - create at your project's folder e.g. `app/dockerfiles/install/apache-dummy` folder (see [DM's structure](#structure)) with dummy files or pull from [repository](https://github.com/demmonico/apache-dummy)
 - set build argument `DUMMY=apache-dummy` at the `docker-compose.yml` file.
 
-***Important*** Check project's folder permissions. It should be owned by you current user (***NOT ROOT!***), which will run `bin/start.sh`, `bin/stop.sh` scripts further.
+***Important*** Check project's folder permissions. It should be owned by you current user (***NOT ROOT!***), which will run `bin/*` scripts further.
 
 *Tip: you could save project configuration to the separate repository or separate branch of the project's repository*
 
@@ -527,25 +519,12 @@ You can pass environment variables inside your container through the:
 
 ### Start project(s)
 
-To build and start proxy, main container and all (or one selected) project's containers you should use command:
+To build and start proxy, main container and all containers of all (or selected one only) projects you should use command:
 ```sh
-/var/docker-manager/bin/start.sh [-n SUB_PROJECT_NAME]
+./dm start [-n SUB_PROJECT_NAME]
 ```
 
-This script do: 
-- init proxy gateway with common network (if it isn't inited yet) 
-- init main host with main project domain's name (if it isn't inited yet) 
-- if no options then init all sub-projects at the `projects` folder
-- if option `-n SUB_PROJECT_NAME` was defined then init `SUB_PROJECT_NAME` sub-project
-
-Process "init" includes: 
-- get Docker Manager settings
-- define project's name and all default variables and export them to `host.env` file and `environment` section of the `docker-compose.yml` file
-- if `HOST_PORT` isn't equal to `80` (so it's local environment) then add line `127.0.0.1        sub_project_name.your_docker_manager.dev-server.com` to the `/etc/hosts` file. ***Note*** require to root permissions
-- build chain of the docker-compose files
-- build Docker container (if need it) - via Docker Compose engine
-- start internal network for this project - via Docker Compose engine
-- start Docker container - via Docker Compose engine
+See the [BIN HELP](BIN_HELP.md#start) file for details.
 
 *Tip: If you want to run you Docker Manager automatically when OS loads (e.g. for dev-server environment) then you could add `/var/docker-manager/bin/start.sh` script to your system scheduler.*
 
@@ -553,38 +532,19 @@ Process "init" includes:
 
 ### Stop project(s)
 
-To build and start proxy, main container and all (or one selected) project's containers you should use command:
+To stop proxy, main container and all containers of all (or selected one only) projects you should use command:
 ```sh
-/var/docker-manager/bin/stop.sh [PARAMS] [-n SUB_PROJECT_NAME]
+./dm stop [OPTIONS] [-n SUB_PROJECT_NAME]
 ```
 
-Available `[PARAMS]` values:
-- `-c` - remove containers after they stops
-- `-a` - remove containers and images after they stops
-- `-f` - forced mode (see Docker documentation)
-
-Single mode (if option `-n` is defined):
-- get Docker Manager settings and define project's name
-- build chain of the docker-compose files
-- stop Docker container - *via Docker Compose engine*
-- remove Docker container (if need it) - *via Docker Compose engine*
-- remove Docker image (if need it) - *via Docker Compose engine*
-- remove all unused networks - *via Docker engine*
-
-Multiple mode (if option `-n` isn't defined):
-- get Docker Manager settings and define project's name
-- find all containers related to this project  
-- stop containers - *via Docker engine*
-- remove containers (if need it) - *via Docker engine*
-- remove images (if need it) - *via Docker engine*
-- remove all unused networks - *via Docker engine*
+See the [BIN HELP](BIN_HELP.md#stop) file for details.
 
 ***Example 1***
 
 Stop main project, DM proxy, all sub-projects.
 
 ```sh
-/var/docker-manager/bin/stop.sh
+/var/docker-manager/dm stop
 ```
 
 ***Example 2***
@@ -593,7 +553,7 @@ Stop and remove all containers related to main project, DM proxy, all sub-projec
 For example, you want to re-build some container from the main project or DM proxy. 
 
 ```sh
-/var/docker-manager/bin/stop.sh -c
+/var/docker-manager/dm stop -c
 ```
 
 ***Example 3***
@@ -601,7 +561,7 @@ For example, you want to re-build some container from the main project or DM pro
 Stop single sub-project.
 
 ```sh
-/var/docker-manager/bin/stop.sh -n sub_project_name
+/var/docker-manager/dm stop -n sub_project_name
 ```
 
 ***Example 4***
@@ -610,7 +570,7 @@ Stop and remove all containers with all base images related to the single sub-pr
 For example, you want to change container base image of the some container and re-build it. 
 
 ```sh
-/var/docker-manager/bin/stop.sh -f -a -n sub_project_name
+/var/docker-manager/dm stop -f -a -n sub_project_name
 ```
 
 

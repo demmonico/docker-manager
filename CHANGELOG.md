@@ -1,3 +1,9 @@
+# 0.5.0-alpha (2018-03-12)
+
+- add CLI command wrapper `dm` for `bin/*` scripts
+- move `bin/*` scripts detailed info to the separate file to provide CLI help
+ 
+
 # 0.4.0 (2018-03-09)
 
 - test project was moved to the separate `demo/` folder

@@ -6,9 +6,11 @@
 #
 # This script install Docker Manager and settings up environment
 #
-# Format: sudo ./install.sh [OPTIONS] -h HOST_NAME [-n DM_NAME] [-p HOST_PORT]
-#       OPTIONS:
-#           -c - configurate only (no prepare environment actions)
+# FORMAT:
+#   sudo ./install.sh [OPTIONS] -h HOST_NAME [-n DM_NAME] [-p HOST_PORT]
+#
+# OPTIONS:
+#   -c - configurate only (no prepare environment actions)
 #-----------------------------------------------------------#
 
 

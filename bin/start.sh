@@ -6,7 +6,7 @@
 #
 # This script starts all available docker container(s) and networks
 #
-# Format: ./start.sh [-n PROJECT_NAME]
+# FORMAT: ./start.sh [-n PROJECT_NAME]
 #-----------------------------------------------------------#
 
 

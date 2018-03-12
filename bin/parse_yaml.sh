@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
+#-----------------------------------------------------------#
 # @link https://gist.github.com/epiloque/8cf512c6d64641bde388
+# @link: https://github.com/demmonico
+# @package: https://github.com/demmonico/docker-manager
+#
+# Helps to parse YAML files
+#
+#-----------------------------------------------------------#
+
 
 parse_yaml() {
     local prefix=$2

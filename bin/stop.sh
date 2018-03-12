@@ -7,11 +7,13 @@
 # This script stops docker container(s) and unused networks
 # If PROJECT_NAME doesn't exists then script will stop all exists containers and unused networks
 #
-# Format: ./stop.sh [PARAMS] [-n PROJECT_NAME]
-# Params:
+# FORMAT:
+#   ./stop.sh [OPTIONS] [-n PROJECT_NAME]
+#
+# OPTIONS:
 #   -c - remove containers after they stops
-#   -a - remove all containers and their images after they stops
-#   -f - forced mode
+#   -a - remove all containers and all images after they stops
+#   -f - forced mode (see Docker documentation)
 #-----------------------------------------------------------#
 
 
