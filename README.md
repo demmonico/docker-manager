@@ -41,6 +41,7 @@ Current mode will be detected automatically through analyzing `netstat` results 
     - [Start project(s)](#start-projects)
     - [Stop project(s)](#stop-projects)
     - [Exec command inside container](#exec-command-inside-container)
+    - [Inspect containers](#inspect-containers)
 - [CLI command readme](#cli-command-readme)
 - [Change log](#change-log)
 - [License](#license)
@@ -238,7 +239,7 @@ You could do it automatically using CLI command `dm install` or manually. Please
 sudo ./dm install [OPTIONS] -h HOST_NAME [-n DM_NAME] [-p HOST_PORT]
 ```
 
-See the [BIN HELP](BIN_HELP.md#install) file for details.
+See the [CLI command readme](BIN_HELP.md#install) file for details.
 
 ***Example 1***
 
@@ -527,7 +528,7 @@ To build and start proxy, main container and all containers of all (or selected 
 ./dm start [-n SUB_PROJECT_NAME]
 ```
 
-See the [BIN HELP](BIN_HELP.md#start) file for details.
+See the [CLI command readme](BIN_HELP.md#start) file for details.
 
 *Tip: If you want to run you Docker Manager automatically when OS loads (e.g. for dev-server environment) then you could add `/var/docker-manager/bin/start.sh` script to your system scheduler.*
 
@@ -540,7 +541,7 @@ To stop proxy, main container and all containers of all (or selected one only) p
 ./dm stop [OPTIONS] [-n SUB_PROJECT_NAME]
 ```
 
-See the [BIN HELP](BIN_HELP.md#stop) file for details.
+See the [CLI command readme](BIN_HELP.md#stop) file for details.
 
 ***Example 1***
 
@@ -584,7 +585,7 @@ To exec command inside some container of your project you should use command:
 ./dm exec PROJECT_NAME [PARAMS][-c COMMAND_WITH_PARAMS (default bash)]
 ```
 
-See the [BIN HELP](BIN_HELP.md#exec) file for details.
+See the [CLI command readme](BIN_HELP.md#exec) file for details.
 
 ***Example 1***
 
@@ -609,10 +610,28 @@ Call command `uname -a` under `root`
 
 ***Example 3***
 
-Call command `uname -a` specified user `root`, service name `db`, service instance name `2`
+Call command `uname -a` with specified user `root`, service name `db`, service instance name `2`
 
 ```sh
 /var/docker-manager/dm exec PROJECT_NAME -s db -i 2 -u root -c uname -a
+```
+
+
+##### Inspect containers
+
+To inspect containers of your project you should use command:
+```sh
+./dm inspect PROJECT_NAME [PARAMS] PROPERTY_NAME
+```
+
+See the [CLI command readme](BIN_HELP.md#inspect) file for details.
+
+***Example***
+
+Get container's id with specified service name `db`, service instance name `2`
+
+```sh
+/var/docker-manager/dm exec PROJECT_NAME -s db -i 2 id
 ```
 
 

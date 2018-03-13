@@ -4,6 +4,7 @@
 - move `bin/*` scripts detailed info to the separate file to provide CLI help
 - change CLI commands colors scheme
 - add `exec` command as a wrapper of native `docker exec` command
+- add `inspect` command for getting some information about container
  
 
 # 0.4.0 (2018-03-09)

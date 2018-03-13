@@ -4,15 +4,14 @@
 # @link: https://github.com/demmonico
 # @package: https://github.com/demmonico/docker-manager
 #
-# This script exec command inside the project
+# This script returns information about containers
 #
 # FORMAT:
-#   ./exec.sh PROJECT_NAME [PARAMS][-c COMMAND_WITH_PARAMS (default bash)]
+#   ./inspect.sh PROJECT_NAME [PARAMS] PROPERTY_NAME
 #
 # PARAMS:
 #   -s - PROJECT_SERVICE_NAME (default app)
 #   -i - PROJECT_SERVICE_INSTANCE_NAME (default 1)
-#   -u - CONTAINER_USER_NAME (default UID=1000 for app services and root for all)
 #
 #-----------------------------------------------------------#
 
@@ -34,8 +33,7 @@ fi
 # params
 PROJECT_SERVICE_NAME='app'
 PROJECT_SERVICE_INSTANCE_NAME='1'
-CONTAINER_USER_NAME=''
-COMMAND='bash'
+PROPERTY=''
 
 while [[ $# -gt 0 ]]
 do
@@ -56,33 +54,26 @@ do
             fi
             shift
             ;;
-        -u)
-            if [ ! -z "$2" ]; then
-                export CONTAINER_USER_NAME="$2"
-            fi
-            shift
-            ;;
-        -c)
-            shift
-            COMMAND="${@}"
-            break
-            ;;
         *)
             echo -e "${RED}Error:${NC} invalid option \"${key}\""
             exit
             ;;
     esac
     shift
+
+    # if last param - try to get PROPERTY
+    if [ $# -eq 1 ] && [[ "${@}" != -* ]]; then
+        PROPERTY="${@}"
+        break
+    fi
 done
 
-# re-assign user for app containers
-if [ -z "${CONTAINER_USER_NAME}" ]; then
-    if [ "${PROJECT_SERVICE_NAME}" == 'app' ]; then
-        CONTAINER_USER_NAME=$UID
-    else
-        CONTAINER_USER_NAME='root'
-    fi
+if [ -z "${PROPERTY}" ]; then
+    echo -e "${RED}Error:${NC} property's name is required"
+    exit
 fi
+
+
 
 # include virtual host getter
 LOCAL_CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
@@ -100,5 +91,32 @@ if [ -z "$(docker ps --format="{{ .Names }}" | grep "${CONTAINER}")" ]; then
     echo -e "${RED}Error:${NC} no running containers named \"${CONTAINER}\""
     exit 1
 else
-    docker exec -ti --user ${CONTAINER_USER_NAME} ${CONTAINER} ${COMMAND}
+    case ${PROPERTY} in
+        name)
+            echo "${CONTAINER}"
+            shift
+            ;;
+        id)
+            echo "$(docker ps -aqf "name=${CONTAINER}")"
+            shift
+            ;;
+        ip)
+            NETWORK="${DM_NAME}_common"
+            echo "$( \
+                docker inspect -f '{{ range $k,$v := .NetworkSettings.Networks }}{{$k}} {{.IPAddress}}|{{end}}' "${CONTAINER}" | \
+                sed 's/|$//g' | sed 's/|/\n/g' | \
+                grep "${NETWORK}" | sed -E "s/${NETWORK}\s(.*)/\1/" \
+            )"
+            shift
+            ;;
+        ips)
+            echo 'NETWORK     IP'
+            echo "$(docker inspect -f '{{ range $k,$v := .NetworkSettings.Networks }}{{$k}} {{.IPAddress}}|{{end}}' "${CONTAINER}" | sed 's/|$//g' | sed 's/|/\n/g')"
+            shift
+            ;;
+        *)
+            echo -e "${RED}Error:${NC} invalid property \"${PROPERTY}\""
+            exit
+            ;;
+    esac
 fi

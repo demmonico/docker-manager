@@ -115,6 +115,25 @@ PARAMS:
 ```
 
 
+##### Inspect
+
+To inspect containers of your project you should use command:
+```sh
+FORMAT:
+    ./dm inspect PROJECT_NAME [PARAMS] PROPERTY_NAME
+    
+PARAMS:
+    -s - PROJECT_SERVICE_NAME (default app)
+    -i - PROJECT_SERVICE_INSTANCE_NAME (default 1)
+    
+PROPERTY_NAME:
+    name    - return container's name
+    id      - return container's id
+    ip      - return container's IP at the DM common network 
+    ips     - return all container's IPs
+```
+
+
 ##### Help
 
 To show CLI help you should use command:
