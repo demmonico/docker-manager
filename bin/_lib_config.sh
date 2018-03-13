@@ -99,7 +99,7 @@ function touchVhostEnv() {
         VIRTUAL_HOST="$( echo "${VIRTUAL_HOST}" | sed 's/VIRTUAL_HOST=//g'  )"
         local VIRTUAL_HOST_STRING="127.0.0.1        ${VIRTUAL_HOST}"
         if ! grep -q "${VIRTUAL_HOST_STRING}" /etc/hosts; then
-            echo -e "${YELLOW}Info:${NC} it seems that DM running at local env mode and VHOST ${VIRTUAL_HOST} doesn't exists at ${YELLOW}/etc/hosts${NC} file";
+            echo -e "${BLUE}Info:${NC} it seems that DM running at local env mode and VHOST ${VIRTUAL_HOST} doesn't exists at ${YELLOW}/etc/hosts${NC} file";
             # is need to update?
             read -p "Do you want to automatically update hosts file? Note: will require for SUDO privileges (y/n) ? " choice
             if [ "$choice" == "y" ] || [ "$choice" == "Y" ]; then

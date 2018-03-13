@@ -9,6 +9,10 @@
 # FORMAT: ./start.sh [-n PROJECT_NAME]
 #-----------------------------------------------------------#
 
+# bin dir & require _common.sh
+DM_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${DM_BIN_DIR}/_common.sh"
+
 
 
 ### get arguments
@@ -35,27 +39,15 @@ done
 ### configure
 
 ## set filenames and paths
+
 # docker compose filename
 DM_FILENAME="docker-compose.yml"
 # filename for hostname environment config
 DM_HOST_ENV_CONFIG="host.env"
-# bin dir
-DM_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-# docker manager root dir
-DM_ROOT_DIR="$(dirname "${DM_BIN_DIR}")"
-# DM projects dir
-DM_PROJECT_DIR="${DM_ROOT_DIR}/projects"
-# DM project/service name splitter (used for docker labels when start/stop containers)
-DM_PROJECT_SPLITTER='000'
 
 # get host user info
 HOST_USER_NAME="$( whoami )"
 HOST_USER_ID="$( id -u "${HOST_USER_NAME}" )"
-
-# set colors
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
 
 
 

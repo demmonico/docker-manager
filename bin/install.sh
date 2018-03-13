@@ -13,14 +13,12 @@
 #   -c - configurate only (no prepare environment actions)
 #-----------------------------------------------------------#
 
+# bin dir & require _common.sh
+DM_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${DM_BIN_DIR}/_common.sh"
+
 
 ### configure
-
-# set colors
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
 
 # check for root permission
 USER=${SUDO_USER:-$(whoami)}
@@ -29,10 +27,6 @@ if [ "$EUID" -ne 0 ]; then
     exit
 fi;
 
-# bin dir
-DM_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-# docker manager root dir
-DM_ROOT_DIR="$(dirname "${DM_BIN_DIR}")"
 # docker manager root dir name
 DM_ROOT_DIR_NAME="$(basename "${DM_ROOT_DIR}")"
 # docker manager's name
@@ -104,7 +98,7 @@ done;
 
 
 ### generate config file
-echo -n -e "${YELLOW}Info:${NC} ${GREEN}generating config file ... ${NC}";
+echo -n -e "${BLUE}Info:${NC} ${GREEN}generating config file ... ${NC}";
 CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
 CONFIG_FILE_EXAMPLE="${DM_ROOT_DIR}/config/local-example.yml"
 sudo cp -p ${CONFIG_FILE_EXAMPLE} ${CONFIG_FILE}
@@ -134,10 +128,10 @@ if [ ! -z "${isLocalEnv}" ]; then
 
     # check for www placement
     if [ "${DM_ROOT_DIR}" == "/var/www/${HOST_NAME}" ]; then
-        echo -e "${YELLOW}Info:${NC} web-server Apache detected. Start configure Apache to make website available";
+        echo -e "${BLUE}Info:${NC} web-server Apache detected. Start configure Apache to make website available";
 
         # set apache site config
-        echo -n -e "${YELLOW}Info:${NC} writing apache config ... ";
+        echo -n -e "${BLUE}Info:${NC} writing Apache config ... ";
         (
             echo "<VirtualHost *:80>";
             echo "    ServerName ${HOST_NAME}";
@@ -158,17 +152,17 @@ if [ ! -z "${isLocalEnv}" ]; then
         echo -e "${GREEN}done${NC}";
 
         # config apache
-        echo -e "${YELLOW}Info:${NC} enabling Apache mod_proxy and proxy_http ... ";
+        echo -e "${BLUE}Info:${NC} enabling Apache mod_proxy and proxy_http ... ";
         sudo a2enmod proxy && sudo a2enmod proxy_http
         echo -e "${GREEN}done${NC}";
 
         # restart apache
-        echo -n -e "${YELLOW}Info:${NC} restart apache service ... ";
+        echo -n -e "${BLUE}Info:${NC} restart Apache service ... ";
         sudo service apache2 restart
         echo -e "${GREEN}done${NC}";
 
         # update hosts file
-        echo -n -e "${YELLOW}Info:${NC} updating available hosts ... ";
+        echo -n -e "${BLUE}Info:${NC} updating available hosts ... ";
         # add/update host
         function updateHostsFile() {
             local SITENAME=$1;
@@ -184,7 +178,7 @@ if [ ! -z "${isLocalEnv}" ]; then
             updateHostsFile "${HOST_NAME}"
         fi
         # update sud-domains
-        for PROJECT in $( find "${DM_ROOT_DIR}/projects" -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | sort )
+        for PROJECT in $( find "${DM_PROJECT_DIR}" -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | sort )
         do
             updateHostsFile "${PROJECT%%/}.${HOST_NAME}"
         done
@@ -200,10 +194,10 @@ fi
 ### install software
 
 VERSION_DOCKER_COMPOSE=${VERSION_DOCKER_COMPOSE:-'1.17.0'}
-echo -e "${YELLOW}Info:${NC} updating repositories ... "
+echo -e "${BLUE}Info:${NC} updating repositories ... "
 sudo apt-get update
-echo -e "${YELLOW}Info:${NC} install software ... "
-{ command -v docker > /dev/null 2>&1 && echo -e "${YELLOW}Info:${NC} ${GREEN}docker${NC} is already installed"; } || \
+echo -e "${BLUE}Info:${NC} install software ... "
+{ command -v docker > /dev/null 2>&1 && echo -e "${BLUE}Info:${NC} ${GREEN}docker${NC} is already installed"; } || \
     { \
         # setup repository
         sudo apt-get -y install apt-transport-https \
@@ -227,7 +221,7 @@ echo -e "${YELLOW}Info:${NC} install software ... "
             #exec sudo su -l ${USER} </dev/null >/dev/null 2>&1; \
         } \
     } && \
-{ command -v docker-compose > /dev/null 2>&1 && echo -e "${YELLOW}Info:${NC} ${GREEN}docker-compose${NC} is already installed"; } || { \
+{ command -v docker-compose > /dev/null 2>&1 && echo -e "${BLUE}Info:${NC} ${GREEN}docker-compose${NC} is already installed"; } || { \
     sudo curl -L https://github.com/docker/compose/releases/download/${VERSION_DOCKER_COMPOSE}/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && \
     sudo chmod +x /usr/local/bin/docker-compose; \
 }
@@ -238,9 +232,9 @@ echo -e "${YELLOW}Info:${NC} install software ... "
 # server environment
 
 if [ -z "${isLocalEnv}" ]; then
-    { command -v mc > /dev/null 2>&1 && echo -e "${YELLOW}Info:${NC} ${GREEN}mc${NC} is already installed"; } || \
+    { command -v mc > /dev/null 2>&1 && echo -e "${BLUE}Info:${NC} ${GREEN}mc${NC} is already installed"; } || \
         sudo apt-get -y install mc && \
-    { command -v ssh > /dev/null 2>&1 && echo -e "${YELLOW}Info:${NC} ${GREEN}openssh-client${NC} is already installed"; } || \
+    { command -v ssh > /dev/null 2>&1 && echo -e "${BLUE}Info:${NC} ${GREEN}openssh-client${NC} is already installed"; } || \
         sudo apt-get -y install openssh-client
 fi
 
@@ -251,9 +245,9 @@ fi
 #-----------------------------------------------------------#
 # create main project stub
 
-DM_MAIN_DIR="${DM_ROOT_DIR}/projects/main"
+DM_MAIN_DIR="${DM_PROJECT_DIR}/main"
 if [ ! -d ${DM_MAIN_DIR} ] && [ -d "${DM_ROOT_DIR}/demo/maintenance" ]; then
-    echo -e "${YELLOW}Info:${NC} creating main project folder ... ";
+    echo -e "${BLUE}Info:${NC} creating main project folder ... ";
     yes 2>/dev/null | sudo cp -rp "${DM_ROOT_DIR}/demo/maintenance" "${DM_MAIN_DIR}"
 fi
 
@@ -268,7 +262,7 @@ BASH_COMPLETIONS_DIR='/etc/bash_completion.d'
 BASH_COMPLETIONS_LINK="${BASH_COMPLETIONS_DIR}/dm"
 BASH_COMPLETIONS_FILE="${DM_BIN_DIR}/_bash_completions.sh"
 if [ -d "${BASH_COMPLETIONS_DIR}" ] && [ ! -L "${BASH_COMPLETIONS_LINK}" ] && [ -f "${BASH_COMPLETIONS_FILE}" ]; then
-    echo -e "${YELLOW}Info:${NC} creating symlink for bash completions ... ";
+    echo -e "${BLUE}Info:${NC} creating symlink for bash completions ... ";
     sudo ln -s ${BASH_COMPLETIONS_FILE} ${BASH_COMPLETIONS_LINK}
 fi
 
@@ -279,7 +273,7 @@ fi
 # finish
 echo "";
 echo -e "${GREEN}All done.${NC}";
-echo -e "${GREEN}Now you${NC} ${YELLOW}should logout${NC} ${GREEN}then${NC} ${YELLOW}after login run bin/start.sh script${NC} ${GREEN}and then you could see your projects from Docker Manager as${NC} ${YELLOW}http://${HOST_NAME}/${NC} ${GREEN}and sub-domains${NC}";
-echo -e "${YELLOW}Info: ${NC} to create new project just create unique ${YELLOW}projects/PROJECT_NAME/docker-compose.yml${NC} file. For more info visit ${YELLOW}https://github.com/demmonico/docker-manager${NC}";
+echo -e "${GREEN}Now you${NC} ${YELLOW}should logout${NC} ${GREEN}then${NC} ${YELLOW}after login run ./dm start command${NC} ${GREEN}and then you could see your projects from Docker Manager as${NC} ${YELLOW}http://${HOST_NAME}/${NC} ${GREEN}and sub-domains${NC}";
+echo -e "${BLUE}Info: ${NC} to create new project just create unique ${YELLOW}projects/PROJECT_NAME/docker-compose.yml${NC} file. For more info visit ${YELLOW}https://github.com/demmonico/docker-manager${NC}";
 echo -e "${GREEN}Have a nice day :)${NC}";
 echo "";

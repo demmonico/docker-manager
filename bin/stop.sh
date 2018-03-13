@@ -16,6 +16,10 @@
 #   -f - forced mode (see Docker documentation)
 #-----------------------------------------------------------#
 
+# bin dir & require _common.sh
+DM_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${DM_BIN_DIR}/_common.sh"
+
 
 
 # get params
@@ -40,18 +44,10 @@ do
         shift
 done
 
+
+
 # docker compose filename
 DM_FILENAME="docker-compose.yml"
-# bin dir
-DM_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-# docker containers root dir
-DM_ROOT_DIR="$(dirname "${DM_BIN_DIR}")"
-# dir of projects
-DM_PROJECT_DIR="${DM_ROOT_DIR}/projects"
-# DM project/service name splitter (used for docker labels when start/stop containers)
-DM_PROJECT_SPLITTER='000'
-
-
 
 # include virtual host getter
 LOCAL_CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
