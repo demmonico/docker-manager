@@ -1,6 +1,6 @@
 # 0.5.0-alpha (2018-03-12)
 
-- add CLI command wrapper `dm` for `bin/*` scripts
+- add CLI command wrapper `dm` for `bin/*` scripts with completions
 - move `bin/*` scripts detailed info to the separate file to provide CLI help
  
 

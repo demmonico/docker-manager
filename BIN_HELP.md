@@ -6,6 +6,16 @@ This document is a helper for using DM CLI scripts.
 
 Following commands are available.
 
+
+##### Version
+
+To show version you should use command:
+```sh
+FORMAT:
+    ./dm version
+```
+
+
 ##### Install
 
 To automatically installation use command:
