@@ -19,11 +19,21 @@
 #-----------------------------------------------------------#
 
 
+DM_DISPLAY_NAME='Docker Manager'
+DM_DISPLAY_URL='https://github.com/demmonico/docker-manager'
+
+YELLOW="\033[1;33m"
+GREEN="\033[0;32m"
+NC="\033[0m" # No Color
+
+DM_CHANGELOG='CHANGELOG.md'
+DM_BIN_HELP='BIN_HELP.md'
+DM_PARSER='_parse_markdown.sh'
+
+
 ### root dir
 DM_ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DM_BIN_DIR="${DM_ROOT_DIR}/bin"
-DM_BIN_HELP='BIN_HELP.md'
-DM_PARSER='_parse_markdown.sh'
 
 ### pull allowed commands
 DM_BIN_COMMANDS=$( find ${DM_BIN_DIR} -type f ! -name '_*.sh' -exec basename {} .sh ';' | sort )
@@ -31,6 +41,17 @@ DM_BIN_COMMANDS=$( find ${DM_BIN_DIR} -type f ! -name '_*.sh' -exec basename {} 
 ### get route
 script="$1"
 case ${script} in
+
+    # show version
+    version)
+        version=$(\
+            head -n 1 "${DM_CHANGELOG}" | \
+            sed -E "s/^#*[[:space:]]*(.*)$/\1/g" \
+        )
+        echo -e "${YELLOW}${DM_DISPLAY_NAME}${NC} v${version}"
+        echo -e "${GREEN}${DM_DISPLAY_URL}${NC}"
+        exit
+        ;;
 
     # show help from markdown
     help)
@@ -47,7 +68,8 @@ case ${script} in
         if [ "${format}" == '-s' ]; then
             commands=()
         else
-            commands=('help' 'help/commands')
+            # needs for completion
+            commands=('help' 'help/commands' 'version')
         fi
         # get
         for command in ${DM_BIN_COMMANDS[@]}
