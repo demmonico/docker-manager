@@ -40,6 +40,8 @@ Current mode will be detected automatically through analyzing `netstat` results 
     - [Environment variables](#environment-variables)
     - [Start project(s)](#start-projects)
     - [Stop project(s)](#stop-projects)
+    - [Exec command inside container](#exec-command-inside-container)
+- [CLI command readme](#cli-command-readme)
 - [Change log](#change-log)
 - [License](#license)
 
@@ -52,6 +54,7 @@ Current mode will be detected automatically through analyzing `netstat` results 
 
 ```
 bin/                contains bin scripts for management purposes
+|-- exec.sh         script for exec command inside container
 |-- install.sh      installation script
 |-- start.sh        script for build/start one/all projects
 |-- stop.sh         script for stop one/all projects
@@ -572,6 +575,51 @@ For example, you want to change container base image of the some container and r
 ```sh
 /var/docker-manager/dm stop -f -a -n sub_project_name
 ```
+
+
+##### Exec command inside container
+
+To exec command inside some container of your project you should use command:
+```sh
+./dm exec PROJECT_NAME [PARAMS][-c COMMAND_WITH_PARAMS (default bash)]
+```
+
+See the [BIN HELP](BIN_HELP.md#exec) file for details.
+
+***Example 1***
+
+Simple call container's terminal.
+
+```sh
+/var/docker-manager/dm exec PROJECT_NAME
+```
+
+By default:
+- service name is `app`
+- service instance name is `1`
+- user is `$USER` for app containers and `root` for others
+
+***Example 2***
+
+Call command `uname -a` under `root`
+
+```sh
+/var/docker-manager/dm exec PROJECT_NAME -u root -c uname -a
+```
+
+***Example 3***
+
+Call command `uname -a` specified user `root`, service name `db`, service instance name `2`
+
+```sh
+/var/docker-manager/dm exec PROJECT_NAME -s db -i 2 -u root -c uname -a
+```
+
+
+
+## CLI command readme
+
+See the [CLI command readme](BIN_HELP.md) file for more information about DM CLI commands.
 
 
 

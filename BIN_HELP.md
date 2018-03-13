@@ -101,6 +101,20 @@ Multiple mode (if option `-n` isn't defined):
 - remove all unused networks - *via Docker engine*
 
 
+##### Exec
+
+To exec command inside some container of your project you should use command:
+```sh
+FORMAT:
+    ./dm exec PROJECT_NAME [PARAMS][-c COMMAND_WITH_PARAMS (default bash)]
+    
+PARAMS:
+    -s - PROJECT_SERVICE_NAME (default app)
+    -i - PROJECT_SERVICE_INSTANCE_NAME (default 1)
+    -u - CONTAINER_USER_NAME (default UID=1000 for app services and root for all)
+```
+
+
 ##### Help
 
 To show CLI help you should use command:
