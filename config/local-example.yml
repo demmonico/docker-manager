@@ -6,4 +6,4 @@ network:
 container:
   cmd_aliases:
     - laravel/phpunit=/var/www/html/vendor/bin/phpunit -c /var/www/html/phpunit.xml
-    - moodle/cacheclear=php /var/www/html/admin/cli/purge_caches.php
+    - moodle/cacheclear=php /var/www/html/admin/cli/purge_caches.php && echo 'Done'
