@@ -27,9 +27,18 @@ function getConfig() {
     # tune for array values
     if [ ! -z "${!PARAM_FULL_NAME}" ] && [[ "$(declare -p ${PARAM_FULL_NAME})" =~ "declare -a" ]]; then
         PARAM_FULL_NAME="${PARAM_FULL_NAME}[@]"
+        local result=''
+        # check for params format (simple list or key-value list)
+        local isKeyValueFormat=$([[ "${!PARAM_FULL_NAME}" = *"="* ]] && echo '1')
+        if [ -z "${isKeyValueFormat}" ]; then
+            result=$( echo "${!PARAM_FULL_NAME}" | sed -E "s/\s/\n/g" )
+        else
+            result=$( echo "${!PARAM_FULL_NAME}" | sed -E "\$s/\s([A-Za-z0-9/]+)=/\n\1=/g" )
+        fi
+        echo -e "${result}"
+    else
+        echo "${!PARAM_FULL_NAME}"
     fi
-
-    echo "${!PARAM_FULL_NAME}"
 }
 
 

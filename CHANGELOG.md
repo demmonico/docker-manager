@@ -1,10 +1,13 @@
-# 0.5.0-alpha (2018-03-13)
+# 0.5.0-alpha (2018-03-14)
 
 - add CLI command wrapper `dm` for `bin/*` scripts with completions
 - move `bin/*` scripts detailed info to the separate file to provide CLI help
 - change CLI commands colors scheme
 - add `exec` command as a wrapper of native `docker exec` command
 - add `inspect` command for getting some information about container
+- fix getConfig() behavior for arrays
+- add ability to exec command aliases which could be defined at the `config/local.yml` file
+- add pre-defined command aliases at the `config/local-example.yml` file
  
 
 # 0.4.0 (2018-03-09)

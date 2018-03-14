@@ -4,7 +4,10 @@ This document is a helper for using DM CLI scripts.
 
 ### CLI commands usage
 
-Following commands are available.
+Following commands are available. 
+Better use them through `./dm` script wrapper, which provide you completions and shorter calling.
+
+Also you could use command aliases which allowed you shorter syntax. Aliases configured at the `config/local.yml` file.
 
 
 ##### Version

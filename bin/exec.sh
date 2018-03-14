@@ -100,5 +100,22 @@ if [ -z "$(docker ps --format="{{ .Names }}" | grep "${CONTAINER}")" ]; then
     echo -e "${RED}Error:${NC} no running containers named \"${CONTAINER}\""
     exit 1
 else
+    # check whether COMMAND is pre-defined cmd_alias
+    readarray -t COMMAND_ALIASES <<<"$(getConfig ${LOCAL_CONFIG_FILE} 'cmd_aliases' 'container')"
+    for ALIAS in "${COMMAND_ALIASES[@]}"
+    do
+        ALIAS_NAME="$( echo "${ALIAS}" | sed -r 's/=.+$//' )"
+        ALIAS_CMD="$( echo "${ALIAS}" | sed -r 's/^.+=//' )"
+        # validate alias
+        if [ ! -z "${ALIAS_NAME}" ] && [ ! -z "${ALIAS_NAME}" ]; then
+            # if match then replace alias with real command
+            if [ "${COMMAND}" == "${ALIAS_NAME}" ]; then
+                COMMAND="${ALIAS_CMD}"
+                break
+            fi
+        fi
+    done
+
+    # exec COMMAND
     docker exec -ti --user ${CONTAINER_USER_NAME} ${CONTAINER} ${COMMAND}
 fi

@@ -587,6 +587,9 @@ To exec command inside some container of your project you should use command:
 
 See the [CLI command readme](BIN_HELP.md#exec) file for details.
 
+Note that you have an ability to exec command using cmd_aliases which could be defined at the `config/local.yml` file. 
+For examples see `config/local-example.yml` file which contains several pre-defined aliases.
+
 ***Example 1***
 
 Simple call container's terminal.
