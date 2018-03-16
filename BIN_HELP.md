@@ -114,7 +114,7 @@ FORMAT:
 PARAMS:
     -s - PROJECT_SERVICE_NAME (default app)
     -i - PROJECT_SERVICE_INSTANCE_NAME (default 1)
-    -u - CONTAINER_USER_NAME (default UID=1000 for app services and root for all)
+    -u - CONTAINER_USER_NAME (default "dm" user)
 ```
 
 

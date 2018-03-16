@@ -12,7 +12,7 @@
 # PARAMS:
 #   -s - PROJECT_SERVICE_NAME (default app)
 #   -i - PROJECT_SERVICE_INSTANCE_NAME (default 1)
-#   -u - CONTAINER_USER_NAME (default UID=1000 for app services and root for all)
+#   -u - CONTAINER_USER_NAME (default "dm" user)
 #
 #-----------------------------------------------------------#
 
@@ -77,11 +77,12 @@ done
 
 # re-assign user for app containers
 if [ -z "${CONTAINER_USER_NAME}" ]; then
-    if [ "${PROJECT_SERVICE_NAME}" == 'app' ]; then
-        CONTAINER_USER_NAME=$UID
-    else
-        CONTAINER_USER_NAME='root'
-    fi
+    #if [ "${PROJECT_SERVICE_NAME}" == 'app' ]; then
+    #    CONTAINER_USER_NAME=$UID
+    #else
+    #    CONTAINER_USER_NAME='root'
+    #fi
+    CONTAINER_USER_NAME='dm'
 fi
 
 # include virtual host getter

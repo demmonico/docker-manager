@@ -1,9 +1,13 @@
 - [x] TODO add images to DockerHub
 - [x] TODO add common config, refactor proxy config, docker-compose files
 - [x] TODO common start.sh script (check services onstart, start proxy only)
+- [x] TODO add env var upload_max_filesize etc (php, apache)
+- [ ] TODO prefixing, refactor env vars & folder names
 - [ ] TODO docker-compose inheritance
-- [ ] TODO add env var upload_max_filesize (nginx+app)
+- [ ] TODO service discovery + DNS
+- [ ] TODO db container permissions
+- [ ] TODO collect logs
 - [ ] TODO add download dummy by URL
 - [ ] TODO secrets storage
-- [ ] TODO overlay network & Docker swarm mode
+- [ ] TODO overlay network & support Docker swarm mode
 - [ ] TODO GUI for management projects/containers

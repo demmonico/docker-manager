@@ -519,6 +519,13 @@ You can pass environment variables inside your container through the:
 - you could pass environment variables via `docker-compose.yml` file using `environment` section
 - you could define any environment variable at your custom Dockerfile
 
+Using environment variables you could drive your container's settings, for example:
+- DMC_APP_APACHE_UPLOADMAXFILESIZE - PHP's `upload_max_filesize` param (auto-adjust following param too)
+- DMC_APP_APACHE_POSTMAXSIZE - PHP's `post_max_size` param (auto-adjust following param too)
+- DMC_APP_APACHE_MEMORYLIMIT - PHP's `memory_limit` param (auto-validate free memory)
+- DMC_APP_APACHE_MAXEXECTIME - PHP's `max_execution_time` param
+- DMC_APP_APACHE_MAXINPUTTIME - PHP's `max_input_time` param
+
 
 
 ### Start project(s)
@@ -578,7 +585,7 @@ For example, you want to change container base image of the some container and r
 ```
 
 
-##### Exec command inside container
+### Exec command inside container
 
 To exec command inside some container of your project you should use command:
 ```sh
@@ -620,7 +627,7 @@ Call command `uname -a` with specified user `root`, service name `db`, service i
 ```
 
 
-##### Inspect containers
+### Inspect containers
 
 To inspect containers of your project you should use command:
 ```sh

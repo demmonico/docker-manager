@@ -1,5 +1,6 @@
-# 0.5.0-alpha (2018-03-14)
+# 0.5.0-alpha (2018-03-16)
 
+- [x] TODO add env var upload_max_filesize etc (php, apache)
 - add CLI command wrapper `dm` for `bin/*` scripts with completions
 - move `bin/*` scripts detailed info to the separate file to provide CLI help
 - change CLI commands colors scheme
