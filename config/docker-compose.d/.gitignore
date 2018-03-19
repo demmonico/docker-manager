@@ -1,0 +1,7 @@
+*
+!.gitignore
+
+# except pre-defined
+!networks.yml
+!app.yml
+!db.yml

@@ -62,6 +62,10 @@ bin/                contains bin scripts for management purposes
 |-- ...
  
 config/                 contains common configs
+|-- docker-compose.d/   contains common used docker-compose settings compiled while compose up. These files will be bound automatically AFTER main docker-compose.yml file
+|   |-- app.yml         contains common used docker-compose settings for app services
+|   |-- db.yml          contains common used docker-compose settings for db services
+|   |-- networks.yml    contains settings for common network of this DM
 |-- security/           [GIT IGNORED] contains security settings, tokens and SSH keys for using while build/start Docker containers
 |   |-- ssh-keys/       [GIT IGNORED] contains SSH keys
 |   |   |-- id_rsa
@@ -126,7 +130,6 @@ projects/                           contains docker containers for all virtual h
 |-- ...
  
 proxy/                          contains docker container for common DM proxy (see jwilder/nginx-proxy docker image for details)
-|-- common-network.yml          contains settings for common network of this DM. File binding last to each container in this network automatically
 |-- custom.conf                 rewrite some default nginx settings, e.g. client_max_body_size option etc
 |-- default_location            hack for NGINX's virtual hosts shared robots.txt file
 |-- docker-compose.yml          contains reverse proxy's build and run settings
@@ -490,7 +493,9 @@ Sub-project's files should be placed at `projects/your_sub_domain` folder
 
 ### Configure project
 
-You can drive your project settings via `docker-compose.yml` file placed your project's folder (`projects/SUB_PROJECT_NAME`). 
+You can drive your project settings via `docker-compose.yml` file placed your project's folder (`projects/SUB_PROJECT_NAME`).
+ 
+***Important*** Check project's folder permissions. It should be owned by you current user (***NOT ROOT!***), which will run `/dm` scripts wrapper further.
 
 Create (or copy sub-project from `demo/`) `docker-compose.yml` file and configure it. 
 As a base of Docker container you could use:
@@ -506,9 +511,14 @@ If you want to add a Apache dummy (like "Waiting" message) which will be shown w
 - create at your project's folder e.g. `app/dockerfiles/install/apache-dummy` folder (see [DM's structure](#structure)) with dummy files or pull from [repository](https://github.com/demmonico/apache-dummy)
 - set build argument `DUMMY=apache-dummy` at the `docker-compose.yml` file.
 
-***Important*** Check project's folder permissions. It should be owned by you current user (***NOT ROOT!***), which will run `bin/*` scripts further.
+*Tip: you could save project configuration to the separate repository or separate branch of the project's repository to provide IaC*
 
-*Tip: you could save project configuration to the separate repository or separate branch of the project's repository*
+For overriding project's config purposes you could use internal order of binding project's `*.yml` files:
+- `projects/SUB_PROJECT_NAME/docker-compose.yml` - project's main config. Called **ALWAYS**
+- `config/docker-compose.d/networks.yml` - define common DM's network. Called **ALWAYS**
+- `config/docker-compose.d/*.yml` - define common used configs of the defined service. Called only if service defined at the project's main config. For example exists `app.yml` file will be bound only if project's `docker-compose.yml` file contains service named `app`
+- `projects/SUB_PROJECT_NAME/docker-compose.override.yml` - project's override config. Called only if file exists. Could be used for override configs from the `config/docker-compose.d/*.yml` files
+- `projects/SUB_PROJECT_NAME/docker-compose.local.yml` - project's local config. **NOT under VCS**. Called only if file exists. Could be used for override configs from all previous listed files
 
 
 

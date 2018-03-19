@@ -1,0 +1,12 @@
+# Define connection to the common network of the DM
+# This file should be bound AFTER main docker-compose.yml file of the project
+#
+# @author demmonico
+# @version v0.5.0
+
+version: '3'
+
+networks:
+  common:
+    external:
+      name: "${DM_NAME}_common"

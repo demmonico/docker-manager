@@ -1,9 +1,0 @@
-# File should bind last to each container in this network
-
-version: '3'
-
-networks:
-  common:
-#    external: true
-    external:
-      name: "${DM_NAME}_common"

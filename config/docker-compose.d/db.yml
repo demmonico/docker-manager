@@ -1,0 +1,21 @@
+# Define common used properties of the db containers at the DM
+# This file should be bound AFTER main docker-compose.yml file of the project
+# These properties could be overriden by project's docker-compose.override.yml and docker-compose.local.yml files
+#
+# @author demmonico
+# @version v0.5.0
+
+version: '3'
+
+services:
+
+  db:
+    volumes:
+      # shared
+      - ./shared:/docker-shared
+      # db tables
+      - ./db/data:/var/lib/mysql
+    env_file:
+      - host.env
+    stdin_open: true
+    tty: true

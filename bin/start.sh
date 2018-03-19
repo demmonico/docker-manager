@@ -40,8 +40,6 @@ done
 
 ## set filenames and paths
 
-# docker compose filename
-DM_FILENAME="docker-compose.yml"
 # filename for hostname environment config
 DM_HOST_ENV_CONFIG="host.env"
 
@@ -75,8 +73,7 @@ function startProject() {
     local _PROJECT_PREFIX="${DM_NAME}${DM_PROJECT_SPLITTER}${_PROJECT}"
 
     # check whether folder has docker-compose file
-    DM_FILE="${DM_PROJECT_DIR}/${_PROJECT}/${DM_FILENAME}"
-    if [ -f ${DM_FILE} ]; then
+    if [ -f "${DM_PROJECT_DIR}/${_PROJECT}/${DM_FILENAME}" ]; then
         # check whether container doesn't run yet
         if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${_PROJECT_PREFIX}_")" ]; then
 
@@ -88,8 +85,7 @@ function startProject() {
             fi
 
             # build && up
-            docker-compose --file ${DM_FILE} \
-                --file "${DM_ROOT_DIR}/proxy/common-network.yml" \
+            docker-compose $( buildComposeFilesLine ${DM_PROJECT_DIR}/${_PROJECT} ) \
                 --project-name "${_PROJECT_PREFIX}" up -d --build
         else
             echo "Container named ${_PROJECT} is already running"
@@ -112,7 +108,11 @@ if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${DM_NAME}_proxy_")" ]; th
     # setup domain's env settings
     touchVhostEnv "${DM_ROOT_DIR}/proxy"
     # build && up
-    docker-compose --file "${DM_ROOT_DIR}/proxy/${DM_FILENAME}" --project-name ${DM_NAME} up -d --build
+    DM_PROXY_COMPOSE="--file ${DM_ROOT_DIR}/proxy/${DM_FILENAME}"
+    if [ -f "${DM_ROOT_DIR}/proxy/${DM_FILENAME_LOCAL}" ]; then
+        DM_PROXY_COMPOSE="${DM_PROXY_COMPOSE} --file ${DM_ROOT_DIR}/proxy/${DM_FILENAME_LOCAL}"
+    fi
+    docker-compose ${DM_PROXY_COMPOSE} --project-name ${DM_NAME} up -d --build
 fi
 
 

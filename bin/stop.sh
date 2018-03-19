@@ -46,9 +46,6 @@ done
 
 
 
-# docker compose filename
-DM_FILENAME="docker-compose.yml"
-
 # include virtual host getter
 LOCAL_CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
 source "$DM_BIN_DIR/_lib_config.sh"
@@ -69,8 +66,6 @@ then
     # if project exists
     if [ -d "${DM_PROJECT_DIR}/${PROJECT}" ]
     then
-        DM_FILE="${DM_PROJECT_DIR}/${PROJECT}/${DM_FILENAME}"
-
         # remove all
         if [ ! -z "${isRemoveAll}" ]
         then
@@ -84,8 +79,8 @@ then
             COMMAND='stop'
         fi
 
-        CONFIGS="--file ${DM_FILE} --file ${DM_ROOT_DIR}/proxy/common-network.yml"
-        docker-compose ${CONFIGS} --project-name "${DM_NAME}${DM_PROJECT_SPLITTER}${PROJECT}" ${COMMAND}
+        docker-compose $( buildComposeFilesLine ${DM_PROJECT_DIR}/${PROJECT} ) \
+            --project-name "${DM_NAME}${DM_PROJECT_SPLITTER}${PROJECT}" ${COMMAND}
     else
         echo "Invalid project - ${PROJECT}"
     fi

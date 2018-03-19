@@ -1,6 +1,7 @@
-# 0.5.0-alpha (2018-03-16)
+# 0.5.0-alpha (2018-03-19)
 
 - [x] TODO add env var upload_max_filesize etc (php, apache)
+- [x] TODO docker-compose inheritance
 - add CLI command wrapper `dm` for `bin/*` scripts with completions
 - move `bin/*` scripts detailed info to the separate file to provide CLI help
 - change CLI commands colors scheme
@@ -9,6 +10,7 @@
 - fix getConfig() behavior for arrays
 - add ability to exec command aliases which could be defined at the `config/local.yml` file
 - add pre-defined command aliases at the `config/local-example.yml` file
+- move common networks settings from `proxy/common-network.yml` to `config/docker-compose.d/networks.yml`
  
 
 # 0.4.0 (2018-03-09)
