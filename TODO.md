@@ -1,7 +1,7 @@
-- [x] TODO add env var upload_max_filesize etc (php, apache)
+- [x] TODO add env var `upload_max_filesize` etc (php, apache)
 - [x] TODO docker-compose inheritance
 - [x] TODO prefixing, refactor env vars and folder names
-- [ ] TODO RF start/stop/install scripts format
+- [x] TODO RF start/stop/install scripts format
 - [ ] TODO re-build app images
 - [ ] TODO apply changes due to app image at moodle, nginx images and rebuild them
 - [ ] TODO check DB fail auto-create DB on run once

@@ -1,8 +1,10 @@
 # 0.5.0-alpha (2018-03-19)
 
-- [x] TODO add env var upload_max_filesize etc (php, apache)
+- [x] TODO add env var `upload_max_filesize` etc (php, apache)
 - [x] TODO docker-compose inheritance
 - [x] TODO prefixing, refactor env vars and folder names
+- [x] TODO RF start/stop/install scripts format
+ 
 - add CLI command wrapper `dm` for `bin/*` scripts with completions
 - move `bin/*` scripts detailed info to the separate file to provide CLI help
 - change CLI commands colors scheme

@@ -98,7 +98,7 @@ case ${script} in
         done
 
         # error
-        echo "Invalid option: \"$1\""
+        echo -e "${RED}Error:${NC} invalid option ${YELLOW}$1${NC}";
         exit 1
         ;;
 esac

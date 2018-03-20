@@ -8,7 +8,7 @@
 # If DM_PROJECT doesn't exists then script will stop all exists containers and unused networks
 #
 # FORMAT:
-#   ./stop.sh [OPTIONS] [-n DM_PROJECT]
+#   ./stop.sh [OPTIONS] [DM_PROJECT]
 #
 # OPTIONS:
 #   -c - remove containers after they stops
@@ -26,19 +26,18 @@ source "${DM_BIN_DIR}/_common.sh"
 while [[ $# -gt 0 ]]
 do
     key="$1"
-    case $key in
+    case ${key} in
         -c) isRemoveContainers='true';;
         -a) isRemoveAll='true';;
         -f) isForceMode='-f';;
-        -n)
-            if [ ! -z "$2" ]; then
-                export DM_PROJECT="$2"
-            fi
-            shift
-            ;;
         *)
-            echo "Invalid option -$1"
-            exit
+            # extract DM_PROJECT
+            if [ $# -eq 1 ] && [[ "${key}" != -* ]]; then
+                export DM_PROJECT="${key}"
+            else
+                echo -e "${RED}Error:${NC} invalid parameters list ${YELLOW}${@}${NC}";
+                exit
+            fi
             ;;
     esac
         shift
@@ -82,7 +81,8 @@ then
         docker-compose $( buildComposeFilesLine ${DM_PROJECT_DIR}/${DM_PROJECT} ) \
             --project-name "${DM_NAME}${DM_PROJECT_SPLITTER}${DM_PROJECT}" ${COMMAND}
     else
-        echo "Invalid project - ${DM_PROJECT}"
+        echo -e "${RED}Error:${NC} invalid project ${YELLOW}${DM_PROJECT}${NC}";
+        exit
     fi
 else
     cd "${DM_ROOT_DIR}"

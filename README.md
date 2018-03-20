@@ -124,8 +124,8 @@ projects/                           contains docker containers for all virtual h
 |   |   NOTE: host.env file generates automatically when start.sh script is used!!!
 |   |
 |
-|-- SUB_PROJECT_NAME/               contains docker/docker-compose configs and data files for sub-project. Shoud be UNIQUE through the current DM's instance
-|   |-- ...                         see "main" folder structure for details
+|-- DM_PROJECT/                 contains docker/docker-compose configs and data files for sub-project. Shoud be UNIQUE through the current DM's instance
+|   |-- ...                     see "main" folder structure for details
 |
 |-- ...
  
@@ -485,15 +485,15 @@ Sub-project's files should be placed at `projects/your_sub_domain` folder
 (accessible as sub-domain e.g. `sub-domain.your_docker_manager.dev-server.com`). 
 ***Note:*** folder's name should be unique through all projects of the Docker Manager instance.
 
-- put app's code to `projects/SUB_PROJECT_NAME/app/src` folder
-- put app's data to `projects/SUB_PROJECT_NAME/app/data` folder
-- put db's data to `projects/SUB_PROJECT_NAME/db/data` folder
+- put app's code to `projects/DM_PROJECT/app/src` folder
+- put app's data to `projects/DM_PROJECT/app/data` folder
+- put db's data to `projects/DM_PROJECT/db/data` folder
 
 
 
 ### Configure project
 
-You can drive your project settings via `docker-compose.yml` file placed your project's folder (`projects/SUB_PROJECT_NAME`).
+You can drive your project settings via `docker-compose.yml` file placed your project's folder (`projects/DM_PROJECT`).
  
 ***Important*** Check project's folder permissions. It should be owned by you current user (***NOT ROOT!***), which will run `/dm` scripts wrapper further.
 
@@ -501,7 +501,7 @@ Create (or copy sub-project from `demo/`) `docker-compose.yml` file and configur
 As a base of Docker container you could use:
 - pre-defined docker's images pulled from `dockerhub.com`
 - pre-defined common docker's images at `images/` folder
-- custom build image based on your custom Dockerfiles - just create `dockerfiles` folder (e.g. `projects/SUB_PROJECT_NAME/app/dockerfiles` - see [DM's structure](#structure)) and put `Dockerfile` and all additional custom scripts or files there
+- custom build image based on your custom Dockerfiles - just create `dockerfiles` folder (e.g. `projects/DM_PROJECT/app/dockerfiles` - see [DM's structure](#structure)) and put `Dockerfile` and all additional custom scripts or files there
 
 Example of the Docker Compose config you could find at `demo/` folder. 
 At `docker-compose.yml` file you could config services, mount volumes, network links, define build arguments and environment variables etc. 
@@ -514,11 +514,11 @@ If you want to add a Apache dummy (like "Waiting" message) which will be shown w
 *Tip: you could save project configuration to the separate repository or separate branch of the project's repository to provide IaC*
 
 For overriding project's config purposes you could use internal order of binding project's `*.yml` files:
-- `projects/SUB_PROJECT_NAME/docker-compose.yml` - project's main config. Called **ALWAYS**
+- `projects/DM_PROJECT/docker-compose.yml` - project's main config. Called **ALWAYS**
 - `config/docker-compose.d/networks.yml` - define common DM's network. Called **ALWAYS**
 - `config/docker-compose.d/*.yml` - define common used configs of the defined service. Called only if service defined at the project's main config. For example exists `app.yml` file will be bound only if project's `docker-compose.yml` file contains service named `app`
-- `projects/SUB_PROJECT_NAME/docker-compose.override.yml` - project's override config. Called only if file exists. Could be used for override configs from the `config/docker-compose.d/*.yml` files
-- `projects/SUB_PROJECT_NAME/docker-compose.local.yml` - project's local config. **NOT under VCS**. Called only if file exists. Could be used for override configs from all previous listed files
+- `projects/DM_PROJECT/docker-compose.override.yml` - project's override config. Called only if file exists. Could be used for override configs from the `config/docker-compose.d/*.yml` files
+- `projects/DM_PROJECT/docker-compose.local.yml` - project's local config. **NOT under VCS**. Called only if file exists. Could be used for override configs from all previous listed files
 
 
 
@@ -542,7 +542,7 @@ Using environment variables you could drive your container's settings, for examp
 
 To build and start proxy, main container and all containers of all (or selected one only) projects you should use command:
 ```sh
-./dm start [-n SUB_PROJECT_NAME]
+./dm start [DM_PROJECT]
 ```
 
 See the [CLI command readme](BIN_HELP.md#start) file for details.
@@ -555,7 +555,7 @@ See the [CLI command readme](BIN_HELP.md#start) file for details.
 
 To stop proxy, main container and all containers of all (or selected one only) projects you should use command:
 ```sh
-./dm stop [OPTIONS] [-n SUB_PROJECT_NAME]
+./dm stop [OPTIONS] [DM_PROJECT]
 ```
 
 See the [CLI command readme](BIN_HELP.md#stop) file for details.
@@ -579,19 +579,19 @@ For example, you want to re-build some container from the main project or DM pro
 
 ***Example 3***
 
-Stop single sub-project.
+Stop single sub-project named `sub_project_name`.
 
 ```sh
-/var/docker-manager/dm stop -n sub_project_name
+/var/docker-manager/dm stop sub_project_name
 ```
 
 ***Example 4***
 
-Stop and remove all containers with all base images related to the single sub-project. 
+Stop and remove all containers with all base images related to the single sub-project named `sub_project_name`. 
 For example, you want to change container base image of the some container and re-build it. 
 
 ```sh
-/var/docker-manager/dm stop -f -a -n sub_project_name
+/var/docker-manager/dm stop -f -a sub_project_name
 ```
 
 

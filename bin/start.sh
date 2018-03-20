@@ -6,7 +6,7 @@
 #
 # This script starts all available docker container(s) and networks
 #
-# FORMAT: ./start.sh [-n DM_PROJECT]
+# FORMAT: ./start.sh [DM_PROJECT]
 #-----------------------------------------------------------#
 
 # bin dir & require _common.sh
@@ -16,23 +16,11 @@ source "${DM_BIN_DIR}/_common.sh"
 
 
 ### get arguments
-while [[ $# -gt 0 ]]
-do
-    key="$1"
-    case $key in
-        -n)
-            if [ ! -z "$2" ]; then
-                export DM_PROJECT="$2"
-            fi
-            shift
-            ;;
-        *)
-            echo "Invalid option -$1"
-            exit
-            ;;
-    esac
-        shift
-done
+export DM_PROJECT="$1"
+if [ $# -gt 1 ]; then
+    echo -e "${RED}Error:${NC} invalid parameters list ${YELLOW}${@}${NC}";
+    exit
+fi
 
 
 
@@ -51,7 +39,7 @@ DM_HOST_USER_ID="$( id -u "${DM_HOST_USER_NAME}" )"
 
 # include virtual host getter
 DM_LOCAL_CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
-source "$DM_BIN_DIR/_lib_config.sh"
+source "${DM_BIN_DIR}/_lib_config.sh"
 
 # docker manager name
 export DM_NAME="$(getConfig ${DM_LOCAL_CONFIG_FILE} "name")"

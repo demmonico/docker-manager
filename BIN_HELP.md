@@ -50,16 +50,16 @@ To build and start proxy, main container and all containers of all (or selected 
 ```sh
 FORMAT:
     # using wrapper
-    ./dm start [-n SUB_PROJECT_NAME]
+    ./dm start [DM_PROJECT]
     # or directly
-    ./bin/start.sh [-n SUB_PROJECT_NAME]
+    ./bin/start.sh [DM_PROJECT]
 ```
 
 This script do: 
 - init proxy gateway with common network (if it wasn't initiated yet) 
 - init main host with main project domain's name (if it isn't inited yet) 
 - if no options then init all sub-projects at the `projects` folder
-- if option `-n SUB_PROJECT_NAME` was defined then init `SUB_PROJECT_NAME` sub-project
+- if option `DM_PROJECT` was defined then init sub-project named `DM_PROJECT` placed at the `projects` folder
 
 Process "init" includes: 
 - get Docker Manager settings
@@ -77,9 +77,9 @@ To stop proxy, main container and all containers of all (or selected one only) p
 ```sh
 FORMAT:
     # using wrapper
-    ./dm stop [OPTIONS] [-n SUB_PROJECT_NAME]
+    ./dm stop [OPTIONS] [DM_PROJECT]
     # or directly
-    ./bin/stop.sh [OPTIONS] [-n SUB_PROJECT_NAME]
+    ./bin/stop.sh [OPTIONS] [DM_PROJECT]
     
 OPTIONS:
     -c - remove containers after they stops
@@ -87,7 +87,7 @@ OPTIONS:
     -f - forced mode (see Docker documentation)
 ```
 
-Single mode (if option `-n` is defined):
+Single mode (if `DM_PROJECT` is defined):
 - get Docker Manager settings and define project's name
 - build chain of the docker-compose files
 - stop Docker container - *via Docker Compose engine*
@@ -95,7 +95,7 @@ Single mode (if option `-n` is defined):
 - remove Docker image (if need it) - *via Docker Compose engine*
 - remove all unused networks - *via Docker engine*
 
-Multiple mode (if option `-n` isn't defined):
+Multiple mode (if `DM_PROJECT` isn't defined):
 - get Docker Manager settings and define project's name
 - find all containers related to this project  
 - stop containers - *via Docker engine*

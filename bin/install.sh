@@ -273,7 +273,7 @@ fi
 # finish
 echo "";
 echo -e "${GREEN}All done.${NC}";
-echo -e "${GREEN}Now you${NC} ${YELLOW}should logout${NC} ${GREEN}then${NC} ${YELLOW}after login run ./dm start command${NC} ${GREEN}and then you could see your projects from Docker Manager as${NC} ${YELLOW}http://${DM_HOST_NAME}/${NC} ${GREEN}and sub-domains${NC}";
+echo -e "${GREEN}Now you${NC} ${YELLOW}should logout${NC} ${GREEN}then${NC} ${YELLOW}after login run \"./dm start\" command${NC} ${GREEN}and then you could see your projects from Docker Manager as${NC} ${YELLOW}http://${DM_HOST_NAME}/${NC} ${GREEN}and sub-domains${NC}";
 echo -e "${BLUE}Info: ${NC} to create new project just create unique ${YELLOW}projects/DM_PROJECT/docker-compose.yml${NC} file. For more info visit ${YELLOW}https://github.com/demmonico/docker-manager${NC}";
 echo -e "${GREEN}Have a nice day :)${NC}";
 echo "";
