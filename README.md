@@ -116,7 +116,7 @@ projects/                           contains docker containers for all virtual h
 |   |-- proxy/                      contains reverse proxy's files
 |   |   |-- nginx-conf/             contains NGINX config files
 |   |   |   |-- proxy.conf          NGINX config file
-|   |-- shared/                     contains files shared between project's containers as e.g. "/docker-shared" alias folder
+|   |-- shared/                     contains files shared between project's containers as e.g. "/dm-shared" alias folder
 |   |-- docker-compose.yml          contains project's build and run settings, e.g. services' (container's) list etc
 |   |-- host.env                    contains environment's variables
 |   |-- ...
@@ -239,7 +239,7 @@ You could do it automatically using CLI command `dm install` or manually. Please
 ##### 2.1) Run install script
 
 ```sh
-sudo ./dm install [OPTIONS] -h HOST_NAME [-n DM_NAME] [-p HOST_PORT]
+sudo ./dm install [OPTIONS] -h DM_HOST_NAME [-n DM_NAME] [-p DM_HOST_PORT]
 ```
 
 See the [CLI command readme](BIN_HELP.md#install) file for details.
@@ -599,7 +599,7 @@ For example, you want to change container base image of the some container and r
 
 To exec command inside some container of your project you should use command:
 ```sh
-./dm exec PROJECT_NAME [PARAMS][-c COMMAND_WITH_PARAMS (default bash)]
+./dm exec DM_PROJECT [PARAMS][-c COMMAND [PARAMS] (default bash)]
 ```
 
 See the [CLI command readme](BIN_HELP.md#exec) file for details.
@@ -612,7 +612,7 @@ For examples see `config/local-example.yml` file which contains several pre-defi
 Simple call container's terminal.
 
 ```sh
-/var/docker-manager/dm exec PROJECT_NAME
+/var/docker-manager/dm exec DM_PROJECT
 ```
 
 By default:
@@ -625,7 +625,7 @@ By default:
 Call command `uname -a` under `root`
 
 ```sh
-/var/docker-manager/dm exec PROJECT_NAME -u root -c uname -a
+/var/docker-manager/dm exec DM_PROJECT -u root -c uname -a
 ```
 
 ***Example 3***
@@ -633,7 +633,7 @@ Call command `uname -a` under `root`
 Call command `uname -a` with specified user `root`, service name `db`, service instance name `2`
 
 ```sh
-/var/docker-manager/dm exec PROJECT_NAME -s db -i 2 -u root -c uname -a
+/var/docker-manager/dm exec DM_PROJECT -s db -i 2 -u root -c uname -a
 ```
 
 
@@ -641,7 +641,7 @@ Call command `uname -a` with specified user `root`, service name `db`, service i
 
 To inspect containers of your project you should use command:
 ```sh
-./dm inspect PROJECT_NAME [PARAMS] PROPERTY_NAME
+./dm inspect DM_PROJECT [PARAMS] PROPERTY_NAME
 ```
 
 See the [CLI command readme](BIN_HELP.md#inspect) file for details.
@@ -651,7 +651,7 @@ See the [CLI command readme](BIN_HELP.md#inspect) file for details.
 Get container's id with specified service name `db`, service instance name `2`
 
 ```sh
-/var/docker-manager/dm exec PROJECT_NAME -s db -i 2 id
+/var/docker-manager/dm exec DM_PROJECT -s db -i 2 id
 ```
 
 

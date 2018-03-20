@@ -12,7 +12,7 @@ services:
   app:
     volumes:
       # shared
-      - ./shared:/docker-shared
+      - ./shared:/dm-shared
       # ssh keys for git
       - ../../config/security/ssh-keys:/root/.ssh:ro
 

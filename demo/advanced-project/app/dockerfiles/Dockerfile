@@ -12,7 +12,7 @@ MAINTAINER demmonico@gmail.com
 
 
 # copy files to install container
-COPY install "${INSTALL_DIR}/"
+COPY install "${DMC_INSTALL_DIR}/"
 
 
 # init run script

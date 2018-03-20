@@ -26,9 +26,9 @@ To automatically installation use command:
 ```sh
 FORMAT:
     # using wrapper
-    sudo ./dm install [OPTIONS] -h HOST_NAME [-n DM_NAME] [-p HOST_PORT]
+    sudo ./dm install [OPTIONS] -h DM_HOST_NAME [-n DM_NAME] [-p DM_HOST_PORT]
     # or directly
-    sudo ./bin/install.sh [OPTIONS] -h HOST_NAME [-n DM_NAME] [-p HOST_PORT]
+    sudo ./bin/install.sh [OPTIONS] -h DM_HOST_NAME [-n DM_NAME] [-p DM_HOST_PORT]
  
 OPTIONS:
     -c - configurate only (no prepare environment actions)
@@ -36,10 +36,10 @@ OPTIONS:
 
 Note:
  - **root permissions are required**
- - `HOST_NAME` parameter is required, value must be unique and match [A-Za-z0-9] pattern (by default use current folder's name)
+ - `DM_HOST_NAME` parameter is required, value must be unique and match [A-Za-z0-9] pattern (by default use current folder's name)
  - installation mode (`server`/`local`) will be detected automatically through analyzing `netstat` results for port `80` and either Apache installed
- - default `HOST_PORT` value is `80` so for `local` mode it's getting required for re-assign default value :)
- - port pointed at `HOST_PORT` value must be available 
+ - default `DM_HOST_PORT` value is `80` so for `local` mode it's getting required for re-assign default value :)
+ - port pointed at `DM_HOST_PORT` value must be available 
  - via using `-c` option you could use `install.sh` script for configuration purposes only and passing Docker environment installation
  
  
@@ -64,7 +64,7 @@ This script do:
 Process "init" includes: 
 - get Docker Manager settings
 - define project's name and all default variables and export them to `host.env` file and `environment` section of the `docker-compose.yml` file
-- if `HOST_PORT` isn't equal to `80` (so it's local environment) then add line `127.0.0.1        sub_project_name.your_docker_manager.dev-server.com` to the `/etc/hosts` file. ***Note*** require to root permissions
+- if `DM_HOST_PORT` isn't equal to `80` (so it's local environment) then add line `127.0.0.1        sub_project_name.your_docker_manager.dev-server.com` to the `/etc/hosts` file. ***Note*** require to root permissions
 - build chain of the docker-compose files
 - build Docker container (if need it) - via Docker Compose engine
 - start internal network for this project - via Docker Compose engine
@@ -109,12 +109,12 @@ Multiple mode (if option `-n` isn't defined):
 To exec command inside some container of your project you should use command:
 ```sh
 FORMAT:
-    ./dm exec PROJECT_NAME [PARAMS][-c COMMAND_WITH_PARAMS (default bash)]
+    ./dm exec DM_PROJECT [PARAMS][-c COMMAND [PARAMS] (default bash)]
     
 PARAMS:
-    -s - PROJECT_SERVICE_NAME (default app)
-    -i - PROJECT_SERVICE_INSTANCE_NAME (default 1)
-    -u - CONTAINER_USER_NAME (default "dm" user)
+    -s - DM_PROJECT_SERVICE_NAME (default app)
+    -i - DM_PROJECT_SERVICE_INSTANCE_NAME (default 1)
+    -u - DMC_USER (default "dm" user)
 ```
 
 
@@ -123,11 +123,11 @@ PARAMS:
 To inspect containers of your project you should use command:
 ```sh
 FORMAT:
-    ./dm inspect PROJECT_NAME [PARAMS] PROPERTY_NAME
+    ./dm inspect DM_PROJECT [PARAMS] PROPERTY_NAME
     
 PARAMS:
-    -s - PROJECT_SERVICE_NAME (default app)
-    -i - PROJECT_SERVICE_INSTANCE_NAME (default 1)
+    -s - DM_PROJECT_SERVICE_NAME (default app)
+    -i - DM_PROJECT_SERVICE_INSTANCE_NAME (default 1)
     
 PROPERTY_NAME:
     name    - return container's name

@@ -6,7 +6,7 @@
 #
 # This script starts all available docker container(s) and networks
 #
-# FORMAT: ./start.sh [-n PROJECT_NAME]
+# FORMAT: ./start.sh [-n DM_PROJECT]
 #-----------------------------------------------------------#
 
 # bin dir & require _common.sh
@@ -22,7 +22,7 @@ do
     case $key in
         -n)
             if [ ! -z "$2" ]; then
-                export PROJECT="$2"
+                export DM_PROJECT="$2"
             fi
             shift
             ;;
@@ -44,24 +44,24 @@ done
 DM_HOST_ENV_CONFIG="host.env"
 
 # get host user info
-HOST_USER_NAME="$( whoami )"
-HOST_USER_ID="$( id -u "${HOST_USER_NAME}" )"
+DM_HOST_USER_NAME="$( whoami )"
+DM_HOST_USER_ID="$( id -u "${DM_HOST_USER_NAME}" )"
 
 
 
 # include virtual host getter
-LOCAL_CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
+DM_LOCAL_CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
 source "$DM_BIN_DIR/_lib_config.sh"
 
 # docker manager name
-export DM_NAME="$(getConfig ${LOCAL_CONFIG_FILE} "name")"
+export DM_NAME="$(getConfig ${DM_LOCAL_CONFIG_FILE} "name")"
 
 # port at host which will be bind with docker network
-export DM_HOST_PORT="$(getConfig ${LOCAL_CONFIG_FILE} "host_port" "network")"
+export DM_HOST_PORT="$(getConfig ${DM_LOCAL_CONFIG_FILE} "host_port" "network")"
 
 # get tokens. Use at app's *.yml
-export GITHUB_TOKEN="$(getConfig "${DM_ROOT_DIR}/config/security/common.yml" "github" "tokens")"
-if [ -z "${GITHUB_TOKEN}" ]; then
+export DMB_APP_GITHUB_TOKEN="$(getConfig "${DM_ROOT_DIR}/config/security/common.yml" "github" "tokens")"
+if [ -z "${DMB_APP_GITHUB_TOKEN}" ]; then
     echo -e "${YELLOW}Warning:${NC} parameter ${YELLOW}tokens->github${NC} which could be used at one of projects wasn't defined at config file ${YELLOW}config/security/common.yml${NC}. Something could go wrong ...";
 fi
 
@@ -73,7 +73,7 @@ function startProject() {
     local _PROJECT_PREFIX="${DM_NAME}${DM_PROJECT_SPLITTER}${_PROJECT}"
 
     # check whether folder has docker-compose file
-    if [ -f "${DM_PROJECT_DIR}/${_PROJECT}/${DM_FILENAME}" ]; then
+    if [ -f "${DM_PROJECT_DIR}/${_PROJECT}/${DM_COMPOSE_FILENAME}" ]; then
         # check whether container doesn't run yet
         if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${_PROJECT_PREFIX}_")" ]; then
 
@@ -108,9 +108,9 @@ if [ -z "$(docker ps --format="{{ .Names }}" | grep "^${DM_NAME}_proxy_")" ]; th
     # setup domain's env settings
     touchVhostEnv "${DM_ROOT_DIR}/proxy"
     # build && up
-    DM_PROXY_COMPOSE="--file ${DM_ROOT_DIR}/proxy/${DM_FILENAME}"
-    if [ -f "${DM_ROOT_DIR}/proxy/${DM_FILENAME_LOCAL}" ]; then
-        DM_PROXY_COMPOSE="${DM_PROXY_COMPOSE} --file ${DM_ROOT_DIR}/proxy/${DM_FILENAME_LOCAL}"
+    DM_PROXY_COMPOSE="--file ${DM_ROOT_DIR}/proxy/${DM_COMPOSE_FILENAME}"
+    if [ -f "${DM_ROOT_DIR}/proxy/${DM_COMPOSE_FILENAME_LOCAL}" ]; then
+        DM_PROXY_COMPOSE="${DM_PROXY_COMPOSE} --file ${DM_ROOT_DIR}/proxy/${DM_COMPOSE_FILENAME_LOCAL}"
     fi
     docker-compose ${DM_PROXY_COMPOSE} --project-name ${DM_NAME} up -d --build
 fi
@@ -126,8 +126,8 @@ startProject 'main'
 cd ${DM_PROJECT_DIR}
 
 # single project
-if [ ! -z "${PROJECT}" ]; then
-    startProject "${PROJECT}"
+if [ ! -z "${DM_PROJECT}" ]; then
+    startProject "${DM_PROJECT}"
 
 # all projects
 else

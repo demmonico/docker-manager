@@ -7,11 +7,11 @@
 # This script returns information about containers
 #
 # FORMAT:
-#   ./inspect.sh PROJECT_NAME [PARAMS] PROPERTY_NAME
+#   ./inspect.sh DM_PROJECT [PARAMS] PROPERTY_NAME
 #
 # PARAMS:
-#   -s - PROJECT_SERVICE_NAME (default app)
-#   -i - PROJECT_SERVICE_INSTANCE_NAME (default 1)
+#   -s - DM_PROJECT_SERVICE_NAME (default app)
+#   -i - DM_PROJECT_SERVICE_INSTANCE_NAME (default 1)
 #
 #-----------------------------------------------------------#
 
@@ -24,33 +24,33 @@ source "${DM_BIN_DIR}/_common.sh"
 ### get arguments
 
 # project
-PROJECT=$1
-if [ -z "${PROJECT}" ]; then
+DM_PROJECT=$1
+if [ -z "${DM_PROJECT}" ]; then
     echo -e "${RED}Error:${NC} project's name is required"
     exit
 fi
 
 # params
-PROJECT_SERVICE_NAME='app'
-PROJECT_SERVICE_INSTANCE_NAME='1'
+DM_PROJECT_SERVICE_NAME='app'
+DM_PROJECT_SERVICE_INSTANCE_NAME='1'
 PROPERTY=''
 
 while [[ $# -gt 0 ]]
 do
     key="$1"
     case "${key}" in
-        "${PROJECT}")
+        "${DM_PROJECT}")
             # nothing do
             ;;
         -s)
             if [ ! -z "$2" ]; then
-                export PROJECT_SERVICE_NAME="$2"
+                export DM_PROJECT_SERVICE_NAME="$2"
             fi
             shift
             ;;
         -i)
             if [ ! -z "$2" ]; then
-                export PROJECT_SERVICE_INSTANCE_NAME="$2"
+                export DM_PROJECT_SERVICE_INSTANCE_NAME="$2"
             fi
             shift
             ;;
@@ -76,13 +76,13 @@ fi
 
 
 # include virtual host getter
-LOCAL_CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
+DM_LOCAL_CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
 source "${DM_BIN_DIR}/_lib_config.sh"
 
 # docker manager name
-DM_NAME="$(getConfig ${LOCAL_CONFIG_FILE} "name")"
+DM_NAME="$(getConfig ${DM_LOCAL_CONFIG_FILE} "name")"
 # docker container name
-CONTAINER="${DM_NAME}${DM_PROJECT_SPLITTER}${PROJECT}_${PROJECT_SERVICE_NAME}_${PROJECT_SERVICE_INSTANCE_NAME}"
+CONTAINER="${DM_NAME}${DM_PROJECT_SPLITTER}${DM_PROJECT}_${DM_PROJECT_SERVICE_NAME}_${DM_PROJECT_SERVICE_INSTANCE_NAME}"
 
 
 

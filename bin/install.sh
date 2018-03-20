@@ -7,7 +7,7 @@
 # This script install Docker Manager and settings up environment
 #
 # FORMAT:
-#   sudo ./install.sh [OPTIONS] -h HOST_NAME [-n DM_NAME] [-p HOST_PORT]
+#   sudo ./install.sh [OPTIONS] -h DM_HOST_NAME [-n DM_NAME] [-p DM_HOST_PORT]
 #
 # OPTIONS:
 #   -c - configurate only (no prepare environment actions)
@@ -35,7 +35,7 @@ DM_NAME=${DM_ROOT_DIR_NAME}
 
 
 ### get arguments
-HOST_PORT=80
+DM_HOST_PORT=80
 while [[ $# -gt 0 ]]
 do
     key="$1"
@@ -43,7 +43,7 @@ do
         -c) isConfigurateOnly='true';;
         -h|--host)
             if [ ! -z "$2" ]; then
-                HOST_NAME="$2"
+                DM_HOST_NAME="$2"
             fi
             shift
             ;;
@@ -55,7 +55,7 @@ do
             ;;
         -p|--port)
             if [ ! -z "$2" ]; then
-                HOST_PORT="$2"
+                DM_HOST_PORT="$2"
             fi
             shift
             ;;
@@ -67,15 +67,15 @@ do
         shift
 done
 
-# validate HOST_NAME
-if [ -z "${HOST_NAME}" ]; then
+# validate DM_HOST_NAME
+if [ -z "${DM_HOST_NAME}" ]; then
     echo -e "${RED}Error:${NC} empty host name (-h parameter)"
     exit
 fi
 
-# validate is HOST_PORT free
-if [ ! -z "$( netstat -ln | grep ":${HOST_PORT} " )" ]; then
-    echo -e "${RED}Error:${NC} port ${HOST_PORT} is busy"
+# validate is DM_HOST_PORT free
+if [ ! -z "$( netstat -ln | grep ":${DM_HOST_PORT} " )" ]; then
+    echo -e "${RED}Error:${NC} port ${DM_HOST_PORT} is busy"
     exit
 fi
 
@@ -99,13 +99,13 @@ done;
 
 ### generate config file
 echo -n -e "${BLUE}Info:${NC} ${GREEN}generating config file ... ${NC}";
-CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
-CONFIG_FILE_EXAMPLE="${DM_ROOT_DIR}/config/local-example.yml"
-sudo cp -p ${CONFIG_FILE_EXAMPLE} ${CONFIG_FILE}
-VARS=("DM_NAME" "HOST_NAME" "HOST_PORT")
+DM_CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
+DM_CONFIG_FILE_EXAMPLE="${DM_ROOT_DIR}/config/local-example.yml"
+sudo cp -p ${DM_CONFIG_FILE_EXAMPLE} ${DM_CONFIG_FILE}
+VARS=("DM_NAME" "DM_HOST_NAME" "DM_HOST_PORT")
 for VAR in "${VARS[@]}"
 do
-    sed -i "s|{{ ${VAR} }}|${!VAR}|g" ${CONFIG_FILE}
+    sed -i "s|{{ ${VAR} }}|${!VAR}|g" ${DM_CONFIG_FILE}
 done
 echo -e "${GREEN}done${NC}";
 
@@ -127,28 +127,28 @@ isLocalEnv="$([ ! -z "$( netstat -ln | grep ":80 " )" ] && [ ! -z "$( dpkg --get
 if [ ! -z "${isLocalEnv}" ]; then
 
     # check for www placement
-    if [ "${DM_ROOT_DIR}" == "/var/www/${HOST_NAME}" ]; then
+    if [ "${DM_ROOT_DIR}" == "/var/www/${DM_HOST_NAME}" ]; then
         echo -e "${BLUE}Info:${NC} web-server Apache detected. Start configure Apache to make website available";
 
         # set apache site config
         echo -n -e "${BLUE}Info:${NC} writing Apache config ... ";
         (
             echo "<VirtualHost *:80>";
-            echo "    ServerName ${HOST_NAME}";
-            echo "    ServerAlias *.${HOST_NAME}";
+            echo "    ServerName ${DM_HOST_NAME}";
+            echo "    ServerAlias *.${DM_HOST_NAME}";
             echo "    DocumentRoot ${DM_ROOT_DIR}";
             echo "    ";
             echo "    RewriteEngine On";
             echo "    ";
             echo "    ProxyPreserveHost On";
             echo "    UseCanonicalName On";
-            echo "    ProxyPass / http://0.0.0.0:${HOST_PORT}/";
-            echo "    ProxyPassReverse / http://0.0.0.0:${HOST_PORT}/";
+            echo "    ProxyPass / http://0.0.0.0:${DM_HOST_PORT}/";
+            echo "    ProxyPassReverse / http://0.0.0.0:${DM_HOST_PORT}/";
             echo "    ";
             echo "    ErrorLog ${DM_ROOT_DIR}/log/error.log";
             echo "    CustomLog ${DM_ROOT_DIR}/log/access.log combined";
             echo "</VirtualHost>";
-        ) | tee /etc/apache2/sites-available/${HOST_NAME}.conf >/dev/null 2>&1;
+        ) | tee /etc/apache2/sites-available/${DM_HOST_NAME}.conf >/dev/null 2>&1;
         echo -e "${GREEN}done${NC}";
 
         # config apache
@@ -173,14 +173,14 @@ if [ ! -z "${isLocalEnv}" ]; then
             echo "127.0.0.1        ${SITENAME}" | sudo tee -a /etc/hosts >/dev/null 2>&1;
         }
         # update main host
-        if ! grep -q "127.0.0.1        ${HOST_NAME}" /etc/hosts
+        if ! grep -q "127.0.0.1        ${DM_HOST_NAME}" /etc/hosts
         then
-            updateHostsFile "${HOST_NAME}"
+            updateHostsFile "${DM_HOST_NAME}"
         fi
         # update sud-domains
         for PROJECT in $( find "${DM_PROJECT_DIR}" -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | sort )
         do
-            updateHostsFile "${PROJECT%%/}.${HOST_NAME}"
+            updateHostsFile "${PROJECT%%/}.${DM_HOST_NAME}"
         done
         echo -e "${GREEN}done${NC}";
     fi
@@ -193,7 +193,7 @@ fi
 
 ### install software
 
-VERSION_DOCKER_COMPOSE=${VERSION_DOCKER_COMPOSE:-'1.17.0'}
+DMI_VERSION_DOCKER_COMPOSE=${DMI_VERSION_DOCKER_COMPOSE:-'1.17.0'}
 echo -e "${BLUE}Info:${NC} updating repositories ... "
 sudo apt-get update
 echo -e "${BLUE}Info:${NC} install software ... "
@@ -222,7 +222,7 @@ echo -e "${BLUE}Info:${NC} install software ... "
         } \
     } && \
 { command -v docker-compose > /dev/null 2>&1 && echo -e "${BLUE}Info:${NC} ${GREEN}docker-compose${NC} is already installed"; } || { \
-    sudo curl -L https://github.com/docker/compose/releases/download/${VERSION_DOCKER_COMPOSE}/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && \
+    sudo curl -L https://github.com/docker/compose/releases/download/${DMI_VERSION_DOCKER_COMPOSE}/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && \
     sudo chmod +x /usr/local/bin/docker-compose; \
 }
 
@@ -259,11 +259,11 @@ fi
 # add bash completions for script wrapper
 
 BASH_COMPLETIONS_DIR='/etc/bash_completion.d'
-BASH_COMPLETIONS_LINK="${BASH_COMPLETIONS_DIR}/dm"
-BASH_COMPLETIONS_FILE="${DM_BIN_DIR}/_bash_completions.sh"
-if [ -d "${BASH_COMPLETIONS_DIR}" ] && [ ! -L "${BASH_COMPLETIONS_LINK}" ] && [ -f "${BASH_COMPLETIONS_FILE}" ]; then
+BASH_COMPLETIONS_FILE="${BASH_COMPLETIONS_DIR}/dm"
+BASH_COMPLETIONS_SOURCE="${DM_BIN_DIR}/_bash_completions.sh"
+if [ -d "${BASH_COMPLETIONS_DIR}" ] && [ ! -L "${BASH_COMPLETIONS_FILE}" ] && [ -f "${BASH_COMPLETIONS_SOURCE}" ]; then
     echo -e "${BLUE}Info:${NC} creating symlink for bash completions ... ";
-    sudo ln -s ${BASH_COMPLETIONS_FILE} ${BASH_COMPLETIONS_LINK}
+    sudo ln -s ${BASH_COMPLETIONS_SOURCE} ${BASH_COMPLETIONS_FILE}
 fi
 
 #-----------------------------------------------------------#
@@ -273,7 +273,7 @@ fi
 # finish
 echo "";
 echo -e "${GREEN}All done.${NC}";
-echo -e "${GREEN}Now you${NC} ${YELLOW}should logout${NC} ${GREEN}then${NC} ${YELLOW}after login run ./dm start command${NC} ${GREEN}and then you could see your projects from Docker Manager as${NC} ${YELLOW}http://${HOST_NAME}/${NC} ${GREEN}and sub-domains${NC}";
-echo -e "${BLUE}Info: ${NC} to create new project just create unique ${YELLOW}projects/PROJECT_NAME/docker-compose.yml${NC} file. For more info visit ${YELLOW}https://github.com/demmonico/docker-manager${NC}";
+echo -e "${GREEN}Now you${NC} ${YELLOW}should logout${NC} ${GREEN}then${NC} ${YELLOW}after login run ./dm start command${NC} ${GREEN}and then you could see your projects from Docker Manager as${NC} ${YELLOW}http://${DM_HOST_NAME}/${NC} ${GREEN}and sub-domains${NC}";
+echo -e "${BLUE}Info: ${NC} to create new project just create unique ${YELLOW}projects/DM_PROJECT/docker-compose.yml${NC} file. For more info visit ${YELLOW}https://github.com/demmonico/docker-manager${NC}";
 echo -e "${GREEN}Have a nice day :)${NC}";
 echo "";

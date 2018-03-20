@@ -2,6 +2,7 @@
 
 - [x] TODO add env var upload_max_filesize etc (php, apache)
 - [x] TODO docker-compose inheritance
+- [x] TODO prefixing, refactor env vars and folder names
 - add CLI command wrapper `dm` for `bin/*` scripts with completions
 - move `bin/*` scripts detailed info to the separate file to provide CLI help
 - change CLI commands colors scheme

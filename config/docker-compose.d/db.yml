@@ -12,7 +12,7 @@ services:
   db:
     volumes:
       # shared
-      - ./shared:/docker-shared
+      - ./shared:/dm-shared
       # db tables
       - ./db/data:/var/lib/mysql
     env_file:

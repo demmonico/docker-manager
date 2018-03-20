@@ -5,10 +5,10 @@
 # @package: https://github.com/demmonico/docker-manager
 #
 # This script stops docker container(s) and unused networks
-# If PROJECT_NAME doesn't exists then script will stop all exists containers and unused networks
+# If DM_PROJECT doesn't exists then script will stop all exists containers and unused networks
 #
 # FORMAT:
-#   ./stop.sh [OPTIONS] [-n PROJECT_NAME]
+#   ./stop.sh [OPTIONS] [-n DM_PROJECT]
 #
 # OPTIONS:
 #   -c - remove containers after they stops
@@ -32,7 +32,7 @@ do
         -f) isForceMode='-f';;
         -n)
             if [ ! -z "$2" ]; then
-                export PROJECT="$2"
+                export DM_PROJECT="$2"
             fi
             shift
             ;;
@@ -47,24 +47,24 @@ done
 
 
 # include virtual host getter
-LOCAL_CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
+DM_LOCAL_CONFIG_FILE="${DM_ROOT_DIR}/config/local.yml"
 source "$DM_BIN_DIR/_lib_config.sh"
 
 # docker manager name
-export DM_NAME="$(getConfig ${LOCAL_CONFIG_FILE} "name")"
+export DM_NAME="$(getConfig ${DM_LOCAL_CONFIG_FILE} "name")"
 
 
 
 # HOTFIX warning
-export GITHUB_TOKEN=""
+export DMB_APP_GITHUB_TOKEN=""
 
 
 
 # one/all processing
-if [ ! -z "${PROJECT}" ]
+if [ ! -z "${DM_PROJECT}" ]
 then
     # if project exists
-    if [ -d "${DM_PROJECT_DIR}/${PROJECT}" ]
+    if [ -d "${DM_PROJECT_DIR}/${DM_PROJECT}" ]
     then
         # remove all
         if [ ! -z "${isRemoveAll}" ]
@@ -79,10 +79,10 @@ then
             COMMAND='stop'
         fi
 
-        docker-compose $( buildComposeFilesLine ${DM_PROJECT_DIR}/${PROJECT} ) \
-            --project-name "${DM_NAME}${DM_PROJECT_SPLITTER}${PROJECT}" ${COMMAND}
+        docker-compose $( buildComposeFilesLine ${DM_PROJECT_DIR}/${DM_PROJECT} ) \
+            --project-name "${DM_NAME}${DM_PROJECT_SPLITTER}${DM_PROJECT}" ${COMMAND}
     else
-        echo "Invalid project - ${PROJECT}"
+        echo "Invalid project - ${DM_PROJECT}"
     fi
 else
     cd "${DM_ROOT_DIR}"

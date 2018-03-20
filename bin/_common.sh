@@ -30,9 +30,9 @@ DM_PROJECT_SPLITTER='000'
 
 
 # docker compose filename
-DM_FILENAME="docker-compose.yml"
-DM_FILENAME_OVERRIDE="docker-compose.override.yml"
-DM_FILENAME_LOCAL="docker-compose.local.yml"
+DM_COMPOSE_FILENAME="docker-compose.yml"
+DM_COMPOSE_FILENAME_OVERRIDE="docker-compose.override.yml"
+DM_COMPOSE_FILENAME_LOCAL="docker-compose.local.yml"
 
 function buildComposeFilesLine()
 {
@@ -40,10 +40,11 @@ function buildComposeFilesLine()
 
     # pre-defined compose files
     local DM_COMMON_COMPOSE_DIR="${DM_ROOT_DIR}/config/docker-compose.d"
-    local FILES="--file ${PROJECT_DIR}/${DM_FILENAME} --file ${DM_COMMON_COMPOSE_DIR}/networks.yml"
+    local FILES="--file ${PROJECT_DIR}/${DM_COMPOSE_FILENAME} --file ${DM_COMMON_COMPOSE_DIR}/networks.yml"
 
     # additional common used compose files
-    local DM_PROJECT_COMPOSE_CONFIG=$( cat ${PROJECT_DIR}/${DM_FILENAME} )
+    local DM_PROJECT_COMPOSE_CONFIG=$( cat ${PROJECT_DIR}/${DM_COMPOSE_FILENAME} )
+    local FILENAME
     for FILE in $( find ${DM_COMMON_COMPOSE_DIR} -type f -iname '*.yml' ! -name 'networks.yml' )
     do
         FILENAME=$( basename "${FILE}" )
@@ -55,13 +56,13 @@ function buildComposeFilesLine()
     done
     
     # add override yml file
-    if [ -f "${PROJECT_DIR}/${DM_FILENAME_OVERRIDE}" ]; then
-        FILES="${FILES} --file ${PROJECT_DIR}/${DM_FILENAME_OVERRIDE}"
+    if [ -f "${PROJECT_DIR}/${DM_COMPOSE_FILENAME_OVERRIDE}" ]; then
+        FILES="${FILES} --file ${PROJECT_DIR}/${DM_COMPOSE_FILENAME_OVERRIDE}"
     fi
     
     # add local yml file
-    if [ -f "${PROJECT_DIR}/${DM_FILENAME_LOCAL}" ]; then
-        FILES="${FILES} --file ${PROJECT_DIR}/${DM_FILENAME_LOCAL}"
+    if [ -f "${PROJECT_DIR}/${DM_COMPOSE_FILENAME_LOCAL}" ]; then
+        FILES="${FILES} --file ${PROJECT_DIR}/${DM_COMPOSE_FILENAME_LOCAL}"
     fi
 
     echo ${FILES}

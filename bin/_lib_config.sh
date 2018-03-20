@@ -23,7 +23,7 @@ function getConfig() {
     eval "$(${YAML_PARSER_FILE} ${YAML_CONFIG_FILE} ${PREFIX})"
 
     CATEGORY_NAME=${CATEGORY_NAME:+"${CATEGORY_NAME}_"}
-    PARAM_FULL_NAME="${PREFIX}${CATEGORY_NAME}${PARAM_NAME}"
+    local PARAM_FULL_NAME="${PREFIX}${CATEGORY_NAME}${PARAM_NAME}"
     # tune for array values
     if [ ! -z "${!PARAM_FULL_NAME}" ] && [[ "$(declare -p ${PARAM_FULL_NAME})" =~ "declare -a" ]]; then
         PARAM_FULL_NAME="${PARAM_FULL_NAME}[@]"
@@ -89,21 +89,21 @@ function touchVhostEnv() {
 
     if [ ! -f ${_ENV_FILE} ]; then
         # virtual hosts
-        local VIRTUAL_HOST="$(getVhostsEnv "${LOCAL_CONFIG_FILE}" "${_PROJECT_NAME}")"
-        if [ -z ${VIRTUAL_HOST} ]; then echo -e "${RED}Error: file ${LOCAL_CONFIG_FILE} with domain settings is absent!${NC}" 1>&2; exit 1; fi
+        local VIRTUAL_HOST="$(getVhostsEnv "${DM_LOCAL_CONFIG_FILE}" "${_PROJECT_NAME}")"
+        if [ -z ${VIRTUAL_HOST} ]; then echo -e "${RED}Error: file ${DM_LOCAL_CONFIG_FILE} with domain settings is absent!${NC}" 1>&2; exit 1; fi
         echo ${VIRTUAL_HOST} > ${_ENV_FILE}
         # project name
-        echo "PROJECT=${_PROJECT_NAME:-main}" >> ${_ENV_FILE}
+        echo "DM_PROJECT=${_PROJECT_NAME:-main}" >> ${_ENV_FILE}
         # script's owner name
-        echo "HOST_USER_NAME=${HOST_USER_NAME}" >> ${_ENV_FILE}
+        echo "DM_HOST_USER_NAME=${DM_HOST_USER_NAME}" >> ${_ENV_FILE}
         # script's owner ID
-        echo "HOST_USER_ID=${HOST_USER_ID}" >> ${_ENV_FILE}
+        echo "DM_HOST_USER_ID=${DM_HOST_USER_ID}" >> ${_ENV_FILE}
     fi
 
     # check for virtual hosts accessible at /etc/hosts whether local environment
     if [ "${DM_HOST_PORT}" != "80" ]; then
         if [ -z "${VIRTUAL_HOST}" ]; then
-            local VIRTUAL_HOST="$(getVhostsEnv "${LOCAL_CONFIG_FILE}" "${_PROJECT_NAME}")"
+            local VIRTUAL_HOST="$(getVhostsEnv "${DM_LOCAL_CONFIG_FILE}" "${_PROJECT_NAME}")"
         fi
         VIRTUAL_HOST="$( echo "${VIRTUAL_HOST}" | sed 's/VIRTUAL_HOST=//g'  )"
         local VIRTUAL_HOST_STRING="127.0.0.1        ${VIRTUAL_HOST}"

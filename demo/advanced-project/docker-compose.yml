@@ -10,7 +10,7 @@ services:
 
   app:
     build:
-     # image's sources should be placed at PROJECT_NAME/app/dockerfiles or images/IMAGE_NAME folder
+     # image's sources should be placed at DM_PROJECT/app/dockerfiles or images/IMAGE_NAME folder
      context: ./app/dockerfiles
     # [optional] customize container's name. Should be unique throught all docker containers from all projects.
     container_name: app-advanced
@@ -19,7 +19,7 @@ services:
       # webapp code
       #- ./app/src:/var/www/html
       # [optional] shared folder between all project's containers (e.g. for collect logs etc.)
-      #- ./shared:/docker-shared
+      #- ./shared:/dm-shared
       # [optional] ssh keys for git (ssh keys should be placed at config/security/ssh-keys folder)
       # - ../../config/security/ssh-keys:/root/.ssh:ro
     networks:
@@ -32,15 +32,15 @@ services:
       # create alias for DB container (db container name : internal alias at app container)
       - db:db
     #env_file:
-      # generates automatically. Provides values for ENV variables VIRTUAL_HOST, PROJECT, HOST_USER_NAME, HOST_USER_ID
+      # generates automatically. Provides values for ENV variables VIRTUAL_HOST, DM_PROJECT, DM_HOST_USER_NAME, DM_HOST_USER_ID
       # we don't need to define this cause it will be auto define at the config/docker-compose.d/app.yml
       #- host.env
     environment:
       # alias name of internal DB host
       - DB_HOST=db
       # [optional] repository info for automatical update while start container
-      #- REPOSITORY=git@bitbucket.org:some_repo.git
-      #- REPO_BRANCH=master
+      #- DM_REPOSITORY=git@bitbucket.org:some_repo.git
+      #- DM_REPO_BRANCH=master
     logging:
       driver: none
     # we don't need to define this cause it will be auto define at the config/docker-compose.d/app.yml
@@ -60,7 +60,7 @@ services:
       - internal
     # we don't need to define this cause it will be auto define at the config/docker-compose.d/db.yml
     #env_file:
-      # generates automatically. Provides values for ENV variables VIRTUAL_HOST, PROJECT, HOST_USER_NAME, HOST_USER_ID
+      # generates automatically. Provides values for ENV variables VIRTUAL_HOST, DM_PROJECT, DM_HOST_USER_NAME, DM_HOST_USER_ID
       #- host.env
     #environment:
       # [optional] db name (default sets to project's name)
