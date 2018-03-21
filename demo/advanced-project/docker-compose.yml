@@ -37,7 +37,7 @@ services:
       #- host.env
     environment:
       # alias name of internal DB host
-      - DB_HOST=db
+      - DMC_DB_SERVICE=db
       # [optional] repository info for automatical update while start container
       #- DM_REPOSITORY=git@bitbucket.org:some_repo.git
       #- DM_REPO_BRANCH=master
@@ -64,7 +64,7 @@ services:
       #- host.env
     #environment:
       # [optional] db name (default sets to project's name)
-      #- DB_NAME=test
+      #- DMC_DB_SERVICE=test
     logging:
       driver: none
     # we don't need to define this cause it will be auto define at the config/docker-compose.d/db.yml

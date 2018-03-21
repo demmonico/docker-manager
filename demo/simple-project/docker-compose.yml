@@ -18,7 +18,7 @@ services:
       - db:db
     environment:
       # alias name of internal DB host
-      - DB_HOST=db
+      - DMC_DB_SERVICE=db
 
   db:
     image: demmonico/ubuntu-mariadb:10.1
