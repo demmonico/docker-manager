@@ -102,8 +102,8 @@ projects/                           contains docker containers for all virtual h
 |   |   |   |   |   |-- uc.php      dummy's php code
 |   |   |   |   |-- custom.sh       additional custom run script
 |   |   |   |   |-- custom_once.sh  additional custom run_once script
-|   |   |   |   |-- run.sh          script runs each time when Docker container starts
-|   |   |   |   |-- run_once.sh     script runs once when Docker container starts at first time
+|   |   |   |   |-- run.sh          BUILD_IN script runs each time when Docker container starts (already exists inside image)
+|   |   |   |   |-- run_once.sh     BUILD_IN script runs once when Docker container starts at first time (already exists inside image)
 |   |   |   |   |-- ...
 |   |   |   |-- Dockerfile          contains Docker's build/run params
 |   |   |   |-- supervisord.conf    supervisord's config file for container
@@ -524,12 +524,36 @@ For overriding project's config purposes you could use internal order of binding
 
 ### Environment variables
 
+Using environment variables you could drive many processes in all stages of the container's life. 
+All DM's environment variables are prefixed due to the follow rules:
+- `DM_`  - common used DM env var
+- `DMB_` - DM env var used at the `build` stage
+- `DMC_` - DM env var used inside the container
+
 You can pass environment variables inside your container through the:
 - when project runs first then file `PROJECT_FOLDER/host.env` is created automatically. It contains default environments variables. You could include this file at `env_file` section at the `docker-compose.yml` file
 - you could pass environment variables via `docker-compose.yml` file using `environment` section
 - you could define any environment variable at your custom Dockerfile
 
-Using environment variables you could drive your container's settings, for example:
+To run custom commands while container build/start you could use special custom env variables within custom scripts:
+- DMC_CUSTOM_RUN_COMMAND (eval every time when container starts)
+- DMC_CUSTOM_RUNONCE_COMMAND (eval once when container creates)
+  
+```sh
+# create file under user dm every time when container starts
+- DMC_CUSTOM_RUN_COMMAND=sudo -u dm bash -c "touch /tmp/run"
+ 
+# create file once when container creates (under user root by defaults)
+- DMC_CUSTOM_RUNONCE_COMMAND=bash -c "touch /tmp/runonce"
+ 
+# add another local domain to inner /etc/hosts file
+- DMC_CUSTOM_RUN_COMMAND=bash -c "echo 172.18.0.3 local.example.loc >> /etc/hosts"
+ 
+# add another local domain (which running at the container named dm000main_app_1) to inner /etc/hosts file
+- DMC_CUSTOM_RUN_COMMAND=bash -c `echo "$$( getent hosts dc000main_app_1 | awk '{ print $$1 }' ) dc" >> /etc/hosts`
+```
+
+To drive your settings of the internal application's PHP service:
 - DMC_APP_APACHE_UPLOADMAXFILESIZE - PHP's `upload_max_filesize` param (auto-adjust following param too)
 - DMC_APP_APACHE_POSTMAXSIZE - PHP's `post_max_size` param (auto-adjust following param too)
 - DMC_APP_APACHE_MEMORYLIMIT - PHP's `memory_limit` param (auto-validate free memory)

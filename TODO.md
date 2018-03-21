@@ -2,16 +2,17 @@
 - [x] TODO docker-compose inheritance
 - [x] TODO prefixing, refactor env vars and folder names
 - [x] TODO RF start/stop/install scripts format
-- [ ] TODO re-build app images
+- [x] TODO re-build app images
 - [ ] TODO apply changes due to app image at moodle, nginx images and rebuild them
 - [ ] TODO check DB fail auto-create DB on run once
 - [ ] TODO db container permissions
 - [ ] TODO re-build db containers
+- [ ] TODO quick installation guide
 - [ ] TODO mail
 - [ ] TODO SSL
 - [ ] TODO service discovery + DNS
 - [ ] TODO collect logs
-- [ ] TODO add download dummy by URL
 - [ ] TODO secrets storage
 - [ ] TODO overlay network & support Docker swarm mode
 - [ ] TODO GUI for management projects/containers
+- [ ] TODO add download dummy by URL
