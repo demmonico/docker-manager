@@ -118,5 +118,5 @@ else
     done
 
     # exec COMMAND
-    docker exec -ti --user ${DMC_USER} ${CONTAINER} ${COMMAND}
+    docker exec -ti -e DMC_EXEC_NAME=${CONTAINER} --user ${DMC_USER} ${CONTAINER} ${COMMAND}
 fi

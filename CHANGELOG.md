@@ -5,6 +5,7 @@
 - [x] TODO prefixing, refactor env vars and folder names
 - [x] TODO RF start/stop/install scripts format
 - [x] TODO re-build app images
+- [x] TODO check DB fail auto-create DB on run once
  
 - add CLI command wrapper `dm` for `bin/*` scripts with completions
 - move `bin/*` scripts detailed info to the separate file to provide CLI help
@@ -16,6 +17,7 @@
 - add pre-defined command aliases at the `config/local-example.yml` file
 - move common networks settings from `proxy/common-network.yml` to `config/docker-compose.d/networks.yml`
 - add env var `DMC_CUSTOM_RUN_COMMAND` and `DMC_CUSTOM_RUNONCE_COMMAND`
+- add env var `DMC_EXEC_NAME`
  
 
 # 0.4.0 (2018-03-09)
