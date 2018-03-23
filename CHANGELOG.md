@@ -1,4 +1,4 @@
-# 0.5.0-alpha (2018-03-21)
+# 0.5.0-alpha (2018-03-22)
 
 - [x] TODO add env var `upload_max_filesize` etc (php, apache)
 - [x] TODO docker-compose inheritance
@@ -6,6 +6,8 @@
 - [x] TODO RF start/stop/install scripts format
 - [x] TODO re-build app images
 - [x] TODO check DB fail auto-create DB on run once
+- [x] TODO db container permissions
+- [x] TODO re-build db containers
  
 - add CLI command wrapper `dm` for `bin/*` scripts with completions
 - move `bin/*` scripts detailed info to the separate file to provide CLI help
@@ -17,7 +19,11 @@
 - add pre-defined command aliases at the `config/local-example.yml` file
 - move common networks settings from `proxy/common-network.yml` to `config/docker-compose.d/networks.yml`
 - add env var `DMC_CUSTOM_RUN_COMMAND` and `DMC_CUSTOM_RUNONCE_COMMAND`
+- add default `dm` user when use `./dm exec`
 - add env var `DMC_EXEC_NAME`
+- FIX `mysqladmin` fail linked with `sock` file
+- FIX `mysql` user permissions via set UID from `DM_USER`
+- add env var `DMC_DB_FILES_DIR`
  
 
 # 0.4.0 (2018-03-09)

@@ -5,8 +5,8 @@
 - [x] TODO re-build app images
 - [x] TODO apply changes due to app image at moodle, nginx images and rebuild them
 - [x] TODO check DB fail auto-create DB on run once
-- [ ] TODO re-build db containers
-- [ ] TODO db container permissions
+- [x] TODO db container permissions
+- [x] TODO re-build db containers
 - [ ] TODO quick installation guide
 - [ ] TODO mail
 - [ ] TODO SSL
