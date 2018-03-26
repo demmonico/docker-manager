@@ -101,21 +101,35 @@ if [ -z "$(docker ps --format="{{ .Names }}" | grep "${CONTAINER}")" ]; then
     echo -e "${RED}Error:${NC} no running containers named \"${CONTAINER}\""
     exit 1
 else
-    # check whether COMMAND is pre-defined cmd_alias
-    readarray -t COMMAND_ALIASES <<<"$(getConfig ${DM_LOCAL_CONFIG_FILE} 'cmd_aliases' 'container')"
-    for ALIAS in "${COMMAND_ALIASES[@]}"
-    do
-        ALIAS_NAME="$( echo "${ALIAS}" | sed -r 's/=.+$//' )"
-        ALIAS_CMD="$( echo "${ALIAS}" | sed -r 's/^.+=//' )"
-        # validate alias
-        if [ ! -z "${ALIAS_NAME}" ] && [ ! -z "${ALIAS_NAME}" ]; then
-            # if match then replace alias with real command
-            if [ "${COMMAND}" == "${ALIAS_NAME}" ]; then
-                COMMAND="${ALIAS_CMD}"
-                break
-            fi
+
+    # check whether COMMAND is pre-defined cmd_alias (is prefixed with lib/ and which related script exists in DMC_INSTALL_DIR prefixed with exec_cmd_)
+    if [[ "${COMMAND}" =~ ^lib//* ]]; then
+        CMD_SCRIPT_NAME="exec_cmd_$( echo "${COMMAND}" | sed 's#lib/##g' | sed 's#/#_#g' | sed -E 's#^([A-Za-z0-9_]+)[[:space:]]*.*$#\1#g' ).sh"
+        FIND_COMMAND="find \"\${DMC_INSTALL_DIR}\" -type f -iname \"${CMD_SCRIPT_NAME}\""
+        LIB_SCRIPT="$( docker exec ${CONTAINER} bash -c "${FIND_COMMAND}" | head -n 1 )"
+        if [ -z "${LIB_SCRIPT}" ]; then
+            echo -e "${RED}Error:${NC} lib command ${YELLOW}${CMD_SCRIPT_NAME}${NC} was no found at \"${CONTAINER}\""
+            exit 1
         fi
-    done
+        LIB_SCRIPT_PARAMS="$( echo "${COMMAND}" | sed 's#/#_#g' | sed -E 's#^[A-Za-z0-9_]+[[:space:]]*(.*)$#\1#g' )"
+        COMMAND="${LIB_SCRIPT} ${LIB_SCRIPT_PARAMS}"
+    else
+        # check whether COMMAND is pre-configured cmd_alias
+        readarray -t COMMAND_ALIASES <<<"$(getConfig ${DM_LOCAL_CONFIG_FILE} 'cmd_aliases' 'container')"
+        for ALIAS in "${COMMAND_ALIASES[@]}"
+        do
+            ALIAS_NAME="$( echo "${ALIAS}" | sed -r 's/=.+$//' )"
+            ALIAS_CMD="$( echo "${ALIAS}" | sed -r 's/^.+=//' )"
+            # validate alias
+            if [ ! -z "${ALIAS_NAME}" ] && [ ! -z "${ALIAS_NAME}" ]; then
+                # if match then replace alias with real command
+                if [ "${COMMAND}" == "${ALIAS_NAME}" ]; then
+                    COMMAND="${ALIAS_CMD}"
+                    break
+                fi
+            fi
+        done
+    fi
 
     # exec COMMAND
     docker exec -ti -e DMC_EXEC_NAME=${CONTAINER} --user ${DMC_USER} ${CONTAINER} ${COMMAND}
