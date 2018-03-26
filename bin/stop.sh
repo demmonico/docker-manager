@@ -11,7 +11,7 @@
 #   ./stop.sh [OPTIONS] [DM_PROJECT]
 #
 # OPTIONS:
-#   -c - remove containers after they stops
+#   -c - remove containers after they stops (always started from HOTFIX)
 #   -a - remove all containers and all images after they stops
 #   -f - forced mode (see Docker documentation)
 #-----------------------------------------------------------#
@@ -56,6 +56,10 @@ export DM_NAME="$(getConfig ${DM_LOCAL_CONFIG_FILE} "name")"
 
 # HOTFIX warning
 export DMB_APP_GITHUB_TOKEN=""
+
+# TODO-dep remove -c option at all
+# HOTFIX related to docker compose error when stop-start containers using several compose files
+[ -z "${isRemoveAll}" ] && [ -z "${isRemoveContainers}" ] && isRemoveContainers='true'
 
 
 
