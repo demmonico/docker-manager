@@ -92,7 +92,11 @@ source "${DM_BIN_DIR}/_lib_config.sh"
 # docker manager name
 DM_NAME="$(getConfig ${DM_LOCAL_CONFIG_FILE} "name")"
 # docker container name
-CONTAINER="${DM_NAME}${DM_PROJECT_SPLITTER}${DM_PROJECT}_${DM_PROJECT_SERVICE_NAME}_${DM_PROJECT_SERVICE_INSTANCE_NAME}"
+if [ "${DM_PROJECT}" == "${DM_NAME}_proxy" ]; then
+    CONTAINER="${DM_NAME}_proxy_${DM_PROJECT_SERVICE_INSTANCE_NAME}"
+else
+    CONTAINER="${DM_NAME}${DM_PROJECT_SPLITTER}${DM_PROJECT}_${DM_PROJECT_SERVICE_NAME}_${DM_PROJECT_SERVICE_INSTANCE_NAME}"
+fi
 
 
 
@@ -132,5 +136,7 @@ else
     fi
 
     # exec COMMAND
-    docker exec -ti -e DMC_EXEC_NAME=${CONTAINER} --user ${DMC_USER} ${CONTAINER} ${COMMAND}
+    docker exec -ti -e DMC_EXEC_NAME=${CONTAINER} --user ${DMC_USER} \
+        -e COLUMNS=`tput cols` -e LINES=`tput lines` \
+        ${CONTAINER} ${COMMAND}
 fi
