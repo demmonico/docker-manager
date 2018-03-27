@@ -57,10 +57,6 @@ export DM_NAME="$(getConfig ${DM_LOCAL_CONFIG_FILE} "name")"
 # HOTFIX warning
 export DMB_APP_GITHUB_TOKEN=""
 
-# TODO-dep remove -c option at all
-# HOTFIX related to docker compose error when stop-start containers using several compose files
-[ -z "${isRemoveAll}" ] && [ -z "${isRemoveContainers}" ] && isRemoveContainers='true'
-
 
 
 # one/all processing
@@ -126,4 +122,7 @@ fi;
 
 
 # remove all unused networks
-docker network prune -f
+# do not run this cause an error related with stop-start containers based on multi docker-compose files
+if [ ! -z "${isRemoveAll}" ] || [ ! -z "${isRemoveContainers}" ]; then
+    docker network prune -f
+fi
