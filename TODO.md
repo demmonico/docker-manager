@@ -7,9 +7,9 @@
 - [x] TODO check DB fail auto-create DB on run once
 - [x] TODO db container permissions
 - [x] TODO re-build db containers
+- [x] TODO SSL
 - [ ] TODO quick installation guide
 - [ ] TODO mail
-- [ ] TODO SSL
 - [ ] TODO service discovery + DNS
 - [ ] TODO collect logs
 - [ ] TODO secrets storage

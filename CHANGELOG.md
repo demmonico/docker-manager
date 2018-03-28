@@ -1,4 +1,4 @@
-# 0.5.0-alpha (2018-03-22)
+# 0.5.0-alpha (2018-03-28)
 
 - [x] TODO add env var `upload_max_filesize` etc (php, apache)
 - [x] TODO docker-compose inheritance
@@ -8,6 +8,7 @@
 - [x] TODO check DB fail auto-create DB on run once
 - [x] TODO db container permissions
 - [x] TODO re-build db containers
+- [x] TODO SSL
  
 - add CLI command wrapper `dm` for `bin/*` scripts with completions
 - move `bin/*` scripts detailed info to the separate file to provide CLI help
@@ -24,6 +25,7 @@
 - FIX `mysqladmin` fail linked with `sock` file
 - FIX `mysql` user permissions via set UID from `DM_USER`
 - add env var `DMC_DB_FILES_DIR`
+- add SSL sert support and HTTP Basic Auth support
  
 
 # 0.4.0 (2018-03-09)

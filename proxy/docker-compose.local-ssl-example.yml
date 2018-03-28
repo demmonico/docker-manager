@@ -1,0 +1,17 @@
+# Project structure file
+#
+# @project maintenance
+# @author demmonico
+# @version v0.1.0
+
+version: '3'
+
+services:
+  proxy:
+    ports:
+      - "443:443"
+    volumes:
+      # bind SSL sertificats
+      - /home/dep/Documents/ssl:/etc/nginx/certs
+      # bind passwords for HTTP Basic Auth
+      - /home/dep/Documents/htpasswd/.htpasswd:/etc/nginx/htpasswd/dc:ro
