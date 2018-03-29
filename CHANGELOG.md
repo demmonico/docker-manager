@@ -20,12 +20,20 @@
 - add pre-defined command aliases at the `config/local-example.yml` file
 - move common networks settings from `proxy/common-network.yml` to `config/docker-compose.d/networks.yml`
 - add env var `DMC_CUSTOM_RUN_COMMAND` and `DMC_CUSTOM_RUNONCE_COMMAND`
+- add env vars for updating PHP limits (image-php)
+- add default `root` user password (images)
+- add default `dm` user to make `docker exec` under no-root user by default (images)
 - add default `dm` user when use `./dm exec`
 - add env var `DMC_EXEC_NAME`
-- FIX `mysqladmin` fail linked with `sock` file
-- FIX `mysql` user permissions via set UID from `DM_USER`
+- add colored term prompt (images)
+- DM* prefixed and renamed
+- FIX `mysqladmin` fail linked with `sock` file (image-mariadb)
+- FIX `mysql` user permissions via set UID from `DM_USER` (image-mariadb)
 - add env var `DMC_DB_FILES_DIR`
-- add SSL sert support and HTTP Basic Auth support
+- add lib scripts functionality while call `/dm exec`
+- add lib scripts for updating /etc/hosts
+- add env var `DMC_CUSTOM_ADD_HOSTS` for updating /etc/hosts
+- add SSL certificates support and HTTP Basic Auth support
  
 
 # 0.4.0 (2018-03-09)
