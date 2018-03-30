@@ -64,7 +64,18 @@ do
             ;;
         -c)
             shift
-            COMMAND="${@}"
+            # try to return quotes to cmd
+            # TODO-dep
+            if [ -z "$( echo "$*" | grep '\s' )" ]; then
+                # simple command
+                COMMAND="${@}"
+            else
+                # command with quotes
+                oldIFS="$IFS"
+                IFS="#${IFS}"
+                COMMAND="$( echo "$*" | sed -E 's/(#|^)?([^\s^#]*\s[^\s^#]*)(#|$)?/#"\2"#/g' | sed 's/#/ /g' )"
+                IFS="${oldIFS}"
+            fi
             break
             ;;
         *)

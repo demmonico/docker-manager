@@ -22,7 +22,8 @@ Current mode will be detected automatically through analyzing `netstat` results 
 
 - [Description](#description)
 - [Structure](#structure)
-- [Installation](#installation)
+- [Quick Guide](#quick-guide)
+- [Installation steps](#installation-steps)
     - [1. Prepare environment](#1-prepare-environment)
         - [Prepare local host environment](#prepare-local-host-environment)
         - [Prepare remote server environment](#prepare-remote-server-environment)
@@ -31,18 +32,29 @@ Current mode will be detected automatically through analyzing `netstat` results 
         - [Manual installation](#manual-installation)
     - [3. Re-login](#3-re-login)
     - [Uninstall](#uninstall)
-- [Usage](#usage)
+- [Configuration](#configuration)
     - [Configure Docker Manager](#configure-docker-manager)
         - [Setup common config](#setup-common-config)
         - [Setup sensitive information](#setup-sensitive-information)
     - [Copy or pull projects](#copy-or-pull-projects)
     - [Configure project](#configure-project)
-    - [Environment variables](#environment-variables)
+        - [Configs priority](#configs-priority)
+            - [Compose files](#compose-files)
+            - [Environment file](#environment-file)
+            - [Dockerfile](#dockerfile)
+        - [Environment variables](#environment-variables)
+            - [Customize DB settings](#customize-db-settings)
+            - [Tune PHP settings](#tune-php-settings)
+            - [Add domains to hosts file](#add-domains-to-hosts-file)
+            - [Add custom command to the entrypoint script](#add-custom-command-to-the-entrypoint-script)
+- [Usage](#usage)
     - [Start project(s)](#start-projects)
     - [Stop project(s)](#stop-projects)
     - [Exec command inside container](#exec-command-inside-container)
     - [Inspect containers](#inspect-containers)
-- [CLI command readme](#cli-command-readme)
+    - [CLI command readme](#cli-command-readme)
+    - [SSL certificates](#ssl-certificates)
+    - [HTTP Basic Authentication](#http-basic-authentication)
 - [Change log](#change-log)
 - [License](#license)
 
@@ -133,24 +145,40 @@ proxy/                          contains docker container for common DM proxy (s
 |-- custom.conf                 rewrite some default nginx settings, e.g. client_max_body_size option etc
 |-- default_location            hack for NGINX's virtual hosts shared robots.txt file
 |-- docker-compose.yml          contains reverse proxy's build and run settings
+|-- Dockerfile                  Dockerfile for proxy container
 |-- host.env                    contains environment's variables
 |-- nginx.tmpl                  contains custom template for NGINX's configs
+|-- run.sh                      proxy's entrypoint
+|-- run_once.sh                 proxy's once entrypoint
  
 |-- dm                          bin scripts wrapper
 ```
-
-*Note: actual started from version 0.3*
 
 </p>
 </details>
 
 
 
-## Installation
+## Quick Guide
 
-Installation steps, CLI command `./dm install` and `bin/install.sh` script are actual for Ubuntu 16.04 OS only! On the other OS didn't tested!
+TODO
+
+While installation process you should do follow steps:
+- configure Docker Manager
+- re-configure Apache settings, setting up Apache mod_proxy, hosts file etc
+- install Docker CE and Docker Compose
+- add current user to `docker` group (to fix group membership [error](https://stackoverflow.com/questions/29101043/cant-connect-to-docker-from-docker-compose))
+
+You could do it automatically using CLI command `dm install` or manually. Please, follow to the related steps.
+
+
+
+## Installation steps
+
+Installation steps, CLI command `./dm install` and `bin/install.sh` script are actual for Ubuntu 16.04 OS only! 
+Script's work didn't test with other OS!
  
-Depending on installation placement (local host or remote server) you must choice follow preparing installation steps.
+Depending on installation placement (`local host` or `remote server`) you have to choose follow installation steps.
 
 
 
@@ -158,8 +186,9 @@ Depending on installation placement (local host or remote server) you must choic
 
 #### Prepare local host environment
 
-This step required if there are installed Apache server at the standard port `80` at the host machine. 
+This step required if there are Apache server listened standard port `80` at the host machine. 
 Otherwise you could go to the [Prepare remote server environment](#prepare-remote-server-environment) section.
+If you have another web server listened port `80` then you have to continue installation manually. 
 
 *Replace `VIRTUAL_HOST_NAME` with real folder name of virtual host for Docker Manager installation.*
 
@@ -430,7 +459,7 @@ sudo groupdel docker
 
 
 
-## Usage
+## Configuration
 
 ### Configure Docker Manager
 
@@ -440,7 +469,7 @@ If you've install Docker Manager via [Automated installation](#automated-install
 
 There are 2 ways to configure Docker Manager: 
 - automatically using CLI command `dm install -c` (see [Automated installation](#automated-installation) section) 
-- manually copying file `config/local-example.yml` to `config/local.yml` and set values
+- manually copying file `config/local-example.yml` to `config/local.yml` and tune configs and command aliases
 
 
 
@@ -470,7 +499,7 @@ If you want to create sub-project then you should create unique folder (named e.
 Further this sub-project will be available as `sub_project.your_docker_manager.dev-server.com` sub-domain. 
  
 2) Create new app, db, proxy, shared and etc. folders regarding to the services at your applications. 
-***Recommended*** create separate folder for each service / container's role (app, db...)
+***Recommended*** create separate folder per each service (`app`, `db`...)
 
 3) Copy or pull (via git for example) your project's code and data regarding the [DM's structure](#structure).
 
@@ -489,78 +518,154 @@ Sub-project's files should be placed at `projects/your_sub_domain` folder
 - put app's data to `projects/DM_PROJECT/app/data` folder
 - put db's data to `projects/DM_PROJECT/db/data` folder
 
+***Important*** Check project's folder permissions. It should be owned by you current user (***NOT ROOT!***), which will run `/dm` scripts wrapper further.
+
 
 
 ### Configure project
 
-You can drive your project settings via `docker-compose.yml` file placed your project's folder (`projects/DM_PROJECT`).
- 
-***Important*** Check project's folder permissions. It should be owned by you current user (***NOT ROOT!***), which will run `/dm` scripts wrapper further.
+#### Configs priority
 
-Create (or copy sub-project from `demo/`) `docker-compose.yml` file and configure it. 
-As a base of Docker container you could use:
+You can manage your project settings using several ways (**from high to low priority** - [see](https://docs.docker.com/compose/environment-variables/#the-env-file)): 
+- Compose files `*.yml`. In the frame of DM usage you could use their overriding in the follow order:
+    - `projects/DM_PROJECT/docker-compose.local.yml` - **optional** **out of VCS** project's local config. Could be used for override configs from all below files
+    - `projects/DM_PROJECT/docker-compose.override.yml` - **optional** project's override config. Could be used for override configs from the `config/docker-compose.d/*.yml` files and below
+    - `config/docker-compose.d/*.yml` - define common used configs of the defined service (`app`, `db`). Called only if service present at the project's main `yml` config. For example exists `app.yml` file will be bound only if project's `docker-compose.yml` file contains service named `app`
+    - `config/docker-compose.d/networks.yml` - define common DM's network. Called **ALWAYS**
+    - `projects/DM_PROJECT/docker-compose.yml` - project's main config. Called **ALWAYS**
+- Environment file
+    - `host.env` which exists by default if using DM
+    - any included to Docker Compose file manually
+- Dockerfile
+
+
+##### Compose files
+
+Main compose `docker-compose.yml` file with project's settings placed at your project's folder (`projects/DM_PROJECT`). 
+You could pull it within `env`/`docker` branch your project or create it manually. 
+As Docker Compose file structure example you could use projects at the `demo/` folder.
+
+*Tip: you could save project configuration to the separate repository or separate branch of the project's repository to provide IaC*
+
+At `docker-compose.yml` file you could:
+- setting a lot of services configurations
+***Note*** if you rename container's name then it should be unique through the all running Docker containers.
+- mounting volumes
+- defining network links, build arguments and environment variables
+ 
+As a base images of Docker container you could use:
 - pre-defined docker's images pulled from `dockerhub.com`
 - pre-defined common docker's images at `images/` folder
 - custom build image based on your custom Dockerfiles - just create `dockerfiles` folder (e.g. `projects/DM_PROJECT/app/dockerfiles` - see [DM's structure](#structure)) and put `Dockerfile` and all additional custom scripts or files there
-
-Example of the Docker Compose config you could find at `demo/` folder. 
-At `docker-compose.yml` file you could config services, mount volumes, network links, define build arguments and environment variables etc. 
-***Note*** if you rename container's name then it should be unique through the all running Docker containers.
 
 If you want to add a Apache dummy (like "Waiting" message) which will be shown while containers are starting then you should: 
 - create at your project's folder e.g. `app/dockerfiles/install/apache-dummy` folder (see [DM's structure](#structure)) with dummy files or pull from [repository](https://github.com/demmonico/apache-dummy)
 - set build argument `DUMMY=apache-dummy` at the `docker-compose.yml` file.
 
-*Tip: you could save project configuration to the separate repository or separate branch of the project's repository to provide IaC*
 
-For overriding project's config purposes you could use internal order of binding project's `*.yml` files:
-- `projects/DM_PROJECT/docker-compose.yml` - project's main config. Called **ALWAYS**
-- `config/docker-compose.d/networks.yml` - define common DM's network. Called **ALWAYS**
-- `config/docker-compose.d/*.yml` - define common used configs of the defined service. Called only if service defined at the project's main config. For example exists `app.yml` file will be bound only if project's `docker-compose.yml` file contains service named `app`
-- `projects/DM_PROJECT/docker-compose.override.yml` - project's override config. Called only if file exists. Could be used for override configs from the `config/docker-compose.d/*.yml` files
-- `projects/DM_PROJECT/docker-compose.local.yml` - project's local config. **NOT under VCS**. Called only if file exists. Could be used for override configs from all previous listed files
+##### Environment file
+
+Files contains list of environment variables which will be accessible into container's runtime.
+
+File `host.env` already exists by default for DM usage case (`dm start` script creates it automatically). **Note** file `host.env`:
+- is out of VCS 
+- is already included to container for services `app` and `db` (defined at the `config/docker-compose.d/*.yml` files)
+- isn't recreated while restarting project/containers
+
+You could add custom variables to the `host.env` file (through it isn't recreated while restarting) or just create another by your own and include it to the project's Docker Compose file at the `env_file` section. 
 
 
+##### Dockerfile
 
-### Environment variables
+You could create your own `Dockerfile` and build your custom image. 
+This way is more effort but it allows the widest way for customization. 
+[See](https://docs.docker.com/engine/reference/builder/) for details.
 
-Using environment variables you could drive many processes in all stages of the container's life. 
+
+#### Environment variables
+
+Using environment variables you could drive many processes at all container's life stages. 
+You can pass environment variables inside your container using any way described above.
+ 
 All DM's environment variables are prefixed due to the follow rules:
 - `DM_`  - common used DM env var
 - `DMB_` - DM env var used at the `build` stage
 - `DMC_` - DM env var used inside the container
 
-You can pass environment variables inside your container through the:
-- when project runs first then file `PROJECT_FOLDER/host.env` is created automatically. It contains default environments variables. You could include this file at `env_file` section at the `docker-compose.yml` file
-- you could pass environment variables via `docker-compose.yml` file using `environment` section
-- you could define any environment variable at your custom Dockerfile
+
+##### Customize DB settings
+
+For customize DB settings at the `app` container use environment variables
+```sh
+# alias name of internal DB host
+- DMC_DB_SERVICE=db
+ 
+# [optional] assigned DB name if it differ with DM_PROJECT
+- DMC_DB_NAME=test-db
+ 
+# [optional] change MySQL files location (/var/lib/mysql by default)
+- DMC_DB_FILES_DIR=/tmp/mysql
+```
+
+
+##### Tune PHP settings
+
+To drive your settings of the internal application's PHP service:
+- `DMC_APP_APACHE_UPLOADMAXFILESIZE` - PHP `upload_max_filesize` param (auto-adjust next param too)
+```sh
+- DMC_APP_APACHE_UPLOADMAXFILESIZE=20M
+```
+- `DMC_APP_APACHE_POSTMAXSIZE` - PHP `post_max_size` param (auto-adjust next param too)
+- `DMC_APP_APACHE_MEMORYLIMIT` - PHP `memory_limit` param (auto-validate free memory)
+- `DMC_APP_APACHE_MAXEXECTIME` - PHP `max_execution_time` param
+- `DMC_APP_APACHE_MAXINPUTTIME` - PHP `max_input_time` param
+
+
+##### Add domains to hosts file
+
+You could add one/several domains to the internal container's `/etc/hosts` file using `DMC_CUSTOM_ADD_HOSTS` variable. 
+Useful at the `development` environment when you need link several DM projects or another local hosts. 
+**Note** exists rows contains these domains will be commented.
+
+```sh
+# one domain by IP
+- DMC_CUSTOM_ADD_HOSTS=192.168.100.1:example.com
+ 
+# one domain by DM container name
+- DMC_CUSTOM_ADD_HOSTS=dc000example_app_1:example.com
+ 
+# several domains separated by ";"
+- DMC_CUSTOM_ADD_HOSTS=dc000example_app_1:example1.com;192.168.100.1:example2.com;dc000test_app_1:test.com
+```
+
+
+##### Add custom command to the entrypoint script
 
 To run custom commands while container build/start you could use special custom env variables within custom scripts:
-- DMC_CUSTOM_RUN_COMMAND (eval every time when container starts)
-- DMC_CUSTOM_RUNONCE_COMMAND (eval once when container creates)
-  
+- `DMC_CUSTOM_RUN_COMMAND` (called when container starts)
 ```sh
 # create file under user dm every time when container starts
 - DMC_CUSTOM_RUN_COMMAND=sudo -u dm bash -c "touch /tmp/run"
- 
-# create file once when container creates (under user root by defaults)
-- DMC_CUSTOM_RUNONCE_COMMAND=bash -c "touch /tmp/runonce"
  
 # add another local domain to inner /etc/hosts file
 - DMC_CUSTOM_RUN_COMMAND=bash -c "echo 172.18.0.3 local.example.loc >> /etc/hosts"
  
 # add another local domain (which running at the container named dm000main_app_1) to inner /etc/hosts file
-- DMC_CUSTOM_RUN_COMMAND=bash -c `echo "$$( getent hosts dc000main_app_1 | awk '{ print $$1 }' ) dc" >> /etc/hosts`
+- DMC_CUSTOM_RUN_COMMAND=bash -c `echo "$$( getent hosts dm000main_app_1 | awk '{ print $$1 }' ) dc" >> /etc/hosts`
 ```
 
-To drive your settings of the internal application's PHP service:
-- DMC_APP_APACHE_UPLOADMAXFILESIZE - PHP's `upload_max_filesize` param (auto-adjust following param too)
-- DMC_APP_APACHE_POSTMAXSIZE - PHP's `post_max_size` param (auto-adjust following param too)
-- DMC_APP_APACHE_MEMORYLIMIT - PHP's `memory_limit` param (auto-validate free memory)
-- DMC_APP_APACHE_MAXEXECTIME - PHP's `max_execution_time` param
-- DMC_APP_APACHE_MAXINPUTTIME - PHP's `max_input_time` param
+- `DMC_CUSTOM_RUNONCE_COMMAND` (called once when container creates)
+```sh
+# create file once when container creates (under user root by defaults)
+- DMC_CUSTOM_RUNONCE_COMMAND=bash -c "touch /tmp/runonce"
+ 
+# install NodeJS and php7.1-sqlite extension
+- DMC_CUSTOM_RUNONCE_COMMAND=bash -c "curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - && sudo apt-get install -y nodejs && apt-get install -y php7.1-sqlite"
+```
 
 
+
+## Usage
 
 ### Start project(s)
 
@@ -628,8 +733,12 @@ To exec command inside some container of your project you should use command:
 
 See the [CLI command readme](BIN_HELP.md#exec) file for details.
 
-Note that you have an ability to exec command using cmd_aliases which could be defined at the `config/local.yml` file. 
+**Note** you could exec command using command aliases which could be defined at the `config/local.yml` file. 
 For examples see `config/local-example.yml` file which contains several pre-defined aliases.
+
+**Note** you could exec pre-defined command scripts loaded into `DMC_INSTALL_DIR` inside the container. 
+File naming rules is `exec_cmd_name.sh` where `name` is your cmd name.   
+For examples see pre-defined scripts at the [app image](https://github.com/demmonico/docker-ubuntu-apache-php).
 
 ***Example 1***
 
@@ -642,7 +751,7 @@ Simple call container's terminal.
 By default:
 - service name is `app`
 - service instance name is `1`
-- user is `$USER` for app containers and `root` for others
+- user is `dm` user
 
 ***Example 2***
 
@@ -658,6 +767,71 @@ Call command `uname -a` with specified user `root`, service name `db`, service i
 
 ```sh
 /var/docker-manager/dm exec DM_PROJECT -s db -i 2 -u root -c uname -a
+```
+
+***Example 4***
+
+Call command alias defined at the `config/local.yml` file
+
+```sh
+# at the `config/local.yml` file
+container:
+  cmd_aliases:
+    - laravel/phpunit=/var/www/html/vendor/bin/phpunit -c /var/www/html/phpunit.xml
+    
+# run in terminal
+/var/docker-manager/dm exec DM_PROJECT -c laravel/phpunit
+```
+
+***Example 5***
+
+Call pre-defined command scripts loaded inside the container. 
+See pre-defined at the [app](https://github.com/demmonico/docker-ubuntu-apache-php) and [db](https://github.com/demmonico/docker-ubuntu-mariadb) containers:
+ 
+- add manually domain to the `app` container `/etc/hosts` file:
+
+```sh
+# at the `app` container exists
+/dm-install/exec_cmd_hosts_add.sh
+    
+# run in terminal
+/var/docker-manager/dm exec DM_PROJECT -c lib/hosts/add 192.168.100.1 example.com
+# or
+/var/docker-manager/dm exec DM_PROJECT -c lib/hosts/add dc000example_app_1 example.com
+```
+
+- remove manually domain from the `app` container `/etc/hosts` file:
+
+```sh
+# at the `app` container exists
+/dm-install/exec_cmd_hosts_remove.sh
+    
+# run in terminal
+/var/docker-manager/dm exec DM_PROJECT -c lib/hosts/remove example.com
+```
+
+- export DB dump at the `db` container (dump file will be placed at the `/var/lib/mysql` folder):
+
+```sh
+# at the `app` container exists
+/dm-install/exec_cmd_mysql_export.sh
+    
+# run in terminal
+/var/docker-manager/dm exec DM_PROJECT -c lib/mysql/export
+# or for getting gzip
+/var/docker-manager/dm exec DM_PROJECT -c lib/mysql/export gzip
+```
+
+- import DB dump at the `db` container (dump file should be placed at the `/var/lib/mysql` folder):
+
+```sh
+# at the `app` container exists
+/dm-install/exec_cmd_mysql_import.sh
+    
+# run in terminal
+/var/docker-manager/dm exec DM_PROJECT -c lib/mysql/import testdump.sql
+# or for gzip
+/var/docker-manager/dm exec DM_PROJECT -c lib/mysql/export testdump.sql.gz
 ```
 
 
@@ -680,10 +854,25 @@ Get container's id with specified service name `db`, service instance name `2`
 
 
 
-## CLI command readme
+### CLI command readme
 
 See the [CLI command readme](BIN_HELP.md) file for more information about DM CLI commands.
 
+
+
+### SSL certificates
+
+TODO
+
+### HTTP Basic Authentication
+
+TODO
+
+create file for credentials
+htpasswd -c .htpasswd
+
+add user password credentials
+htpasswd -cb .htpasswd dev marina
 
 
 ## Change log
