@@ -26,12 +26,15 @@ Here you can find organization schemes of:
 </details>
 
 <details><summary>single server mode</summary>
-<img>
-[single server mode](https://raw.githubusercontent.com/demmonico/docker-manager/master/docs/images/single-server-mode-scheme.png)
-</img>
+<img src="https://raw.githubusercontent.com/demmonico/docker-manager/master/docs/images/single-server-mode-scheme.png" alt="single server mode"> 
+</details>
+
+<details><summary>single server mode</summary>
+<img src="docs/images/single-server-mode-scheme.png" alt="single server mode"> 
 </details>
 
 - single server mode
+
 ![single server mode](https://raw.githubusercontent.com/demmonico/docker-manager/master/docs/images/single-server-mode-scheme.png)
 
 
