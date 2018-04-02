@@ -4,23 +4,27 @@
 
 Tool for automated management of Docker-based projects, networks and environments either at local development host and remote server.
 Common usage as a Docker-based structure for deploy several web-sites or MSA-based web-application at single server or local host for development purposes.
-This skeleton makes simpler deploy and management different web-sites at server and maintenance them further.
+This skeleton makes simpler process of deploy and management different web-sites at server and maintenance them further.
+
+
+##### Modes
 
 There are two modes which are supported by this manager:
- - **local** (used when port `80` is busy and/or Apache is installed at the host machine)
- - **server** (other cases)
+ - **local** used at the developer's local machine (when port `80` is busy and/or `Apache` is installed at the host machine)
+ - **server** other cases, e.g. dev-server
 
 Local mode mostly used at developer's machine when:
- - Apache server is installed
+ - `Apache` web server is installed
  - Docker Manager used as a Docker-based wrapper which is serving multiple sub-domains or multi-service application
  
-Current mode will be detected automatically through analyzing `netstat` results for port `80` and either Apache server installation.
+Current mode will be detected automatically through analyzing `netstat` results for port `80` and either `Apache` web server installation.
 
 
 
 ## Contents
 
 - [Description](#description)
+    - [Modes](#modes)
 - [Structure](#structure)
 - [Quick Guide](#quick-guide)
 - [Installation steps](#installation-steps)
@@ -165,7 +169,7 @@ TODO
 
 While installation process you should do follow steps:
 - configure Docker Manager
-- re-configure Apache settings, setting up Apache mod_proxy, hosts file etc
+- re-configure `Apache` settings, setting up `Apache mod_proxy`, `/etc/hosts` file etc
 - install Docker CE and Docker Compose
 - add current user to `docker` group (to fix group membership [error](https://stackoverflow.com/questions/29101043/cant-connect-to-docker-from-docker-compose))
 
@@ -186,13 +190,13 @@ Depending on installation placement (`local host` or `remote server`) you have t
 
 #### Prepare local host environment
 
-This step required if there are Apache server listened standard port `80` at the host machine. 
+This step required if there are `Apache` web server listened standard port `80` at the host machine. 
 Otherwise you could go to the [Prepare remote server environment](#prepare-remote-server-environment) section.
 If you have another web server listened port `80` then you have to continue installation manually. 
 
 *Replace `VIRTUAL_HOST_NAME` with real folder name of virtual host for Docker Manager installation.*
 
-1.1) Creating new virtual host's folder and setting up Apache config
+1.1) Creating new virtual host's folder and setting up `Apache` config
  
 Do this automatically using [small script](https://github.com/demmonico/bash/blob/master/newsite.sh).
  
@@ -227,7 +231,7 @@ rm -rf .git && rm -f .gitignore
 
 #### Prepare remote server environment
 
-This step required if there are no installed Apache/Nginx servers and standard port `80` is free at the host machine. 
+This step required if there are no installed `Apache`/`Nginx` web servers and standard port `80` is free at the host machine. 
 Otherwise you could go to the [Prepare local host environment](#prepare-local-host-environment) section.
 
 1.1) Creating folder and download Docker Manager
@@ -255,7 +259,7 @@ rm -rf .git && rm -f .gitignore
 
 While installation process you should do follow steps:
 - configure Docker Manager
-- re-configure Apache settings, setting up Apache mod_proxy, hosts file etc
+- re-configure `Apache` settings, setting up `Apache mod_proxy`, `/etc/hosts` file etc
 - install Docker CE and Docker Compose
 - add current user to `docker` group (to fix group membership [error](https://stackoverflow.com/questions/29101043/cant-connect-to-docker-from-docker-compose))
 
@@ -365,7 +369,7 @@ sudo usermod -aG docker $USER
 
 ##### Install at the local environment (case when locally Apache server installed and/or busy port 80)
 
-1) Create new website project's folder and setup Apache configs manually or automatically using [script](https://github.com/demmonico/bash/blob/master/newsite.sh)
+1) Create new website project's folder and setup `Apache` configs manually or automatically using [script](https://github.com/demmonico/bash/blob/master/newsite.sh)
 ```sh
 # prepare
 sudo wget -q https://raw.githubusercontent.com/demmonico/bash/master/newsite.sh -O /var/www/newsite.sh
@@ -375,7 +379,7 @@ sudo chmod +x newsite.sh
 # create new site
 sudo ./newsite.sh -n SITENAME
 ```
-***Note*** to automatically remove website and clear up hosts and Apache settings you can use [script](https://github.com/demmonico/bash/blob/master/rmsite.sh)
+***Note*** to automatically remove website and clear up hosts and `Apache` settings you can use [script](https://github.com/demmonico/bash/blob/master/rmsite.sh)
 ```sh
 # pulling script the same as newsite.sh
 # and afterward run it
@@ -390,11 +394,11 @@ git pull origin master
 ```
 Now you could remove `.git` folder to avoid nested git IDE errors
 
-3) Correct host's Apache config and setup docker-manager host's settings.
+3) Correct host's `Apache` config and setup docker-manager host's settings.
 
-Follow will provide you correct work both with inner docker projects and with your exists Apache projects. 
+Follow will provide you correct work both with inner docker projects and with your exists `Apache` projects. 
 
-- re-configure Apache for using proxy mod's for Docker Manager's virtual host. ***Note*** please, check whether Apache proxy mod is enabled
+- re-configure `Apache` for using proxy mod's for Docker Manager's virtual host. ***Note*** please, check whether `Apache` proxy mod is enabled
 - update `hosts` file to make available new virtual hosts
 
 
@@ -558,7 +562,7 @@ As a base images of Docker container you could use:
 - pre-defined common docker's images at `images/` folder
 - custom build image based on your custom Dockerfiles - just create `dockerfiles` folder (e.g. `projects/DM_PROJECT/app/dockerfiles` - see [DM's structure](#structure)) and put `Dockerfile` and all additional custom scripts or files there
 
-If you want to add a Apache dummy (like "Waiting" message) which will be shown while containers are starting then you should: 
+If you want to add a `Apache` dummy (like "Waiting" message) which will be shown while containers are starting then you should: 
 - create at your project's folder e.g. `app/dockerfiles/install/apache-dummy` folder (see [DM's structure](#structure)) with dummy files or pull from [repository](https://github.com/demmonico/apache-dummy)
 - set build argument `DUMMY=apache-dummy` at the `docker-compose.yml` file.
 
@@ -725,7 +729,7 @@ You could enable SSL protection at your web-site (or/and sub-domains).
 
 3. Bind port `443` and mount volume with certs to the `proxy` container. 
 Use as an example `proxy/docker-compose.local-ssl-example.yml` file. 
-**Note**: for `local` (`dev`) environment it would work if you disable (or configure specially) your host's web-server (`Apache` etc) and set up `DM_HOST_PORT` to port `80` directly
+**Note**: for `local` environment it would work if you disable (or configure specially) your host's web-server (`Apache` etc) and set up `DM_HOST_PORT` to port `80` directly
 
 4. Make sure that ports are bound correctly and restart DM.
 **Note**: by default router `NGINX` will redirect all requests from `http` to `https`. 
