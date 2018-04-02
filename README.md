@@ -47,14 +47,14 @@ Current mode will be detected automatically through analyzing `netstat` results 
             - [Tune PHP settings](#tune-php-settings)
             - [Add domains to hosts file](#add-domains-to-hosts-file)
             - [Add custom command to the entrypoint script](#add-custom-command-to-the-entrypoint-script)
+        - [SSL certificates](#ssl-certificates)
+        - [HTTP Basic Authentication](#http-basic-authentication)
 - [Usage](#usage)
     - [Start project(s)](#start-projects)
     - [Stop project(s)](#stop-projects)
     - [Exec command inside container](#exec-command-inside-container)
     - [Inspect containers](#inspect-containers)
     - [CLI command readme](#cli-command-readme)
-    - [SSL certificates](#ssl-certificates)
-    - [HTTP Basic Authentication](#http-basic-authentication)
 - [Change log](#change-log)
 - [License](#license)
 
@@ -665,6 +665,106 @@ To run custom commands while container build/start you could use special custom 
 
 
 
+#### SSL certificates
+
+You could enable SSL protection at your web-site (or/and sub-domains). 
+
+<details><summary>Follow steps</summary>
+<p>
+
+1. Generate SSL certificates (or buy). As a result of this step you have to get `.crt` and `.key` files. If you going to generate:
+    - create a file called `openssl.cnf` with the following details
+    ```cnf
+        [req]
+        distinguished_name = req_distinguished_name
+        req_extensions = v3_req
+     
+        [req_distinguished_name]
+        countryName = SL
+        countryName_default = SL
+        stateOrProvinceName = Western
+        stateOrProvinceName_default = Western
+        localityName = Colombo
+        localityName_default = Colombo
+        organizationalUnitName = ABC
+        organizationalUnitName_default = ABC
+        commonName = *.dev.abc.com
+        commonName_max = 64
+     
+        [ v3_req ]
+        # Extensions to add to a certificate request
+        basicConstraints = CA:FALSE
+        keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+        subjectAltName = @alt_names
+     
+        [alt_names]
+        DNS.1 = *.api.dev.abc.com
+        DNS.2 = *.app.dev.abc.com
+    ```
+    
+    - create the Private key
+    ```sh
+    sudo openssl genrsa -out server.key 2048
+    ```
+    
+    - create Certificate Signing Request (CSR)
+    ```sh
+    sudo openssl req -new -out server.csr -key server.key -config openssl.cnf
+    ```
+    **Note:** for the common name type as `*.dev.abc.com`. 
+    It will take the default values mentioned above for other values.
+    
+    - sign the SSL Certificate (you'll get files `server.csr`, `server.key` and `server.crt`)
+    ```sh
+    # file server.csr certificate will contains *.dev.abc.com as the common name and other domain names as the DNS alternative names
+    sudo openssl x509 -req -days 3650 -in server.csr -signkey server.key -out server.crt -extensions v3_req -extfile openssl.cnf
+    ```
+    
+2. For using wildcard certificates you have to smooth naming files, e.g. `VIRTUAL_HOST=foo.bar.com` would use cert name `bar.com.crt` and `bar.com.key`. 
+[See](https://github.com/jwilder/nginx-proxy#wildcard-certificates) for details
+
+3. Bind port `443` and mount volume with certs to the `proxy` container. 
+Use as an example `proxy/docker-compose.local-ssl-example.yml` file. 
+**Note**: for `local` (`dev`) environment it would work if you disable (or configure specially) your host's web-server (`Apache` etc) and set up `DM_HOST_PORT` to port `80` directly
+
+4. Make sure that ports are bound correctly and restart DM.
+**Note**: by default router `NGINX` will redirect all requests from `http` to `https`. 
+To avoid that you could manually add env variable `HTTPS_METHOD=noredirect` to the project when you want to disable that behavior. 
+[See](https://github.com/jwilder/nginx-proxy#how-ssl-support-works) for details
+
+</p>
+</details>
+
+
+
+#### HTTP Basic Authentication
+
+You could enable HTTP Basic Authentication at your web-site (or/and sub-domains). 
+
+<details><summary>Follow steps</summary>
+<p>
+
+1. Generate `htpasswd` file(s). 
+If you want to use separate user profiles for you sub-domains then you have to repeat this step as many times as you need.  
+```sh
+# create file for credentials
+htpasswd -c .htpasswd
+ 
+# add user name and password credentials
+htpasswd -cb .htpasswd username userpassword
+```
+ 
+2. Mount file as a volume with certs to the `proxy` container. Filename should be equal with host name which you want to protect. 
+Use as an example `proxy/docker-compose.local-ssl-example.yml` file. 
+**Note**: if you need to include several `htpasswd` files then you have to mount all of them
+
+3. Make sure that all settings are correct and restart DM.
+
+</p>
+</details>
+
+
+
 ## Usage
 
 ### Start project(s)
@@ -858,21 +958,6 @@ Get container's id with specified service name `db`, service instance name `2`
 
 See the [CLI command readme](BIN_HELP.md) file for more information about DM CLI commands.
 
-
-
-### SSL certificates
-
-TODO
-
-### HTTP Basic Authentication
-
-TODO
-
-create file for credentials
-htpasswd -c .htpasswd
-
-add user password credentials
-htpasswd -cb .htpasswd dev marina
 
 
 ## Change log
