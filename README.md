@@ -19,6 +19,21 @@ Local mode mostly used at developer's machine when:
  
 Current mode will be detected automatically through analyzing `netstat` results for port `80` and either `Apache` web server installation.
 
+You are free to run multiple Docker Manager engines at the same host as far as run multiple sub-domains at frame of the single DM. 
+Here you can find organization schemes of:
+- single server mode
+<details><summary>Click here to expand</summary>
+<p>
+![single server mode](https://raw.githubusercontent.com/demmonico/docker-manager/master/docs/images/single-server-mode-scheme.png)
+</p>
+</details>
+
+- <details><summary>single server mode</summary>
+<p>
+![single server mode](https://raw.githubusercontent.com/demmonico/docker-manager/master/docs/images/single-server-mode-scheme.png)
+</p>
+</details>
+
 
 
 ## Contents
@@ -673,7 +688,7 @@ To run custom commands while container build/start you could use special custom 
 
 You could enable SSL protection at your web-site (or/and sub-domains). 
 
-<details><summary>Follow steps</summary>
+<details><summary>Click to find steps</summary>
 <p>
 
 1. Generate SSL certificates (or buy). As a result of this step you have to get `.crt` and `.key` files. If you going to generate:
@@ -745,7 +760,7 @@ To avoid that you could manually add env variable `HTTPS_METHOD=noredirect` to t
 
 You could enable HTTP Basic Authentication at your web-site (or/and sub-domains). 
 
-<details><summary>Follow steps</summary>
+<details><summary>Click to find steps</summary>
 <p>
 
 1. Generate `htpasswd` file(s). 
