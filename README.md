@@ -21,21 +21,10 @@ Current mode will be detected automatically through analyzing `netstat` results 
 
 You are free to run multiple Docker Manager engines at the same host as far as run multiple sub-domains at frame of the single DM. 
 Here you can find organization schemes of:
-<details><summary>single server mode</summary>
-![single server mode](https://raw.githubusercontent.com/demmonico/docker-manager/master/docs/images/single-server-mode-scheme.png)
-</details>
-
-<details><summary>single server mode</summary>
-<img src="https://raw.githubusercontent.com/demmonico/docker-manager/master/docs/images/single-server-mode-scheme.png" alt="single server mode"> 
-</details>
 
 <details><summary>single server mode</summary>
 <img src="docs/images/single-server-mode-scheme.png" alt="single server mode"> 
 </details>
-
-- single server mode
-
-![single server mode](https://raw.githubusercontent.com/demmonico/docker-manager/master/docs/images/single-server-mode-scheme.png)
 
 
 
