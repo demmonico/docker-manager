@@ -23,7 +23,11 @@ You are free to run multiple Docker Manager engines at the same host as far as r
 Here you can find organization schemes of:
 
 <details><summary>single server mode</summary>
-<img src="docs/images/single-server-mode-scheme.png" alt="single server mode"> 
+<img src="docs/images/single-server-mode-scheme.png" alt="single server mode" width=100%> 
+</details>
+
+<details><summary>multiple server mode</summary>
+<img src="docs/images/multiple-server-mode-scheme.png" alt="multiple server mode" width=100%> 
 </details>
 
 
