@@ -1,4 +1,4 @@
-# 0.5.0-alpha (2018-03-28)
+# 0.5.0-beta (2018-04-02)
 
 - [x] TODO add env var `upload_max_filesize` etc (php, apache)
 - [x] TODO docker-compose inheritance
@@ -9,6 +9,7 @@
 - [x] TODO db container permissions
 - [x] TODO re-build db containers
 - [x] TODO SSL
+- [x] TODO quick installation guide
  
 - add CLI command wrapper `dm` for `bin/*` scripts with completions
 - move `bin/*` scripts detailed info to the separate file to provide CLI help

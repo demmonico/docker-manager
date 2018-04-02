@@ -8,7 +8,7 @@
 - [x] TODO db container permissions
 - [x] TODO re-build db containers
 - [x] TODO SSL
-- [ ] TODO quick installation guide
+- [x] TODO quick installation guide
 - [ ] TODO mail
 - [ ] TODO service discovery + DNS
 - [ ] TODO collect logs

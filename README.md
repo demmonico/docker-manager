@@ -180,15 +180,24 @@ proxy/                          contains docker container for common DM proxy (s
 
 ## Quick Guide
 
-TODO
+For bootstrap DM-based application you have to: 
 
-While installation process you should do follow steps:
-- configure Docker Manager
-- re-configure `Apache` settings, setting up `Apache mod_proxy`, `/etc/hosts` file etc
-- install Docker CE and Docker Compose
-- add current user to `docker` group (to fix group membership [error](https://stackoverflow.com/questions/29101043/cant-connect-to-docker-from-docker-compose))
+- prepare host (download [Docker Manager](https://github.com/demmonico/docker-manager)). 
+See [local](#prepare-local-host-environment) and [server](#prepare-remote-server-environment) for details
 
-You could do it automatically using CLI command `dm install` or manually. Please, follow to the related steps.
+- install Docker Manager engine [automatically](#automated-installation) or [manually](#manual-installation) 
+(configure `./dm install` script, configure host and DM, install Docker CE and Docker Compose, add current host user to `docker` group etc)
+
+- [re-login](#3-re-login) (re-evaluated your group membership)
+
+- [configure DM](#configure-docker-manager) (add sensitive information if you need it), 
+prepare project folder(s) - (`projects/main` for main or single project `example.com` and `projects/DM_PROJECT` for sub-project `DM_PROJECT.example.com`)
+
+- [pull](#copy-or-pull-projects) project's environments branch or create project's structure manually
+
+- [configure project](#configure-project) (`docker-compose.yml` file, environments variables, `Dockerfile` etc)
+
+- [start DM](#start-projects)
 
 
 
@@ -249,7 +258,7 @@ rm -rf .git && rm -f .gitignore
 This step required if there are no installed `Apache`/`Nginx` web servers and standard port `80` is free at the host machine. 
 Otherwise you could go to the [Prepare local host environment](#prepare-local-host-environment) section.
 
-1.1) Creating folder and download Docker Manager
+1.1) Creating folder and download [Docker Manager](https://github.com/demmonico/docker-manager)
 
 *You could replace `docker-manager` with custom name or change Docker Manager installation path `/var`.*
 
