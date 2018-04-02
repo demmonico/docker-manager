@@ -35,6 +35,8 @@ Here you can find organization schemes of:
 
 [single server mode](https://raw.githubusercontent.com/demmonico/docker-manager/master/docs/images/single-server-mode-scheme.png)
 
+![single server mode](https://raw.githubusercontent.com/demmonico/docker-manager/master/docs/images/single-server-mode-scheme.png)
+
 
 
 ## Contents
