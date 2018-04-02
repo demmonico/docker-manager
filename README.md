@@ -22,12 +22,16 @@ Current mode will be detected automatically through analyzing `netstat` results 
 You are free to run multiple Docker Manager engines at the same host as far as run multiple sub-domains at frame of the single DM. 
 Here you can find organization schemes of:
 
-<details><summary>single server mode</summary>
-<img src="docs/images/single-server-mode-scheme.png" alt="single server mode" width=100%> 
+<details><summary>single DM server mode</summary>
+<img src="docs/images/single-dm-server-mode-scheme.png" alt="single DM server mode" width=100%> 
 </details>
 
-<details><summary>multiple server mode</summary>
-<img src="docs/images/multiple-server-mode-scheme.png" alt="multiple server mode" width=100%> 
+<details><summary>multiple DM server mode</summary>
+<img src="docs/images/multiple-dm-server-mode-scheme.png" alt="multiple DM server mode" width=100%> 
+</details>
+
+<details><summary>multiple DM local mode</summary>
+<img src="docs/images/multiple-dm-local-mode-scheme.png" alt="multiple DM local mode" width=100%> 
 </details>
 
 
