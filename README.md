@@ -756,7 +756,8 @@ htpasswd -cb .htpasswd username userpassword
  
 2. Mount file as a volume with certs to the `proxy` container. Filename should be equal with host name which you want to protect. 
 Use as an example `proxy/docker-compose.local-ssl-example.yml` file. 
-**Note**: if you need to include several `htpasswd` files then you have to mount all of them
+**Note**: if you need to include several `htpasswd` files then you have to mount all of them. 
+[See](https://github.com/jwilder/nginx-proxy#basic-authentication-support) for details
 
 3. Make sure that all settings are correct and restart DM.
 
