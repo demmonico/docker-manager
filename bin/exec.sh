@@ -147,7 +147,10 @@ else
     fi
 
     # exec COMMAND
-    docker exec -ti -e DMC_EXEC_NAME=${CONTAINER} --user ${DMC_USER} \
+    [ "${COMMAND}" == "bash" ] && OPTION_INTERACTIVE='-ti' || OPTION_INTERACTIVE=''
+
+    docker exec ${OPTION_INTERACTIVE} -e DMC_EXEC_NAME=${CONTAINER} \
+        --user ${DMC_USER} \
         -e COLUMNS=`tput cols` -e LINES=`tput lines` \
         ${CONTAINER} ${COMMAND}
 fi
