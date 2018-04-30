@@ -71,6 +71,7 @@ Here you can find organization schemes of:
 - [Usage](#usage)
     - [Start project(s)](#start-projects)
     - [Stop project(s)](#stop-projects)
+    - [Update projects code](#update-projects-code)
     - [Exec command inside container](#exec-command-inside-container)
     - [Inspect containers](#inspect-containers)
     - [CLI command readme](#cli-command-readme)
@@ -87,6 +88,7 @@ Here you can find organization schemes of:
 ```
 bin/                contains bin scripts for management purposes
 |-- exec.sh         script for exec command inside container
+|-- inspect.sh      script for inspect command of the container
 |-- install.sh      installation script
 |-- start.sh        script for build/start one/all projects
 |-- stop.sh         script for stop one/all projects
@@ -853,6 +855,31 @@ For example, you want to change container base image of the some container and r
 ```
 
 
+### Update projects code
+
+For app code updating you don't have to going inside the container. You could just put it inside needed folder (e.g. `app/src`). 
+
+**Note** owner of new files have to be the same as an owner of entire project and DM folder.
+
+***Example 1***
+
+Update entire app code at the `main` project
+
+```sh
+cd /var/docker-manager/projects/main/app/src
+git pull origin master
+```
+
+***Example 2***
+
+Update source code of the Moodle plugin `local/plugin_name` at the `main` project
+
+```sh
+cd /var/docker-manager/projects/main/app/src/local/plugin_name
+git pull origin master
+```
+
+
 ### Exec command inside container
 
 To exec command inside some container of your project you should use command:
@@ -898,6 +925,26 @@ Call command `uname -a` with specified user `root`, service name `db`, service i
 /var/docker-manager/dm exec DM_PROJECT -s db -i 2 -u root -c uname -a
 ```
 
+Run `composer install` or `composer update` from user `www-data` for `DM_PROJECT` folder calling as a command
+
+```sh
+/var/docker-manager/dm exec DM_PROJECT -u www-data -c composer install -d /var/www/html
+# or
+/var/docker-manager/dm exec DM_PROJECT -u www-data -c composer install --working-dir=/var/www/html
+```
+
+Run `php artisan migrate` from user `www-data` for `DM_PROJECT` folder calling as a command
+
+```sh
+/var/docker-manager/dm exec DM_PROJECT -u www-data -c php /var/www/html/artisan migrate
+```
+
+Run `php yii migrate` from user `www-data` for `DM_PROJECT` folder calling as a command
+
+```sh
+/var/docker-manager/dm exec DM_PROJECT -u www-data -c php /var/www/html/yii migrate
+```
+
 ***Example 4***
 
 Call command alias defined at the `config/local.yml` file
@@ -910,6 +957,42 @@ container:
     
 # run in terminal
 /var/docker-manager/dm exec DM_PROJECT -c laravel/phpunit
+```
+
+Run `composer install` or `composer update` from user `www-data` for `DM_PROJECT` folder calling as a command alias
+
+```sh
+# at the `config/local.yml` file
+container:
+  cmd_aliases:
+    - composer/install=composer install -d /var/www/html
+    
+# run in terminal
+/var/docker-manager/dm exec DM_PROJECT -c composer/install
+```
+
+Run `php artisan migrate` from user `www-data` for `DM_PROJECT` folder calling as a command alias
+
+```sh
+# at the `config/local.yml` file
+container:
+  cmd_aliases:
+    - laravel/migrate=php /var/www/html/artisan migrate
+    
+# run in terminal
+/var/docker-manager/dm exec DM_PROJECT -c laravel/migrate
+```
+
+Run `php yii migrate` from user `www-data` for `DM_PROJECT` folder calling as a command alias
+
+```sh
+# at the `config/local.yml` file
+container:
+  cmd_aliases:
+    - yii/migrate=php /var/www/html/yii migrate
+    
+# run in terminal
+/var/docker-manager/dm exec DM_PROJECT -c yii/migrate
 ```
 
 ***Example 5***

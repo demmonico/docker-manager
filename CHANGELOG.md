@@ -1,4 +1,4 @@
-# 0.5.0-beta (2018-04-30)
+# 0.5.0 (2018-04-30)
 
 - [x] TODO add env var `upload_max_filesize` etc (php, apache)
 - [x] TODO docker-compose inheritance

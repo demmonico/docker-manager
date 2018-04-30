@@ -6,4 +6,8 @@ network:
 container:
   cmd_aliases:
     - laravel/phpunit=/var/www/html/vendor/bin/phpunit -c /var/www/html/phpunit.xml
+    - laravel/migrate=php /var/www/html/artisan migrate
+    - yii/migrate=php /var/www/html/yii migrate
     - moodle/cacheclear=php /var/www/html/admin/cli/purge_caches.php
+    - composer/install=composer install -d /var/www/html
+    - composer/update=composer update -d /var/www/html
