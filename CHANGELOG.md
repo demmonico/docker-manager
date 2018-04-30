@@ -1,4 +1,4 @@
-# 0.5.0-beta (2018-04-02)
+# 0.5.0-beta (2018-04-30)
 
 - [x] TODO add env var `upload_max_filesize` etc (php, apache)
 - [x] TODO docker-compose inheritance
@@ -35,6 +35,7 @@
 - add lib scripts for updating /etc/hosts
 - add env var `DMC_CUSTOM_ADD_HOSTS` for updating /etc/hosts
 - add SSL certificates support and HTTP Basic Auth support
+- add `dm` script to the startup on server env or settled `-a` flag
  
 
 # 0.4.0 (2018-03-09)

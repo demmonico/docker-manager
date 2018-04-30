@@ -324,11 +324,11 @@ sudo /var/docker-manager/dm install -h docker.localhost -p 8080
 
 ***Example 3***
 
-If we want just re-configure Docker Manager, e.g. to another port, we could use `-c` option.
-Port is changed to `8081`, configuration is refreshed and no installation was done.
+If we want just re-configure Docker Manager, e.g. to another port, we could use `-c` and `-a` options.
+Port is changed to `8081`, configuration is refreshed and no installation was done. DM was added to the startup
 
 ```sh
-sudo /var/docker-manager/dm install -c -h docker.localhost -p 8081
+sudo /var/docker-manager/dm install -c -a -h docker.localhost -p 8081
 ```
 
 ##### 2.2) Configure Docker Manager

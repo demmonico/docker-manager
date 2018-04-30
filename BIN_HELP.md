@@ -31,7 +31,8 @@ FORMAT:
     sudo ./bin/install.sh [OPTIONS] -h DM_HOST_NAME [-n DM_NAME] [-p DM_HOST_PORT]
  
 OPTIONS:
-    -c - configurate only (no prepare environment actions)
+    -c - configurate only (no preparing environment actions)
+    -a - add DM to startup (default true for server env and false for local env)
 ```
 
 Note:
@@ -41,6 +42,7 @@ Note:
  - default `DM_HOST_PORT` value is `80` so for `local` mode it's getting required for re-assign default value :)
  - port pointed at `DM_HOST_PORT` value must be available 
  - via using `-c` option you could use `install.sh` script for configuration purposes only and passing Docker environment installation
+ - via using `-a` option you could add `dm` script to the startup (default `true` for server env and `false` for local env)
  
  
 ##### Start

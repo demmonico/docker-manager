@@ -10,7 +10,9 @@
 #   sudo ./install.sh [OPTIONS] -h DM_HOST_NAME [-n DM_NAME] [-p DM_HOST_PORT]
 #
 # OPTIONS:
-#   -c - configurate only (no prepare environment actions)
+#   -c - configurate only (no preparing environment actions)
+#   -a - add DM to startup (default true for server env and false for local env)
+#
 #-----------------------------------------------------------#
 
 # bin dir & require _common.sh
@@ -41,6 +43,7 @@ do
     key="$1"
     case $key in
         -c) isConfigurateOnly='true';;
+        -a) isAutostart='true';;
         -h|--host)
             if [ ! -z "$2" ]; then
                 DM_HOST_NAME="$2"
@@ -109,16 +112,42 @@ do
 done
 echo -e "${GREEN}done${NC}";
 
+
+
+### prepare environment
+
+isLocalEnv="$([ ! -z "$( netstat -ln | grep ":80 " )" ] && [ ! -z "$( dpkg --get-selections | grep apache )" ] && echo 'true' )";
+
+
+
+#-----------------------------------------------------------#
+# add DM to startup for server environment or if
+
+# set flag true for server env
+[ -z "${isLocalEnv}" ] && isAutostart='true'
+if [ ! -z "${isAutostart}" ]; then
+    echo -n -e "${BLUE}Info:${NC} ${GREEN}inserting command to startup ... ${NC}";
+    source "${DM_BIN_DIR}/_startup.sh"
+    r=$( add_startup "${DM_ROOT_DIR}/dm start" 1 )
+    if [ "${r}" == "done" ]; then
+        echo -e "${GREEN}${r}${NC}";
+    elif [ "${r}" == "skip" ]; then
+        echo -e "${YELLOW}${r}${NC}";
+    else
+        echo -e "${RED}${r}${NC}";
+    fi
+fi
+
+#-----------------------------------------------------------#
+
+
+
 # exit if configurate only mode
 if [ ! -z "$isConfigurateOnly" ]; then
     exit
 fi;
 
 
-
-### prepare environment
-
-isLocalEnv="$([ ! -z "$( netstat -ln | grep ":80 " )" ] && [ ! -z "$( dpkg --get-selections | grep apache )" ] && echo 'true' )";
 
 #-----------------------------------------------------------#
 # local environment
