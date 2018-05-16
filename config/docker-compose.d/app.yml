@@ -15,9 +15,6 @@ services:
       - ./shared:/dm-shared
       # ssh keys for git
       - ../../config/security/ssh-keys:/root/.ssh:ro
-
-      # webapp code
-      - ./app/src:/var/www/html
     networks:
       - common
     env_file:
